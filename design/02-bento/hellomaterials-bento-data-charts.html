@@ -1,0 +1,1358 @@
+<!doctype html>
+<!--
+  Hellomaterials — Data Grid · Animated chart bento (v1 · 13 Sep 2026)
+  Ten report-style charts (funnel, bullet, waterfall, 100% stacked, slope, quadrant,
+  grouped columns, part-to-whole, Marimekko, small multiples) drawn from the Meta testing SOP data.
+  ⚠ DATA: copied from the DATA block of ../03-presentations/meta-testing-sop-presentation.html,
+  which is marked FAKE TEST DATA. Replace with real exports.
+  Series palette validated (dataviz validate_palette.js, dark, surface #161616):
+  #C97A1E + #3987E5 all checks PASS. Brand #DE8A25 fails the dark lightness band → UI accent only.
+  Status #00975A / #E0533D: CVD WARN 7.5 → always shipped with +/− signs, ▲/▼ and value labels.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hellomaterials — Data Grid Bento</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Oswald:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #DE8A25;
+    --charcoal: #282828;
+    --cream: #FEF9DF;
+    --card: #1F1F1F;
+    --well: #161616;
+    --line: rgba(254,249,223,.08);
+    --t1: #F5F1E0;
+    --t2: rgba(254,249,223,.62);
+    --t3: rgba(254,249,223,.42);
+    --r-block: 10px;
+    --r-medium: 6px;
+    --f-head: 'Oswald', 'Arial Narrow', sans-serif;
+    --f-body: 'Geist', 'Helvetica Neue', Arial, sans-serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --ease: cubic-bezier(.65, 0, .35, 1);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; min-height: 100vh; background: var(--charcoal); color: var(--cream); font-family: var(--f-body); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(900px 420px at 50% 0%, rgba(222,138,37,.13), transparent 60%), repeating-linear-gradient(115deg, rgba(254,249,223,.02) 0 2px, transparent 2px 16px); }
+  h1, h3, p { margin: 0; }
+
+  /* ── Header ─────────────────────────────────────────── */
+  .announce { position: relative; background: var(--orange); color: #000; font-size: 13px; font-weight: 500; text-align: center; padding: 7px 16px; }
+  .wrap { position: relative; max-width: 1480px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 48px); }
+  .top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; padding-block: 44px 30px; }
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand img { width: 64px; height: 64px; flex: none; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--orange); border-radius: 2px; }
+  .top h1 { font-family: var(--f-head); font-weight: 600; text-transform: uppercase; font-size: clamp(28px, 4vw, 46px); line-height: 1.05; margin-top: 6px; color: #fff; }
+  .top h1 em { color: var(--orange); }
+  .top .meta { color: var(--t2); font-size: 13px; margin-top: 8px; max-width: 70ch; }
+  .notice { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; color: #FFC98A; background: rgba(222,138,37,.1); border: 1px solid rgba(222,138,37,.4); border-radius: var(--r-medium); padding: 6px 10px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-head); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; line-height: 1; padding: 12px 18px; border-radius: var(--r-block); border: 1px solid rgba(254,249,223,.25); background: transparent; color: var(--cream); cursor: pointer; text-decoration: none; transition: background .2s, color .2s, border-color .2s; }
+  .btn:hover, .btn:focus-visible { background: var(--orange); border-color: var(--orange); color: #000; outline: none; }
+
+  /* ── Grid + card ────────────────────────────────────── */
+  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; padding-bottom: 40px; }
+  .dc { grid-column: span 4; min-width: 0; display: flex; flex-direction: column; padding: 22px 22px 24px; background: var(--card); border: 1px solid rgba(77,71,62,.9); border-radius: var(--r-block); box-shadow: 0 30px 60px -36px rgba(0,0,0,.8); transition: border-color .3s; }
+  .dc.w6 { grid-column: span 6; }
+  .dc:hover { border-color: rgba(222,138,37,.45); }
+  .dc.feature { border-color: rgba(222,138,37,.6); box-shadow: 0 0 0 4px rgba(222,138,37,.07), 0 30px 70px -36px rgba(222,138,37,.35); }
+  @media (max-width: 1180px) { .dc, .dc.w6 { grid-column: span 6; } }
+  @media (max-width: 760px)  { .dc, .dc.w6 { grid-column: span 12; } .grid { gap: 16px; } .dc { padding: 18px 16px 20px; } }
+
+  .dc-head { display: flex; align-items: center; gap: 10px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; min-width: 0; }
+  .dc-head .num { color: var(--orange); font-weight: 500; }
+  .dc-head .lbl { color: var(--t3); overflow: hidden; text-overflow: ellipsis; }
+  .pill { margin-left: auto; font-size: 10px; letter-spacing: .16em; color: #FFC98A; background: rgba(222,138,37,.1); border: 1px solid rgba(222,138,37,.55); border-radius: 999px; padding: 3px 10px; }
+  .tbl-btn { margin-left: auto; font-family: var(--f-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--t2); background: transparent; border: 1px solid rgba(254,249,223,.18); border-radius: 5px; padding: 4px 8px; cursor: pointer; }
+  .pill + .tbl-btn { margin-left: 0; }
+  .tbl-btn:hover, .tbl-btn:focus-visible { color: #000; background: var(--orange); border-color: var(--orange); outline: none; }
+
+  .well { flex: 1; display: flex; flex-direction: column; margin-top: 14px; padding: 16px 16px 14px; background: var(--well); border: 1px solid rgba(254,249,223,.06); border-radius: 8px; }
+  .figrow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 14px; }
+  .fig { font-family: var(--f-body); font-weight: 600; font-size: 30px; line-height: 1; color: #fff; letter-spacing: -.01em; }
+  .unit { font-size: 12.5px; color: var(--t2); }
+  .chip { margin-left: auto; align-self: center; font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .04em; white-space: nowrap; padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(254,249,223,.18); color: var(--t2); }
+  .chip.good { color: #4CC795; border-color: rgba(0,151,90,.45); background: rgba(0,151,90,.1); }
+  .chip.bad  { color: #FF8A78; border-color: rgba(224,83,61,.45); background: rgba(224,83,61,.1); }
+  .chip.good::before { content: "▲ "; }
+  .chip.bad::before  { content: "▼ "; }
+  .plot { width: 100%; margin-top: auto; }
+  .plot svg { display: block; overflow: visible; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 11.5px; color: var(--t2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; }
+  .legend i.ln { width: 14px; height: 2px; border-radius: 1px; }
+  .tablewrap { overflow-x: auto; }
+  .tablewrap table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .tablewrap th { text-align: left; font-family: var(--f-mono); font-size: 9.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--t3); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .tablewrap td { padding: 6px 8px; border-bottom: 1px solid rgba(254,249,223,.05); color: var(--t2); }
+  .tablewrap td.n, .tablewrap th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .tablewrap td.n { color: var(--t1); }
+  .dc.show-table .plot, .dc.show-table .legend { display: none; }
+
+  .dc h3 { margin-top: 18px; font-family: var(--f-head); font-weight: 500; text-transform: uppercase; font-size: 21px; line-height: 1.15; color: #fff; }
+  .dc > p { margin-top: 6px; font-size: 14px; line-height: 1.55; color: var(--t2); }
+
+  /* ── SVG text + chrome (text wears text tokens, never series colour) ── */
+  .lb    { font: 500 11.5px var(--f-body); fill: var(--t2); }
+  .ax    { font: 400 10px var(--f-mono); fill: var(--t3); }
+  .num   { font-variant-numeric: tabular-nums; }
+  .ax2   { font: 400 9.5px var(--f-mono); fill: rgba(254,249,223,.3); }
+  .hd    { font: 500 9.5px var(--f-mono); letter-spacing: .14em; fill: var(--t3); }
+  .val   { font: 600 12px var(--f-body); fill: var(--t1); }
+  .val-s { font: 600 11px var(--f-body); fill: var(--t1); }
+  .inl   { font: 600 11px var(--f-body); fill: #121212; }
+  .ref-t { font: 500 9.5px var(--f-mono); fill: var(--t2); }
+  .q-t   { font: 500 9.5px var(--f-mono); letter-spacing: .1em; fill: var(--t2); }
+  .gl    { stroke: rgba(254,249,223,.07); stroke-width: 1; }
+  .base  { stroke: rgba(254,249,223,.22); stroke-width: 1; }
+  .conn  { stroke: rgba(254,249,223,.28); stroke-width: 1; }
+  .ref   { stroke: rgba(254,249,223,.5); stroke-width: 1; }
+  .cross { stroke: rgba(254,249,223,.35); stroke-width: 1; }
+  .hit   { cursor: pointer; outline: none; }
+  .hit:focus-visible { stroke: #DE8A25; stroke-width: 1.5; }
+  .hit-line:focus-visible { stroke: rgba(222,138,37,.35); }
+  .mk    { transition: filter .15s; }
+  .mk.on { filter: brightness(1.35); }
+
+  /* ── Motion: marks start collapsed until the card is revealed ── */
+  .gx, .gy, .gyt, .pop { transform-box: fill-box; }
+  .gx  { transform-origin: left center;  transition: transform .9s var(--ease) var(--d, 0s), filter .15s; }
+  .gy  { transform-origin: center bottom; transition: transform .9s var(--ease) var(--d, 0s), filter .15s; }
+  .gyt { transform-origin: center top;    transition: transform .9s var(--ease) var(--d, 0s), filter .15s; }
+  .pop { transform-origin: center; transition: opacity .5s ease var(--d, 0s), transform .6s var(--ease) var(--d, 0s), filter .15s; }
+  .draw { stroke-dasharray: 1 1; transition: stroke-dashoffset 1.4s var(--ease) var(--d, 0s), filter .15s; }
+  .fade { transition: opacity .6s ease var(--d, 0s); }
+  .js .dc:not(.in) .gx  { transform: scaleX(0); }
+  .js .dc:not(.in) .gy, .js .dc:not(.in) .gyt { transform: scaleY(0); }
+  .js .dc:not(.in) .pop { opacity: 0; transform: scale(.3); }
+  .js .dc:not(.in) .draw { stroke-dashoffset: 1; }
+  .js .dc:not(.in) .fade { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .gx, .gy, .gyt, .pop, .draw, .fade { transition: none !important; }
+  }
+
+  /* ── Part 2 · interactive controls ─────────────────── */
+  .part { padding-block: 34px 18px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; }
+  .part h2 { margin: 6px 0 0; font-family: var(--f-head); font-weight: 600; text-transform: uppercase; font-size: clamp(24px, 3vw, 34px); line-height: 1.05; color: #fff; }
+  .part h2 em { color: var(--orange); }
+  .part p { margin-top: 6px; color: var(--t2); font-size: 13.5px; max-width: 62ch; }
+  .ctrls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; }
+  .seg { display: inline-flex; flex-wrap: wrap; gap: 3px; padding: 3px; background: #101010; border: 1px solid rgba(254,249,223,.1); border-radius: 7px; }
+  .seg button { font: 500 10.5px var(--f-mono); letter-spacing: .05em; color: var(--t2); background: transparent; border: 0; border-radius: 5px; padding: 5px 8px; cursor: pointer; transition: background .2s, color .2s; }
+  .seg button:hover { color: #fff; }
+  .seg button[aria-pressed="true"] { background: rgba(222,138,37,.18); color: #FFC98A; box-shadow: inset 0 0 0 1px rgba(222,138,37,.55); }
+  .seg button:focus-visible, .slider input:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+  .slider { display: flex; align-items: center; gap: 10px; flex: 1 1 220px; min-width: 0; font: 400 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--t3); }
+  .slider input[type=range] { flex: 1; min-width: 0; accent-color: var(--orange); cursor: pointer; }
+  .slider output { min-width: 52px; text-align: right; font: 600 13px var(--f-body); letter-spacing: 0; text-transform: none; color: #fff; font-variant-numeric: tabular-nums; }
+  .trace { display: flex; flex-direction: column; gap: 6px; }
+  .tstep { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; background: #121212; border: 1px solid rgba(254,249,223,.08); border-radius: var(--r-medium); transition: border-color .35s, background .35s, opacity .35s; }
+  .tstep b { font: 500 11px var(--f-mono); color: var(--orange); }
+  .tstep strong { display: block; font: 500 13px/1.3 var(--f-body); color: #fff; }
+  .tstep small { display: block; font-size: 11.5px; line-height: 1.35; color: var(--t3); }
+  .tstep .ans { font: 500 10.5px var(--f-mono); letter-spacing: .06em; color: var(--t3); white-space: nowrap; }
+  .tstep.on { border-color: rgba(222,138,37,.6); background: rgba(222,138,37,.08); }
+  .tstep.skip { opacity: .35; }
+  .tstep .ans.go { color: #4CC795; }
+  .tstep .ans.kill { color: #FF8A78; }
+  .tstep .ans.next { color: var(--t1); }
+
+  #tip { position: fixed; z-index: 50; pointer-events: none; display: flex; flex-direction: column; gap: 1px; max-width: 260px; padding: 7px 10px; background: #0E0E0E; border: 1px solid rgba(254,249,223,.16); border-radius: var(--r-medium); box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  #tip b { font: 600 14px var(--f-body); color: #fff; }
+  #tip span { font: 400 11.5px var(--f-body); color: var(--t2); }
+
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding-block: 8px 48px; color: rgba(254,249,223,.55); font-size: 12.5px; }
+  .foot a { color: var(--cream); }
+  @media (max-width: 760px) { .brand img { width: 48px; height: 48px; } }
+</style>
+</head>
+<body>
+
+<div class="announce">Show up ready — the Hellomaterials data grid</div>
+
+<header class="wrap top">
+  <div class="brand">
+    <img src="../01-brand/hellomaterials-logo.svg" alt="Hellomaterials logo">
+    <div>
+      <span class="eyebrow">Data grid · Animated chart bento</span>
+      <h1>Twenty charts. One testing <em>story</em>.</h1>
+      <p class="meta">Ten report-style charts for the Meta testing SOP, then ten interactive what-ifs with sliders, switches and scenarios. Hover any mark, drag the lines, or open a card's table.</p>
+      <span class="notice">⚠ Test data from the SOP deck — replace with real exports before sharing</span>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="replay" type="button">Replay charts</button>
+    <a class="btn" href="hellomaterials-bento-motion-kit.html">Motion kit →</a>
+  </div>
+</header>
+
+<main class="wrap grid">
+  <article class="dc" data-chart="funnel">
+    <header class="dc-head"><span class="num">01</span><span class="lbl">Funnel</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Most creatives never reach the exit</h3>
+    <p>120 tested, 36 past the first gate, 19 out at 10 results. Bars shrink to scale.</p>
+  </article>
+
+  <article class="dc feature" data-chart="signals">
+    <header class="dc-head"><span class="num">02</span><span class="lbl">Exit signals</span><span class="pill">The unlock</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>The combined signal scales twice as often</h3>
+    <p>Share of creatives meeting each condition that went on to scale. The line marks today's 10-result gate.</p>
+  </article>
+
+  <article class="dc" data-chart="waterfall">
+    <header class="dc-head"><span class="num">03</span><span class="lbl">Profit bridge</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>The stall eats most of the profit</h3>
+    <p>A typical stalled creative: profit earned, minus spend burned while stalled, plus the late results.</p>
+  </article>
+
+  <article class="dc w6" data-chart="geo">
+    <header class="dc-head"><span class="num">04</span><span class="lbl">Geo split</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Cheap geos win the soft metrics, not the sale</h3>
+    <p>Share of each metric by geo tier at the $70 gate. The numbers we judge on are mostly low-CPM noise.</p>
+  </article>
+
+  <article class="dc w6" data-chart="slope">
+    <header class="dc-head"><span class="num">05</span><span class="lbl">Test → scale</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Test CPA rarely survives scaling</h3>
+    <p>Each line is one exited creative: CPA at $10/day on the left, CPA in the scaling campaign on the right.</p>
+  </article>
+
+  <article class="dc" data-chart="quadrant">
+    <header class="dc-head"><span class="num">06</span><span class="lbl">Correlation</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Cheap at exit isn't cheap at scale</h3>
+    <p>CPA at exit against CPA after scaling. Only the shaded corner is a real winner.</p>
+  </article>
+
+  <article class="dc" data-chart="cond">
+    <header class="dc-head"><span class="num">07</span><span class="lbl">Exit conditions</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>How a creative exits matters</h3>
+    <p>Scaling success rate, split by how each creative reached 10 results.</p>
+  </article>
+
+  <article class="dc" data-chart="zombie">
+    <header class="dc-head"><span class="num">08</span><span class="lbl">Recovery</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>The Zombie campaign brings winners back</h3>
+    <p>Creatives routed from each loss type, and how many recovered.</p>
+  </article>
+
+  <article class="dc w6" data-chart="mekko">
+    <header class="dc-head"><span class="num">09</span><span class="lbl">Concept mix</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Where production effort pays</h3>
+    <p>Column width is creatives tested, fill is the share that scaled. Testimonials take 23% of production and return 3 winners.</p>
+  </article>
+
+  <article class="dc w6" data-chart="dep">
+    <header class="dc-head"><span class="num">10</span><span class="lbl">Audience fatigue</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>The cold audience wears out</h3>
+    <p>Average of stalled creatives, day 1 to 8 of the stall. Each panel keeps its own scale.</p>
+  </article>
+</main>
+
+<section class="wrap part" aria-labelledby="part2">
+  <div>
+    <span class="eyebrow">Part 2 · Interactive</span>
+    <h2 id="part2">Ten more you can <em>play</em> with</h2>
+    <p>Sliders, switches and scenario pickers on the same test data. Every what-if runs on a rule or rate from the SOP deck, and projections are labelled.</p>
+  </div>
+</section>
+
+<div class="wrap grid" id="interactive">
+  <article class="dc" data-chart="exitsim">
+    <header class="dc-head"><span class="num">11</span><span class="lbl">Exit timer</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>At $10/day, CPA is the wait</h3>
+    <p>Drag the CPA. Days to exit follow the deck's rule: results × CPA ÷ $10 a day.</p>
+  </article>
+
+  <article class="dc" data-chart="geoskew">
+    <header class="dc-head"><span class="num">12</span><span class="lbl">Geo-skew line</span><span class="pill">Open item</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Where should the geo-skew line sit?</h3>
+    <p>Eight killed creatives by low-CPM spend share. Move the line to see which get routed to a re-test.</p>
+  </article>
+
+  <article class="dc" data-chart="country">
+    <header class="dc-head"><span class="num">13</span><span class="lbl">Country explorer</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Same spend, opposite stories</h3>
+    <p>Switch the metric and the countries re-rank. Cheap geos lead on reach, Tier-1 on everything that pays.</p>
+  </article>
+
+  <article class="dc w6" data-chart="campaigns">
+    <header class="dc-head"><span class="num">14</span><span class="lbl">Campaign snapshot</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>The test is the weakest place we judge</h3>
+    <p>Last 30 days by campaign. Pick a metric and a sort order; the cold creative test is highlighted.</p>
+  </article>
+
+  <article class="dc w6" data-chart="conceptfunnel">
+    <header class="dc-head"><span class="num">15</span><span class="lbl">Concept funnel</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Follow one concept down the funnel</h3>
+    <p>Produced, passed gate 1, reached exit, scaled. Switch concepts to compare where each one leaks.</p>
+  </article>
+
+  <article class="dc" data-chart="tracer">
+    <header class="dc-head"><span class="num">16</span><span class="lbl">Checkpoint A</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Walk a creative through the $70 gate</h3>
+    <p>Pick a scenario. Each step lights up until the rule resolves to one action.</p>
+  </article>
+
+  <article class="dc" data-chart="cpasignal">
+    <header class="dc-head"><span class="num">17</span><span class="lbl">CPA signal</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Move the CPA signal, watch the hit rate</h3>
+    <p>Share of the 12 exited creatives that held CPA ≤ $35 after scaling, split at your line. Small sample, so read it as directional.</p>
+  </article>
+
+  <article class="dc" data-chart="outcomes">
+    <header class="dc-head"><span class="num">18</span><span class="lbl">Before / after</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Before and after, point by point</h3>
+    <p>Switch between the four proposals. Each row keeps its own scale, and projections are marked.</p>
+  </article>
+
+  <article class="dc w6" data-chart="fatigue">
+    <header class="dc-head"><span class="num">19</span><span class="lbl">Fatigue scrubber</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Scrub through the stall, day by day</h3>
+    <p>Pick a metric and drag the day. The change is measured against day 1 of the stall.</p>
+  </article>
+
+  <article class="dc w6" data-chart="briefs">
+    <header class="dc-head"><span class="num">20</span><span class="lbl">Brief mix</span><button class="tbl-btn" type="button" aria-pressed="false">Table</button></header>
+    <div class="well"></div>
+    <h3>Move briefs, gain winners</h3>
+    <p>Shift testimonial briefs to Problem-agitate. Expected winners use each concept's scale rate from the deck, so the result is a projection.</p>
+  </article>
+</div>
+
+<footer class="wrap foot">
+  <span>Data: Meta testing SOP deck (test data) · charts drawn in inline SVG, no libraries</span>
+  <span>Built on <a href="../01-brand/design-system.html">design-system.html</a> · Companion: <a href="hellomaterials-bento-motion-kit.html">Motion kit</a></span>
+</footer>
+
+<div id="tip" hidden></div>
+
+<script>
+(function () {
+  // Series palette (validated, dark surface #161616). Status pair always carries +/− and ▲/▼.
+  var S1 = '#C97A1E', S2 = '#3987E5', GOOD = '#00975A', BAD = '#E0533D', GREY = '#5A5A5A', DIM = '#383838', TRACK = '#262626', WELL = '#161616';
+  var NS = 'http://www.w3.org/2000/svg';
+
+  // ⚠ TEST DATA — copied from the Meta testing SOP deck's DATA block (marked FAKE TEST DATA). Replace with real exports.
+  var D = {
+    funnel: [['Entered testing', 120, ''], ['Passed first gate', 36, '84 killed'], ['Exited at 10 results', 19, '17 stalled']],
+    signals: { cats: ['Current · 10 results', '5 results at CPA ≤ $22', '5 results within 10 days', '≥ 60% spend in Tier-1', 'Combined signal'], values: [33, 57, 60, 67, 75], n: [12, 7, 5, 6, 4] },
+    waterfall: [{ l: 'Before stall', full: 'Profit before stall', v: 2244 }, { l: 'Stall spend', full: 'Stall spend', v: -1428 }, { l: 'Late results', full: 'Late results', v: 310 }, { l: 'Net', full: 'Net position', total: true }],
+    geo: { rows: ['Spend', 'Impressions', 'Landing-page views', 'Add to cart', 'Purchases'], low: [64.5, 94.9, 93.2, 45.6, 0], high: [35.5, 5.1, 6.8, 54.4, 100] },
+    exited: [['C-201', 14.8, 38.5], ['C-204', 16.2, 21.0], ['C-207', 18.5, 52.3], ['C-211', 19.8, 24.6], ['C-214', 21.0, 61.8], ['C-218', 22.4, 29.4],
+             ['C-222', 24.1, 47.2], ['C-225', 25.6, 36.4], ['C-229', 27.3, 26.9], ['C-233', 29.0, 58.4], ['C-236', 31.5, 36.0], ['C-240', 34.2, 44.7]],
+    target: 35,
+    cond: { cats: ['Speed', 'CPA at exit', 'Tier-1 share'], full: ['Speed to 10 results', 'CPA at exit', 'Tier-1 geo share'],
+            fav: { values: [60, 50, 67], labels: ['≤ 20 days', '≤ $22', '≥ 60%'] }, unfav: { values: [14, 25, 0], labels: ['> 20 days', '> $22', '< 60%'] } },
+    zombie: { cats: ['Gate-1 kill · geo skew', 'Gate-1 kill · under-delivered', 'Stalled at 3–5 results'], routed: [22, 13, 17], recovered: [7, 2, 5] },
+    concepts: { cats: ['UGC unboxing', 'Problem-agitate', 'Testimonials', 'Product demo'], short: ['UGC', 'PAS', 'Testim.', 'Demo'], tested: [60, 45, 40, 30], scaled: [15, 18, 3, 9] },
+    dep: { freq: [1.02, 1.15, 1.32, 1.58, 1.84, 2.45, 2.80, 3.12], cpm: [14.2, 15.1, 17.8, 21.5, 26.4, 34.8, 38.9, 42.5],
+           reach: [8.5, 7.8, 6.2, 5.0, 3.9, 2.1, 1.6, 1.2], gap: [1.1, 1.3, 1.6, 2.0, 2.4, 2.9, 3.4, 3.8] }
+  };
+
+  // ── helpers ─────────────────────────────────────────────
+  function el(tag, attrs, parent) { var n = document.createElementNS(NS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+  function tx(parent, x, y, str, cls, anchor, delay) {
+    var n = el('text', { x: x, y: y, 'class': cls || 'ax', 'text-anchor': anchor || 'start' }, parent);
+    n.textContent = str;
+    if (delay != null) n.style.setProperty('--d', delay + 's');
+    return n;
+  }
+  function dly(n, s) { n.style.setProperty('--d', s + 's'); return n; }
+  function money(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
+  function pct(v) { return (Math.round(v * 10) / 10) + '%'; }
+  // bar with a 4px rounded data-end, square at the baseline
+  function hbar(x, y, len, t) {
+    if (len <= 0) return 'M0 0';
+    var r = Math.min(4, len / 2, t / 2);
+    return 'M' + x + ' ' + y + 'H' + (x + len - r) + 'Q' + (x + len) + ' ' + y + ' ' + (x + len) + ' ' + (y + r) + 'V' + (y + t - r) + 'Q' + (x + len) + ' ' + (y + t) + ' ' + (x + len - r) + ' ' + (y + t) + 'H' + x + 'Z';
+  }
+  function vbar(x, yb, hgt, t) {
+    if (hgt <= 0) return 'M0 0';
+    var r = Math.min(4, hgt / 2, t / 2), y = yb - hgt;
+    return 'M' + x + ' ' + yb + 'V' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + 'H' + (x + t - r) + 'Q' + (x + t) + ' ' + y + ' ' + (x + t) + ' ' + (y + r) + 'V' + yb + 'Z';
+  }
+  function svgFor(plot, w, h) {
+    plot.replaceChildren();
+    var s = el('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, role: 'group' });
+    plot.appendChild(s);
+    return s;
+  }
+  function hitRect(parent, x, y, w, h) { return el('rect', { x: x, y: y, width: Math.max(0, w), height: Math.max(0, h), fill: 'transparent', 'class': 'hit' }, parent); }
+
+  // ── tooltip: value leads, label follows; same on focus as on hover ──
+  var tip = document.getElementById('tip');
+  function showTip(value, label, x, y) {
+    tip.replaceChildren();
+    var b = document.createElement('b'); b.textContent = value;
+    var sp = document.createElement('span'); sp.textContent = label;
+    tip.append(b, sp);
+    tip.hidden = false;
+    var r = tip.getBoundingClientRect();
+    var left = Math.min(x + 14, window.innerWidth - r.width - 8), top = y - r.height - 12;
+    if (top < 8) top = y + 18;
+    tip.style.left = Math.max(8, left) + 'px';
+    tip.style.top = top + 'px';
+  }
+  function hideTip() { tip.hidden = true; }
+  function bind(hit, marks, value, label) {
+    marks = [].concat(marks).filter(Boolean);
+    hit.setAttribute('tabindex', '0');
+    hit.setAttribute('aria-label', label + ': ' + value);
+    function on(e) { marks.forEach(function (m) { m.classList.add('on'); }); showTip(value, label, e.clientX, e.clientY); }
+    function off() { marks.forEach(function (m) { m.classList.remove('on'); }); hideTip(); }
+    hit.addEventListener('pointermove', on);
+    hit.addEventListener('pointerleave', off);
+    hit.addEventListener('focus', function () { var r = hit.getBoundingClientRect(); on({ clientX: r.left + r.width / 2, clientY: r.top }); });
+    hit.addEventListener('blur', off);
+  }
+
+  function pearson(rows) {
+    var n = rows.length, mx = 0, my = 0, sxy = 0, sxx = 0, syy = 0;
+    rows.forEach(function (p) { mx += p[1]; my += p[2]; });
+    mx /= n; my /= n;
+    rows.forEach(function (p) { var a = p[1] - mx, b = p[2] - my; sxy += a * b; sxx += a * a; syy += b * b; });
+    return sxy / Math.sqrt(sxx * syy);
+  }
+  var R = pearson(D.exited);
+  var rWord = Math.abs(R) < 0.3 ? 'weak' : Math.abs(R) < 0.6 ? 'moderate' : 'strong';
+
+  // ── the ten charts ─────────────────────────────────────
+  var SPECS = {
+    funnel: {
+      fig: { v: 19 / 120 * 100, f: function (v) { return v.toFixed(1) + '%'; } }, unit: 'exit rate', chip: { t: '19 of 120', tone: '' },
+      aria: 'Funnel: 120 creatives entered testing, 36 passed the first gate, 19 exited at 10 results',
+      table: { head: ['Stage', 'Creatives', 'Lost before stage'], rows: [['Entered testing', '120', '—'], ['Passed first gate', '36', '84 killed'], ['Exited at 10 results', '19', '17 stalled']] },
+      draw: function (plot, w) {
+        var rowH = 62, h = rowH * 3 - 4, s = svgFor(plot, w, h), max = w - 44;
+        D.funnel.forEach(function (r, i) {
+          var y0 = 14 + i * rowH, len = Math.max(4, r[1] / 120 * max);
+          tx(s, 0, y0, r[0], 'lb');
+          if (r[2]) tx(s, w, y0, '−' + r[2], 'ax', 'end');
+          var bar = dly(el('path', { d: hbar(0, y0 + 8, len, 22), fill: S1, 'class': 'mk gx' }, s), i * 0.18);
+          tx(s, len + 8, y0 + 24, String(r[1]), 'val fade', 'start', 0.5 + i * 0.18);
+          bind(hitRect(s, 0, y0 - 12, w, 46), bar, r[1] + ' creatives', r[0] + (r[2] ? ' · ' + r[2] + ' before this stage' : ''));
+        });
+      }
+    },
+
+    signals: {
+      fig: { v: 75, f: function (v) { return Math.round(v) + '%'; } }, unit: 'combined-signal scale rate', chip: { t: '+42 pts vs today', tone: 'good' },
+      legend: [[GREY, 'Current gate'], [S1, 'Proposed signal'], ['rgba(254,249,223,.5)', 'Today (33%)', 'ln']],
+      aria: 'Bullet chart: scaling success rate is 33% for the current 10-result gate, 57%, 60% and 67% for single signals, and 75% for the combined signal',
+      table: { head: ['Condition', 'Scaled', 'n'], rows: D.signals.cats.map(function (c, i) { return [c, D.signals.values[i] + '%', String(D.signals.n[i])]; }) },
+      draw: function (plot, w) {
+        var S = D.signals, rowH = 40, bt = 12, T = 22, h = T + S.cats.length * rowH, s = svgFor(plot, w, h);
+        var pw = w - 70, sx = function (v) { return v / 100 * pw; };
+        S.cats.forEach(function (c, i) {
+          var y0 = T + i * rowH, y = y0 + 16, v = S.values[i];
+          tx(s, 0, y0 + 10, c, 'lb');
+          el('rect', { x: 0, y: y, width: pw, height: bt, rx: 2, fill: TRACK }, s);
+          var bar = dly(el('path', { d: hbar(0, y, sx(v), bt), fill: i === 0 ? GREY : S1, 'class': 'mk gx' }, s), i * 0.12);
+          tx(s, w - 30, y + 10, v + '%', 'val fade', 'end', 0.4 + i * 0.12);
+          tx(s, w, y + 10, 'n ' + S.n[i], 'ax', 'end');
+          bind(hitRect(s, 0, y0 - 4, w, rowH), bar, v + '% scaled', c + ' · n ' + S.n[i]);
+        });
+        var xr = sx(33);
+        el('line', { x1: xr, x2: xr, y1: 14, y2: h - 4, 'class': 'ref' }, s);
+        tx(s, xr, 9, 'TODAY 33%', 'ref-t', 'middle');
+      }
+    },
+
+    waterfall: {
+      fig: { v: 1126, f: money }, unit: 'net after the stall', chip: { t: '−64% vs pre-stall', tone: 'bad' },
+      legend: [[GOOD, 'Gain (+)'], [BAD, 'Loss (−)'], [S1, 'Net']],
+      aria: 'Waterfall: profit before stall $2,244, stall spend minus $1,428, late results plus $310, net position $1,126',
+      table: { head: ['Step', 'Change', 'Running total'], rows: [['Profit before stall', '+$2,244', '$2,244'], ['Stall spend', '−$1,428', '$816'], ['Late results', '+$310', '$1,126'], ['Net position', '', '$1,126']] },
+      draw: function (plot, w) {
+        var h = 214, L = 40, Rr = 4, T = 22, B = 30, s = svgFor(plot, w, h), ph = h - T - B, max = 2500;
+        var sy = function (v) { return T + ph - v / max * ph; };
+        [0, 1000, 2000].forEach(function (v) {
+          el('line', { x1: L, x2: w - Rr, y1: sy(v), y2: sy(v), 'class': v ? 'gl' : 'base' }, s);
+          tx(s, L - 8, sy(v) + 3, v ? '$' + v / 1000 + 'k' : '$0', 'ax num', 'end');
+        });
+        var band = (w - L - Rr) / 4, t = Math.min(24, band * 0.5), run = 0;
+        D.waterfall.forEach(function (st, i) {
+          var cx = L + band * i + band / 2, x = cx - t / 2, mark, valTxt, from = run, to;
+          if (st.total) {
+            to = run;
+            mark = dly(el('path', { d: vbar(x, sy(0), sy(0) - sy(run), t), fill: S1, 'class': 'mk gy' }, s), i * 0.25);
+            valTxt = money(run);
+          } else {
+            to = run + st.v; run = to;
+            var fill = st.v > 0 ? GOOD : BAD, top = sy(Math.max(from, to)), bot = sy(Math.min(from, to));
+            mark = i === 0
+              ? el('path', { d: vbar(x, sy(0), sy(0) - sy(to), t), fill: fill, 'class': 'mk gy' }, s)
+              : el('rect', { x: x, y: top, width: t, height: bot - top, rx: 3, fill: fill, 'class': 'mk ' + (st.v > 0 ? 'gy' : 'gyt') }, s);
+            dly(mark, i * 0.25);
+            valTxt = (st.v > 0 ? '+' : '−') + money(Math.abs(st.v));
+          }
+          var capY = (!st.total && st.v < 0) ? sy(to) + 15 : sy(Math.max(from, to)) - 7;
+          tx(s, cx, capY, valTxt, 'val-s fade', 'middle', i * 0.25 + 0.5);
+          var shortL = { 'Before stall': 'Profit', 'Stall spend': 'Stall', 'Late results': 'Late' }[st.l] || st.l;
+          tx(s, cx, h - 10, band < 84 ? shortL : st.l, 'ax', 'middle'); // narrow bands get short labels so they never collide
+          if (i < 3) dly(el('line', { x1: x + t, x2: L + band * (i + 1) + band / 2 - t / 2, y1: sy(to), y2: sy(to), 'class': 'conn fade' }, s), i * 0.25 + 0.6);
+          bind(hitRect(s, cx - band / 2, T, band, ph), mark, valTxt, st.full);
+        });
+      }
+    },
+
+    geo: {
+      fig: { v: 64.5, f: function (v) { return v.toFixed(1) + '%'; } }, unit: 'of spend in low-CPM geos', chip: { t: '0 of 49 purchases', tone: 'bad' },
+      legend: [[S2, 'Low-CPM geos'], [S1, 'Tier-1 geos']],
+      aria: '100% stacked bars: low-CPM geos take 64.5% of spend, 94.9% of impressions, 93.2% of landing-page views, 45.6% of add to carts and 0% of purchases',
+      table: { head: ['Metric', 'Low-CPM geos', 'Tier-1 geos'], rows: D.geo.rows.map(function (r, i) { return [r, D.geo.low[i] + '%', D.geo.high[i] + '%']; }) },
+      draw: function (plot, w) {
+        var G = D.geo, rowH = 44, bt = 20, B = 20, h = G.rows.length * rowH + B, s = svgFor(plot, w, h);
+        var sx = function (v) { return v / 100 * w; };
+        [0, 50, 100].forEach(function (v) {
+          var x = Math.min(w - 0.5, Math.max(0.5, sx(v)));
+          el('line', { x1: x, x2: x, y1: 0, y2: h - B, 'class': v ? 'gl' : 'base' }, s);
+          tx(s, x, h - 5, v + '%', 'ax num', v === 0 ? 'start' : v === 100 ? 'end' : 'middle');
+        });
+        G.rows.forEach(function (r, i) {
+          var y = i * rowH + 18, a = G.low[i], b = G.high[i], wa = sx(a), wb = sx(b), both = a > 0 && b > 0;
+          tx(s, 0, i * rowH + 12, r, 'lb');
+          var mA = null, mB = null;
+          if (a > 0) {
+            mA = both ? el('rect', { x: 0, y: y, width: Math.max(0, wa - 1), height: bt, fill: S2, 'class': 'mk gx' }, s)
+                      : el('path', { d: hbar(0, y, wa, bt), fill: S2, 'class': 'mk gx' }, s);
+            dly(mA, i * 0.12);
+            if (wa >= 46) tx(s, wa / 2, y + 14, a + '%', 'inl fade', 'middle', 0.6 + i * 0.12);
+          }
+          if (b > 0) {
+            var x0 = both ? wa + 1 : 0;
+            mB = dly(el('path', { d: hbar(x0, y, wb - (both ? 1 : 0), bt), fill: S1, 'class': 'mk gx' }, s), i * 0.12 + 0.35);
+            if (wb >= 46) tx(s, x0 + (wb - (both ? 1 : 0)) / 2, y + 14, b + '%', 'inl fade', 'middle', 0.8 + i * 0.12);
+          }
+          if (mA) bind(hitRect(s, 0, y - 4, wa, bt + 8), mA, a + '%', r + ' · Low-CPM geos');
+          if (mB) bind(hitRect(s, both ? wa : 0, y - 4, wb, bt + 8), mB, b + '%', r + ' · Tier-1 geos');
+        });
+      }
+    },
+
+    slope: {
+      fig: { v: 4, f: function (v) { return Math.round(v) + ' of 12'; } }, unit: 'held CPA ≤ $35 after scaling', chip: { t: '33%', tone: '' },
+      legend: [[S1, 'Held the $35 target', 'ln'], [GREY, 'Missed the target', 'ln']],
+      aria: 'Slope chart of 12 exited creatives from CPA at exit to CPA after scaling; 4 of 12 stayed at or under the $35 target',
+      table: { head: ['Creative', 'CPA at exit', 'CPA after scaling'], rows: D.exited.map(function (e) { return [e[0], '$' + e[1].toFixed(2), '$' + e[2].toFixed(2)]; }) },
+      draw: function (plot, w) {
+        var h = 240, L = 40, Rr = 16, T = 30, B = 12, s = svgFor(plot, w, h), max = 70;
+        var sy = function (v) { return T + (h - T - B) * (1 - v / max); };
+        var x1 = L + 36, x2 = w - Rr - 84; // right margin keeps the target label clear of the end dots
+        [0, 20, 40, 60].forEach(function (v) {
+          el('line', { x1: L, x2: w - Rr, y1: sy(v), y2: sy(v), 'class': v ? 'gl' : 'base' }, s);
+          tx(s, L - 8, sy(v) + 3, '$' + v, 'ax num', 'end');
+        });
+        el('line', { x1: L, x2: w - Rr, y1: sy(D.target), y2: sy(D.target), 'class': 'ref' }, s);
+        tx(s, w - Rr, sy(D.target) - 6, 'TARGET $35', 'ref-t', 'end');
+        tx(s, x1, 12, 'AT EXIT · $10/DAY', 'hd', 'middle');
+        tx(s, x2, 12, 'AFTER SCALING', 'hd', 'middle');
+        var rows = D.exited.slice().sort(function (a, b) { return (a[2] <= D.target) - (b[2] <= D.target); });
+        var drawn = rows.map(function (e, k) {
+          var held = e[2] <= D.target, c = held ? S1 : GREY;
+          var line = dly(el('path', { d: 'M' + x1 + ' ' + sy(e[1]) + 'L' + x2 + ' ' + sy(e[2]), fill: 'none', stroke: c, 'stroke-width': 2, 'stroke-linecap': 'round', pathLength: 1, 'class': 'mk draw' }, s), 0.1 + k * 0.06);
+          var a = dly(el('circle', { cx: x1, cy: sy(e[1]), r: 4, fill: c, stroke: WELL, 'stroke-width': 2, 'class': 'mk pop' }, s), 0.1 + k * 0.06);
+          var b = dly(el('circle', { cx: x2, cy: sy(e[2]), r: 4, fill: c, stroke: WELL, 'stroke-width': 2, 'class': 'mk pop' }, s), 0.9 + k * 0.06);
+          return [e, held, line, a, b];
+        });
+        drawn.forEach(function (d) {
+          var e = d[0];
+          var hit = el('path', { d: 'M' + x1 + ' ' + sy(e[1]) + 'L' + x2 + ' ' + sy(e[2]), fill: 'none', stroke: 'rgba(0,0,0,0)', 'stroke-width': 14, 'pointer-events': 'stroke', 'class': 'hit hit-line' }, s);
+          bind(hit, [d[2], d[3], d[4]], '$' + e[1].toFixed(2) + ' → $' + e[2].toFixed(2), e[0] + (d[1] ? ' · held target' : ' · missed target'));
+        });
+      }
+    },
+
+    quadrant: {
+      fig: { v: R, f: function (v) { return 'r = ' + v.toFixed(2); } }, unit: 'CPA at exit vs after scaling', chip: { t: rWord + ' link', tone: '' },
+      aria: 'Scatter of 12 creatives, CPA at exit against CPA after scaling, with a $22 signal line and a $35 target line; correlation r = ' + R.toFixed(2),
+      table: { head: ['Creative', 'At exit', 'After scaling', 'Quadrant'], rows: D.exited.map(function (e) { return [e[0], '$' + e[1].toFixed(2), '$' + e[2].toFixed(2), (e[1] <= 22 ? 'Cheap' : 'Costly') + ' · ' + (e[2] <= 35 ? 'held' : 'missed')]; }) },
+      draw: function (plot, w) {
+        var h = 240, L = 36, Rr = 8, T = 16, B = 30, s = svgFor(plot, w, h), xmin = 10, xmax = 40, ymax = 70;
+        var sx = function (v) { return L + (w - L - Rr) * (v - xmin) / (xmax - xmin); };
+        var sy = function (v) { return T + (h - T - B) * (1 - v / ymax); };
+        el('rect', { x: sx(xmin), y: sy(D.target), width: sx(22) - sx(xmin), height: sy(0) - sy(D.target), fill: 'rgba(201,122,30,.1)' }, s);
+        [0, 20, 40, 60].forEach(function (v) {
+          el('line', { x1: L, x2: w - Rr, y1: sy(v), y2: sy(v), 'class': v ? 'gl' : 'base' }, s);
+          tx(s, L - 8, sy(v) + 3, '$' + v, 'ax num', 'end');
+        });
+        [10, 20, 30, 40].forEach(function (v) { tx(s, sx(v), h - 14, '$' + v, 'ax num', v === 10 ? 'start' : v === 40 ? 'end' : 'middle'); });
+        tx(s, w - Rr, h - 1, 'CPA AT EXIT →', 'ax2', 'end');
+        tx(s, L, 9, 'AFTER SCALING', 'ax2', 'start');
+        el('line', { x1: sx(22), x2: sx(22), y1: T, y2: sy(0), 'class': 'ref' }, s);
+        el('line', { x1: L, x2: w - Rr, y1: sy(D.target), y2: sy(D.target), 'class': 'ref' }, s);
+        tx(s, sx(22) + 5, T + 9, '$22 SIGNAL', 'ref-t');
+        tx(s, w - Rr, sy(D.target) + 13, '$35 TARGET', 'ref-t', 'end');
+        tx(s, sx(xmin) + 6, sy(0) - 8, 'CHEAP & HELD', 'q-t');
+        D.exited.forEach(function (e, i) {
+          var dot = dly(el('circle', { cx: sx(e[1]), cy: sy(e[2]), r: 5, fill: S1, stroke: WELL, 'stroke-width': 2, 'class': 'mk pop' }, s), 0.15 + i * 0.06);
+          var hit = el('circle', { cx: sx(e[1]), cy: sy(e[2]), r: 12, fill: 'transparent', 'class': 'hit' }, s);
+          bind(hit, dot, '$' + e[1].toFixed(2) + ' → $' + e[2].toFixed(2), e[0] + ' · CPA at exit → after scaling');
+        });
+      }
+    },
+
+    cond: {
+      fig: { v: 67, f: function (v) { return '+' + Math.round(v) + ' pts'; } }, unit: 'gap on Tier-1 share', chip: { t: 'n 12 · directional', tone: '' },
+      legend: [[S1, 'Favourable condition'], [GREY, 'Unfavourable condition']],
+      aria: 'Grouped columns: scaling success 60% vs 14% by speed, 50% vs 25% by CPA at exit, 67% vs 0% by Tier-1 share',
+      table: { head: ['Condition', 'Favourable', 'Scaled', 'Unfavourable', 'Scaled'], rows: D.cond.full.map(function (c, i) { return [c, D.cond.fav.labels[i], D.cond.fav.values[i] + '%', D.cond.unfav.labels[i], D.cond.unfav.values[i] + '%']; }) },
+      draw: function (plot, w) {
+        var h = 214, L = 34, Rr = 4, T = 18, B = 24, s = svgFor(plot, w, h), ph = h - T - B;
+        var sy = function (v) { return T + ph * (1 - v / 100); };
+        [0, 50, 100].forEach(function (v) {
+          el('line', { x1: L, x2: w - Rr, y1: sy(v), y2: sy(v), 'class': v ? 'gl' : 'base' }, s);
+          tx(s, L - 8, sy(v) + 3, v + '%', 'ax num', 'end');
+        });
+        var band = (w - L - Rr) / 3, t = Math.min(24, band * 0.28);
+        D.cond.cats.forEach(function (c, i) {
+          var cx = L + band * i + band / 2;
+          [['fav', S1], ['unfav', GREY]].forEach(function (sr, j) {
+            var v = D.cond[sr[0]].values[i], x = j === 0 ? cx - t - 1 : cx + 1, m = null;
+            if (v > 0) m = dly(el('path', { d: vbar(x, sy(0), sy(0) - sy(v), t), fill: sr[1], 'class': 'mk gy' }, s), i * 0.15 + j * 0.1);
+            tx(s, x + t / 2, sy(v) - 6, v + '%', 'val-s fade', 'middle', 0.6 + i * 0.15 + j * 0.1);
+            bind(hitRect(s, x - 2, T, t + 4, ph), m, v + '% scaled', D.cond.full[i] + ' · ' + D.cond[sr[0]].labels[i]);
+          });
+          tx(s, cx, h - 6, c, 'ax', 'middle');
+        });
+      }
+    },
+
+    zombie: {
+      fig: { v: 14, f: function (v) { return String(Math.round(v)); } }, unit: 'of 52 routed creatives recovered', chip: { t: '$4.5K → $14.3K', tone: 'good' },
+      legend: [[S1, 'Recovered'], [DIM, 'Not recovered']],
+      aria: 'Part-to-whole bars: 7 of 22 geo-skew kills, 2 of 13 under-delivered kills and 5 of 17 stalled creatives recovered',
+      table: { head: ['Source', 'Routed', 'Recovered', 'Rate'], rows: D.zombie.cats.map(function (c, i) { return [c, String(D.zombie.routed[i]), String(D.zombie.recovered[i]), Math.round(D.zombie.recovered[i] / D.zombie.routed[i] * 100) + '%']; }) },
+      draw: function (plot, w) {
+        var Z = D.zombie, rowH = 56, bt = 18, h = Z.cats.length * rowH - 6, s = svgFor(plot, w, h), pw = w - 64;
+        var sx = function (v) { return v / 22 * pw; };
+        Z.cats.forEach(function (c, i) {
+          var y0 = i * rowH, y = y0 + 20, rt = Z.routed[i], rc = Z.recovered[i], wr = sx(rt), wc = sx(rc);
+          tx(s, 0, y0 + 12, c, 'lb');
+          var mR = dly(el('rect', { x: 0, y: y, width: Math.max(0, wc - 1), height: bt, fill: S1, 'class': 'mk gx' }, s), i * 0.15 + 0.3);
+          var mN = dly(el('path', { d: hbar(wc + 1, y, wr - wc - 1, bt), fill: DIM, 'class': 'mk gx' }, s), i * 0.15);
+          tx(s, w, y + 13, rc + ' of ' + rt, 'val fade', 'end', 0.7 + i * 0.15);
+          bind(hitRect(s, 0, y - 4, wc, bt + 8), mR, rc + ' recovered', c + ' · ' + Math.round(rc / rt * 100) + '% of ' + rt);
+          bind(hitRect(s, wc, y - 4, wr - wc, bt + 8), mN, (rt - rc) + ' not recovered', c);
+        });
+      }
+    },
+
+    mekko: {
+      fig: { v: 40, f: function (v) { return Math.round(v) + '%'; } }, unit: 'Problem-agitate scale rate', chip: { t: 'Testimonials 7.5%', tone: '' },
+      legend: [[S1, 'Scaled'], [DIM, 'Not scaled']],
+      aria: 'Marimekko: column width is creatives tested and fill is share scaled. UGC unboxing 60 tested 25% scaled; Problem-agitate 45 tested 40%; Testimonials 40 tested 7.5%; Product demo 30 tested 30%',
+      table: { head: ['Concept', 'Tested', 'Scaled', 'Rate'], rows: D.concepts.cats.map(function (c, i) { return [c, String(D.concepts.tested[i]), String(D.concepts.scaled[i]), pct(D.concepts.scaled[i] / D.concepts.tested[i] * 100)]; }) },
+      draw: function (plot, w) {
+        var C = D.concepts, h = 240, L = 36, T = 6, B = 38, s = svgFor(plot, w, h), ph = h - T - B, gap = 2;
+        var sy = function (v) { return T + ph * (1 - v / 100); };
+        [0, 50, 100].forEach(function (v) { tx(s, L - 8, sy(v) + 3, v + '%', 'ax num', 'end'); });
+        var total = C.tested.reduce(function (a, b) { return a + b; }, 0), avail = w - L - gap * (C.cats.length - 1), x = L;
+        var names = w < 460 ? C.short : C.cats;
+        C.cats.forEach(function (c, i) {
+          var cw = avail * C.tested[i] / total, share = C.scaled[i] / C.tested[i] * 100;
+          var top = dly(el('path', { d: vbar(x, sy(share) - gap, sy(share) - gap - sy(100), cw), fill: DIM, 'class': 'mk fade' }, s), i * 0.12);
+          var sc = dly(el('rect', { x: x, y: sy(share), width: cw, height: sy(0) - sy(share), fill: S1, 'class': 'mk gy' }, s), 0.2 + i * 0.12);
+          tx(s, x + cw / 2, sy(share) - gap - 8, pct(share), 'val-s fade', 'middle', 0.8 + i * 0.12);
+          tx(s, x + cw / 2, h - 20, names[i], 'ax', 'middle');
+          tx(s, x + cw / 2, h - 6, 'n ' + C.tested[i], 'ax2', 'middle');
+          bind(hitRect(s, x, T, cw, ph), [top, sc], C.scaled[i] + ' of ' + C.tested[i] + ' scaled (' + pct(share) + ')', c);
+          x += cw + gap;
+        });
+      }
+    },
+
+    dep: {
+      fig: { v: 3.12, f: function (v) { return v.toFixed(2) + '×'; } }, unit: 'frequency by day 8', chip: { t: 'CPM ×3.0', tone: 'bad' },
+      aria: 'Small multiples, day 1 to 8 of the stall: frequency rises from 1.02 to 3.12, CPM from $14.20 to $42.50, daily reach falls from 8.5K to 1.2K, days between results rise from 1.1 to 3.8',
+      table: { head: ['Day', 'Frequency', 'CPM', 'Reach (K)', 'Days between results'], rows: D.dep.freq.map(function (f, i) { return ['Day ' + (i + 1), f.toFixed(2), '$' + D.dep.cpm[i].toFixed(2), D.dep.reach[i].toFixed(1), D.dep.gap[i].toFixed(1)]; }) },
+      draw: function (plot, w) {
+        var M = [['Frequency', D.dep.freq, function (v) { return v.toFixed(2) + '×'; }],
+                 ['CPM', D.dep.cpm, function (v) { return '$' + v.toFixed(2); }],
+                 ['Daily reach (K)', D.dep.reach, function (v) { return v.toFixed(1) + 'K'; }],
+                 ['Days between results', D.dep.gap, function (v) { return v.toFixed(1) + ' d'; }]];
+        var cols = w >= 460 ? 2 : 1, gx = 24, gyGap = 16, pw = (w - gx * (cols - 1)) / cols, ph = 104, rows = Math.ceil(M.length / cols);
+        var h = rows * ph + (rows - 1) * gyGap, s = svgFor(plot, w, h);
+        M.forEach(function (m, i) {
+          var name = m[0], arr = m[1], f = m[2], n = arr.length;
+          var g = el('g', { transform: 'translate(' + ((i % cols) * (pw + gx)) + ' ' + (Math.floor(i / cols) * (ph + gyGap)) + ')' }, s);
+          tx(g, 0, 11, name, 'lb');
+          tx(g, pw, 12, f(arr[n - 1]), 'val', 'end');
+          var top = 26, bot = ph - 16, mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr), pad = (mx - mn) * 0.12;
+          var sy = function (v) { return bot - (v - (mn - pad)) / ((mx + pad) - (mn - pad)) * (bot - top); };
+          var sx = function (j) { return 4 + j / (n - 1) * (pw - 8); };
+          el('line', { x1: 0, x2: pw, y1: bot, y2: bot, 'class': 'base' }, g);
+          tx(g, 0, ph - 2, 'DAY 1', 'ax2');
+          tx(g, pw, ph - 2, 'DAY 8', 'ax2', 'end');
+          var pts = arr.map(function (v, j) { return [sx(j), sy(v)]; });
+          var dLine = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L');
+          dly(el('path', { d: dLine + 'L' + pts[n - 1][0] + ' ' + bot + 'L' + pts[0][0] + ' ' + bot + 'Z', fill: S1, 'fill-opacity': 0.1, 'class': 'fade' }, g), 0.6 + i * 0.15);
+          dly(el('path', { d: dLine, fill: 'none', stroke: S1, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', pathLength: 1, 'class': 'draw' }, g), i * 0.15);
+          dly(el('circle', { cx: pts[n - 1][0], cy: pts[n - 1][1], r: 4, fill: S1, stroke: WELL, 'stroke-width': 2, 'class': 'pop' }, g), 1.2 + i * 0.15);
+          // crosshair finds the X; the whole panel is the hit target
+          var ch = el('line', { x1: 0, x2: 0, y1: top - 4, y2: bot, 'class': 'cross', visibility: 'hidden' }, g);
+          var cd = el('circle', { r: 4, fill: S1, stroke: WELL, 'stroke-width': 2, visibility: 'hidden' }, g);
+          var hit = el('rect', { x: 0, y: 0, width: pw, height: ph, fill: 'transparent', 'class': 'hit', tabindex: 0, 'aria-label': name + ': day 1 ' + f(arr[0]) + ', day 8 ' + f(arr[n - 1]) + '. Arrow keys step through days.' }, g);
+          var cur = n - 1;
+          function showAt(j, cx, cy) {
+            cur = j;
+            ch.setAttribute('x1', pts[j][0]); ch.setAttribute('x2', pts[j][0]); ch.setAttribute('visibility', 'visible');
+            cd.setAttribute('cx', pts[j][0]); cd.setAttribute('cy', pts[j][1]); cd.setAttribute('visibility', 'visible');
+            showTip(f(arr[j]), name + ' · day ' + (j + 1), cx, cy);
+          }
+          function off() { ch.setAttribute('visibility', 'hidden'); cd.setAttribute('visibility', 'hidden'); hideTip(); }
+          function atKey(j) { var r = hit.getBoundingClientRect(); showAt(j, r.left + r.width * pts[j][0] / pw, r.top); }
+          hit.addEventListener('pointermove', function (e) {
+            var r = hit.getBoundingClientRect();
+            showAt(Math.max(0, Math.min(n - 1, Math.round((e.clientX - r.left) / r.width * (n - 1)))), e.clientX, e.clientY);
+          });
+          hit.addEventListener('pointerleave', off);
+          hit.addEventListener('blur', off);
+          hit.addEventListener('focus', function () { atKey(cur); });
+          hit.addEventListener('keydown', function (e) {
+            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+            e.preventDefault();
+            atKey(Math.max(0, Math.min(n - 1, cur + (e.key === 'ArrowRight' ? 1 : -1))));
+          });
+        });
+      }
+    }
+  };
+
+  // ── card assembly ──────────────────────────────────────
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Part 2 · interactive charts (same ⚠ test data, from other tables in the SOP deck) ──
+  Object.assign(D, {
+    // [creative, low-CPM spend share %, verdict, Tier-1 impressions, re-test purchases]
+    killed: [['C-104', 71, 'false', 520, 3], ['C-109', 66, 'false', 610, 2], ['C-113', 38, 'correct', 1840, 0], ['C-118', 74, 'false', 470, 4],
+             ['C-121', 69, 'correct', 590, 0], ['C-126', 29, 'correct', 2210, 0], ['C-131', 63, 'false', 700, 2], ['C-137', 58, 'false', 880, 1]],
+    countries: [
+      { n: 'Philippines', tier: 'low', spend: 38.4, cpm: 4.20, lpvr: 84.2, purch: 0, cvr: 0 },
+      { n: 'India', tier: 'low', spend: 26.1, cpm: 2.80, lpvr: 88.5, purch: 0, cvr: 0 },
+      { n: 'United States', tier: 't1', spend: 22.5, cpm: 38.50, lpvr: 42.1, purch: 31, cvr: 3.44 },
+      { n: 'Canada', tier: 't1', spend: 13.0, cpm: 31.20, lpvr: 46.0, purch: 18, cvr: 2.81 }],
+    tiers: { low: { spend: 64.5, cpm: 3.51, lpvr: 86.5, purch: 0, cvr: 0 }, t1: { spend: 35.5, cpm: 35.47, lpvr: 43.7, purch: 49, cvr: 3.18 } },
+    // [campaign, spend, CPM, CTR, CPA, ROAS, 7D change %]
+    campaigns: [['Broad Scale · CBO', 18420, 31.8, 1.9, 42.2, 2.7, 12], ['Creative Test · ABO cold', 12000, 27.4, 2.6, 58.1, 1.6, -8], ['Retargeting · Warm', 5280, 44.7, 3.8, 29.6, 4.1, 19],
+                ['Zombie Recovery · CBO', 4500, 24.1, 2.2, 47.5, 2.2, 6], ['Testimonials · Retargeting', 1450, 39.2, 3.1, 24.1, 3.6, 9]],
+    // [produced, passed gate 1, reached exit, scaled, direction, tone]
+    cfunnel: { 'Problem-agitate': [45, 21, 20, 18, 'Produce more', 'good'], 'Product demo': [30, 13, 11, 9, 'Keep volume', ''],
+               'UGC unboxing': [60, 24, 19, 15, 'Reduce volume', ''], 'Testimonials': [40, 5, 4, 3, 'Test in retargeting', 'bad'] },
+    outcomes: {
+      p1: [{ label: 'Spend on a geo-skewed kill', a: 100, b: 70, fmt: '$', lower: true }, { label: 'False-kill rate', a: 42.9, b: 18.0, fmt: '%1', lower: true, proj: true },
+           { label: 'Monthly spend on killed creatives', a: 8400, b: 6840, fmt: '$', lower: true, proj: true }],
+      p2: [{ label: 'Average spend to exit', a: 237, b: 118, fmt: '$', lower: true, proj: true }, { label: '7-day scaling survival', a: 33, b: 75, fmt: '%', lower: false, proj: true },
+           { label: 'Days to scaling (winner)', a: 21, b: 9, fmt: 'd', lower: true, proj: true }],
+      p3: [{ label: 'Creatives lost per cycle', a: 101, b: 87, fmt: 'n', lower: true }, { label: 'Zombie spend vs recovered profit', a: 4500, b: 14250, fmt: '$', lower: false, names: ['Spend', 'Profit'] },
+           { label: 'False-kill rate', a: 42.9, b: 26.0, fmt: '%1', lower: true, proj: true }],
+      p4: [{ label: 'Scaled winners per 175 creatives', a: 45, b: 50, fmt: 'n', lower: false, proj: true }, { label: 'First-gate pass rate', a: 36.0, b: 39.1, fmt: '%1', lower: false, proj: true },
+           { label: 'Briefs on the top concept', a: 26, b: 35, fmt: '%', lower: false, proj: true }]
+    },
+    scen: {
+      insufficient: { d: ['go', 'Continue to $100'], path: { signal: 'No', checkpoint: 'Next gate' } },
+      purchase: { d: ['go', 'Continue to $100'], path: { signal: 'Yes', purchase: 'Yes', checkpoint: 'Next gate' } },
+      lowgeo: { d: ['kill', 'Kill at $70'], path: { signal: 'Yes', purchase: 'No', geo: 'Low-CPM' } },
+      strong: { d: ['go', 'Continue to $100'], path: { signal: 'Yes', purchase: 'No', geo: 'Tier-1', secondary: 'Strong', checkpoint: 'Next gate' } },
+      weak: { d: ['kill', 'Kill at $70'], path: { signal: 'Yes', purchase: 'No', geo: 'Tier-1', secondary: 'Weak' } }
+    }
+  });
+
+  // bar with the rounded data-end on the left (negative diverging values)
+  function hbarL(xr, y, len, t) {
+    if (len <= 0) return 'M0 0';
+    var r = Math.min(4, len / 2, t / 2), xl = xr - len;
+    return 'M' + xr + ' ' + y + 'H' + (xl + r) + 'Q' + xl + ' ' + y + ' ' + xl + ' ' + (y + r) + 'V' + (y + t - r) + 'Q' + xl + ' ' + (y + t) + ' ' + (xl + r) + ' ' + (y + t) + 'H' + xr + 'Z';
+  }
+  function ranksOf(vals, dir) {
+    var order = vals.map(function (_, i) { return i; }).sort(function (a, b) { return (dir === 'asc' ? vals[a] - vals[b] : vals[b] - vals[a]) || a - b; });
+    var ranks = []; order.forEach(function (idx, pos) { ranks[idx] = pos; });
+    return ranks;
+  }
+  function anchorFor(x, w) { return x < 56 ? 'start' : x > w - 56 ? 'end' : 'middle'; }
+  function signed(x, unit) { return (x >= 0 ? '+' : '−') + Math.abs(Math.round(x)) + (unit || ''); }
+  function fmtK(v, f) {
+    if (f === '$') return money(v);
+    if (f === '%1') return v.toFixed(1) + '%';
+    if (f === '%') return Math.round(v) + '%';
+    if (f === 'd') return Math.round(v) + ' days';
+    return Math.round(v).toLocaleString('en-US');
+  }
+  var FMT_C = { spend: function (v) { return v.toFixed(1) + '%'; }, cpm: function (v) { return '$' + v.toFixed(2); }, lpvr: function (v) { return v.toFixed(1) + '%'; },
+                purch: function (v) { return String(Math.round(v)); }, cvr: function (v) { return v.toFixed(2) + '%'; } };
+  var NAME_C = { spend: '% of spend', cpm: 'CPM', lpvr: 'LPV rate', purch: 'purchases', cvr: 'CVR' };
+  var CAMP_I = { spend: 1, cpm: 2, ctr: 3, cpa: 4, roas: 5, change: 6 };
+  var FMT_CAMP = { spend: money, cpm: function (v) { return '$' + v.toFixed(2); }, ctr: function (v) { return v.toFixed(2) + '%'; }, cpa: function (v) { return '$' + v.toFixed(2); },
+                   roas: function (v) { return v.toFixed(1) + '×'; }, change: function (v) { return signed(v, '%'); } };
+  var FMT_F = { freq: function (v) { return v.toFixed(2) + '×'; }, cpm: function (v) { return '$' + v.toFixed(2); }, reach: function (v) { return v.toFixed(1) + 'K'; }, gap: function (v) { return v.toFixed(1) + ' d'; } };
+  var NAME_F = { freq: 'Frequency', cpm: 'CPM', reach: 'Daily reach', gap: 'Days between results' };
+  var STAGES = ['Produced', 'Passed gate 1', 'Reached exit', 'Scaled'];
+  var CONCEPTS = ['UGC unboxing', 'Problem-agitate', 'Testimonials', 'Product demo'], RATES = [0.25, 0.40, 0.075, 0.30], CCOL = ['#6B6B6B', S1, S2, '#474747'];
+  function valAtDay(arr, d) { var i = Math.max(0, Math.min(arr.length - 2, Math.floor(d - 1))), f = (d - 1) - i; return arr[i] + (arr[i + 1] - arr[i]) * f; }
+  function sigSplit(th) {
+    var meet = D.exited.filter(function (e) { return e[1] <= th; }), rest = D.exited.filter(function (e) { return e[1] > th; });
+    var held = function (g) { return g.filter(function (e) { return e[2] <= D.target; }).length; };
+    return { n1: meet.length, r1: meet.length ? held(meet) / meet.length * 100 : null, n2: rest.length, r2: rest.length ? held(rest) / rest.length * 100 : null };
+  }
+
+  Object.assign(SPECS, {
+    exitsim: {
+      init: { cpa: 22, rule: 10 },
+      controls: [{ type: 'range', key: 'cpa', label: 'CPA', min: 10, max: 40, step: 1, fmt: function (v) { return '$' + v; } },
+                 { type: 'seg', key: 'rule', label: 'Exit rule', options: [[10, '10 results'], [5, '5 results']] }],
+      drag: { key: 'cpa', L: 36, R: 12, min: 10, max: 40, step: 1 },
+      model: function (s) { return { cpa: s.cpa, rule: s.rule }; },
+      figOf: function (v) {
+        var rule = v.rule >= 7.5 ? 10 : 5, d = v.rule * v.cpa / 10;
+        return { v: d, f: function (x) { return Math.round(x) + ' days'; }, unit: 'to ' + rule + ' results at $' + Math.round(v.cpa) + ' CPA', chip: { t: '$' + Math.round(d * 10) + ' test spend', tone: '' } };
+      },
+      legend: [[S1, '10 results', 'ln'], [S2, '5 results', 'ln']],
+      aria: 'Line chart: days to exit against CPA at $10 a day, for 10 results and 5 results, with a marker at the chosen CPA. Drag or use the slider to change it.',
+      table: { head: ['CPA', 'Days to 10 results', 'Days to 5 results', 'Spend to 10'], rows: [10, 15, 20, 25, 30, 35, 40].map(function (c) { return ['$' + c, c + ' d', (c / 2) + ' d', '$' + c * 10]; }) },
+      draw: function (plot, w) {
+        var v = plot._view, h = 214, L = 36, R = 12, T = 14, B = 26, s = svgFor(plot, w, h), pw = w - L - R, ph = h - T - B;
+        var sx = function (c) { return L + (c - 10) / 30 * pw; }, sy = function (d) { return T + ph * (1 - d / 40); };
+        [0, 10, 20, 30, 40].forEach(function (d) { el('line', { x1: L, x2: w - R, y1: sy(d), y2: sy(d), 'class': d ? 'gl' : 'base' }, s); tx(s, L - 6, sy(d) + 3, d + 'd', 'ax num', 'end'); });
+        [10, 20, 30, 40].forEach(function (c) { tx(s, sx(c), h - 8, '$' + c, 'ax num', c === 10 ? 'start' : c === 40 ? 'end' : 'middle'); });
+        D.exited.forEach(function (e) { el('line', { x1: sx(e[1]), x2: sx(e[1]), y1: sy(0) - 6, y2: sy(0), stroke: 'rgba(254,249,223,.35)', 'stroke-width': 1 }, s); });
+        var selC = v.rule >= 7.5 ? S1 : S2;
+        el('path', { d: 'M' + sx(10) + ' ' + sy(0) + 'L' + sx(10) + ' ' + sy(v.rule) + 'L' + sx(v.cpa) + ' ' + sy(v.rule * v.cpa / 10) + 'L' + sx(v.cpa) + ' ' + sy(0) + 'Z', fill: selC, 'fill-opacity': 0.1 }, s);
+        [[10, S1], [5, S2]].forEach(function (ln) {
+          var on = Math.abs(v.rule - ln[0]) < 2.5;
+          el('path', { d: 'M' + sx(10) + ' ' + sy(ln[0]) + 'L' + sx(40) + ' ' + sy(ln[0] * 4), fill: 'none', stroke: ln[1], 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-opacity': on ? 1 : 0.35, pathLength: 1, 'class': 'draw' }, s);
+        });
+        el('line', { x1: sx(v.cpa), x2: sx(v.cpa), y1: T, y2: sy(0), 'class': 'ref' }, s);
+        [[10, S1], [5, S2]].forEach(function (ln) { el('circle', { cx: sx(v.cpa), cy: sy(ln[0] * v.cpa / 10), r: 5, fill: ln[1], stroke: WELL, 'stroke-width': 2, 'class': 'pop' }, s); });
+        var dd = v.rule * v.cpa / 10, right = v.cpa > 31;
+        tx(s, sx(v.cpa) + (right ? -10 : 10), sy(dd) - 9, Math.round(dd) + ' days', 'val', right ? 'end' : 'start');
+        var hit = hitRect(s, L, T, pw, ph); hit.style.cursor = 'ew-resize';
+        hit.addEventListener('pointermove', function (e) {
+          var r = hit.getBoundingClientRect(), c = Math.round(10 + Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * 30);
+          showTip(c + ' days to 10 · ' + (c / 2) + ' to 5', '$' + c + ' CPA at $10/day · click or drag to set', e.clientX, e.clientY);
+        });
+        hit.addEventListener('pointerleave', hideTip);
+      }
+    },
+
+    geoskew: {
+      init: { th: 60 },
+      controls: [{ type: 'range', key: 'th', label: 'Skew line', min: 0, max: 100, step: 1, fmt: function (v) { return v + '%'; } }],
+      drag: { key: 'th', L: 44, R: function (w) { return w < 420 ? 34 : 112; }, min: 0, max: 100, step: 1 },
+      model: function (s) { return { th: s.th }; },
+      figOf: function (v) {
+        var fk = D.killed.filter(function (k) { return k[1] >= v.th && k[2] === 'false'; }).length, ck = D.killed.filter(function (k) { return k[1] >= v.th && k[2] === 'correct'; }).length;
+        return { v: fk, f: function (x) { return Math.round(x) + ' of 6'; }, unit: 'false kills routed to re-test', chip: { t: ck + ' correct kill' + (ck === 1 ? '' : 's') + ' routed too', tone: ck ? 'bad' : 'good' } };
+      },
+      legend: [[S1, 'At or above the line · routed'], [GREY, 'Below · stays killed']],
+      aria: 'Bars of 8 killed creatives by low-CPM spend share with a movable geo-skew line; creatives at or above the line are routed to re-test',
+      table: { head: ['Creative', 'Low-CPM share', 'Tier-1 impr.', 'Re-test purch.', 'Verdict'], rows: D.killed.map(function (k) { return [k[0], k[1] + '%', k[3].toLocaleString('en-US'), String(k[4]), k[2] === 'false' ? 'False kill' : 'Correct kill']; }) },
+      draw: function (plot, w) {
+        var v = plot._view, rows = D.killed.slice().sort(function (a, b) { return b[1] - a[1]; });
+        var T = 24, rowH = 26, bt = 12, B = 18, x0 = 44, verdW = w < 420 ? 0 : 78, pw = w - x0 - verdW - 34, h = T + rows.length * rowH + B, s = svgFor(plot, w, h);
+        var sx = function (p) { return x0 + p / 100 * pw; };
+        [0, 50, 100].forEach(function (p) { el('line', { x1: sx(p), x2: sx(p), y1: T - 6, y2: h - B, 'class': p ? 'gl' : 'base' }, s); tx(s, sx(p), h - 4, p + '%', 'ax num', p ? (p === 100 ? 'end' : 'middle') : 'start'); });
+        rows.forEach(function (r, i) {
+          var y0 = T + i * rowH, flagged = r[1] >= v.th;
+          tx(s, 0, y0 + 10, r[0], 'ax num');
+          var bar = dly(el('path', { d: hbar(x0, y0, sx(r[1]) - x0, bt), fill: flagged ? S1 : GREY, 'class': 'mk gx' }, s), i * 0.08);
+          tx(s, sx(r[1]) + 6, y0 + 10, r[1] + '%', 'val-s');
+          if (verdW) tx(s, w, y0 + 10, r[2] === 'false' ? '✕ FALSE KILL' : '✓ CORRECT', 'ax', 'end');
+          bind(hitRect(s, 0, y0 - 7, w, rowH), bar, r[1] + '% low-CPM spend', r[0] + ' · ' + (r[2] === 'false' ? 'false kill, ' + r[4] + ' re-test purchases' : 'correct kill') + (flagged ? ' · routed' : ' · stays killed'));
+        });
+        var xl = sx(v.th);
+        el('line', { x1: xl, x2: xl, y1: T - 8, y2: h - B, 'class': 'ref' }, s);
+        tx(s, Math.max(x0, Math.min(x0 + pw, xl)), T - 13, 'LINE ' + Math.round(v.th) + '%', 'ref-t', anchorFor(xl, w));
+      }
+    },
+
+    country: {
+      init: { m: 'spend' },
+      controls: [{ type: 'seg', key: 'm', label: 'Metric', options: [['spend', '% spend'], ['cpm', 'CPM'], ['lpvr', 'LPV rate'], ['purch', 'Purchases'], ['cvr', 'CVR']] }],
+      model: function (s) { var vals = D.countries.map(function (c) { return c[s.m]; }); return { m: s.m, vals: vals, ranks: ranksOf(vals, 'desc'), max: Math.max.apply(null, vals) || 1 }; },
+      figOf: function (v) { var f = FMT_C[v.m]; return { v: D.tiers.t1[v.m], f: f, unit: 'Tier-1 ' + NAME_C[v.m], chip: { t: 'Low-CPM ' + f(D.tiers.low[v.m]), tone: '' } }; },
+      legend: [[S2, 'Low-CPM geo'], [S1, 'Tier-1 geo']],
+      aria: 'Horizontal bars for Philippines, India, United States and Canada, re-sorted by the chosen metric',
+      table: { head: ['Country', '% spend', 'CPM', 'LPV rate', 'Purch.', 'CVR'], rows: D.countries.map(function (c) { return [c.n, FMT_C.spend(c.spend), FMT_C.cpm(c.cpm), FMT_C.lpvr(c.lpvr), String(c.purch), FMT_C.cvr(c.cvr)]; }) },
+      draw: function (plot, w) {
+        var v = plot._view, rowH = 46, bt = 18, T = 2, h = T + D.countries.length * rowH, s = svgFor(plot, w, h), pw = w - 64;
+        D.countries.forEach(function (c, i) {
+          var y0 = T + v.ranks[i] * rowH, val = v.vals[i], len = Math.max(0, val / v.max * pw);
+          tx(s, 0, y0 + 12, c.n, 'lb');
+          var bar = dly(el('path', { d: hbar(0, y0 + 18, len, bt), fill: c.tier === 't1' ? S1 : S2, 'class': 'mk gx' }, s), i * 0.1);
+          tx(s, len + 8, y0 + 31, FMT_C[v.m](val), 'val');
+          bind(hitRect(s, 0, y0, w, rowH - 4), bar, FMT_C[v.m](val), c.n + ' · ' + (c.tier === 't1' ? 'Tier-1' : 'Low-CPM') + ' · ' + NAME_C[v.m]);
+        });
+      }
+    },
+
+    campaigns: {
+      init: { m: 'roas', dir: 'desc' },
+      controls: [{ type: 'seg', key: 'm', label: 'Metric', options: [['spend', 'Spend'], ['cpm', 'CPM'], ['ctr', 'CTR'], ['cpa', 'CPA'], ['roas', 'ROAS'], ['change', '7D change']] },
+                 { type: 'seg', key: 'dir', label: 'Sort order', options: [['desc', 'High → low'], ['asc', 'Low → high']] }],
+      model: function (s) {
+        var vals = D.campaigns.map(function (c) { return c[CAMP_I[s.m]]; });
+        return { m: s.m, vals: vals, ranks: ranksOf(vals, s.dir), max: Math.max.apply(null, vals), maxAbs: Math.max.apply(null, vals.map(Math.abs)) };
+      },
+      figOf: function (v) {
+        var lowBest = v.m === 'cpm' || v.m === 'cpa', best = 0;
+        v.vals.forEach(function (x, i) { if (lowBest ? x < v.vals[best] : x > v.vals[best]) best = i; });
+        return { v: v.vals[best], f: FMT_CAMP[v.m], unit: 'best: ' + D.campaigns[best][0], chip: { t: 'Test ABO ' + FMT_CAMP[v.m](v.vals[1]), tone: '' } };
+      },
+      legend: [[S1, 'Creative Test · ABO cold'], [GREY, 'Other campaigns'], [GOOD, '7D up (+)'], [BAD, '7D down (−)']],
+      aria: 'Bars for five campaigns over the last 30 days, sortable by spend, CPM, CTR, CPA, ROAS or 7-day change',
+      table: { head: ['Campaign', 'Spend', 'CPM', 'CTR', 'CPA', 'ROAS', '7D'], rows: D.campaigns.map(function (c) { return [c[0], money(c[1]), '$' + c[2].toFixed(2), c[3].toFixed(2) + '%', '$' + c[4].toFixed(2), c[5].toFixed(1) + '×', signed(c[6], '%')]; }) },
+      draw: function (plot, w) {
+        var v = plot._view, narrow = w < 460, labelW = narrow ? 0 : Math.min(190, w * 0.34), rowH = narrow ? 44 : 34, bt = 16, T = 2, valW = 62;
+        var h = T + D.campaigns.length * rowH, s = svgFor(plot, w, h), x0 = labelW, pw = w - labelW - valW, isChange = v.m === 'change', zero = x0 + pw / 2;
+        if (isChange) el('line', { x1: zero, x2: zero, y1: 0, y2: h, 'class': 'base' }, s);
+        D.campaigns.forEach(function (c, i) {
+          var y0 = T + v.ranks[i] * rowH, val = v.vals[i], yb = narrow ? y0 + 18 : y0 + (rowH - bt) / 2, bar, vx, anchor = 'start', fill;
+          tx(s, 0, narrow ? y0 + 12 : yb + 12, c[0], 'lb');
+          if (!isChange) {
+            var len = Math.max(0, val / v.max * pw);
+            bar = el('path', { d: hbar(x0, yb, len, bt), fill: i === 1 ? S1 : GREY, 'class': 'mk gx' }, s);
+            vx = x0 + len + 8;
+          } else {
+            var lenC = Math.abs(val) / v.maxAbs * (pw / 2 - 40);
+            fill = val >= 0 ? GOOD : BAD;
+            bar = el('path', { d: val >= 0 ? hbar(zero, yb, lenC, bt) : hbarL(zero, yb, lenC, bt), fill: fill, 'class': 'mk gx' }, s);
+            vx = val >= 0 ? zero + lenC + 6 : zero - lenC - 6; anchor = val >= 0 ? 'start' : 'end';
+          }
+          dly(bar, i * 0.1);
+          tx(s, vx, yb + 12, FMT_CAMP[v.m](val), i === 1 ? 'val' : 'val-s', anchor);
+          bind(hitRect(s, 0, y0, w, rowH - 2), bar, FMT_CAMP[v.m](val), c[0]);
+        });
+      }
+    },
+
+    conceptfunnel: {
+      init: { c: 'Problem-agitate' },
+      controls: [{ type: 'seg', key: 'c', label: 'Concept', options: [['All', 'All'], ['Problem-agitate', 'Problem-agitate'], ['Product demo', 'Demo'], ['UGC unboxing', 'UGC'], ['Testimonials', 'Testimonials']] }],
+      model: function (s) {
+        var vals = s.c === 'All' ? [0, 1, 2, 3].map(function (k) { return CONCEPTS.reduce(function (a, n) { return a + D.cfunnel[n][k]; }, 0); }) : D.cfunnel[s.c].slice(0, 4);
+        return { c: s.c, vals: vals };
+      },
+      figOf: function (v) {
+        var cf = D.cfunnel[v.c];
+        return { v: v.vals[3] / v.vals[0] * 100, f: function (x) { return x.toFixed(1) + '%'; }, unit: (v.c === 'All' ? 'all concepts' : v.c) + ' · scale rate', chip: cf ? { t: cf[4], tone: cf[5] } : { t: 'n 175', tone: '' } };
+      },
+      legend: [[GREY, 'Stage'], [S1, 'Scaled']],
+      aria: 'Funnel bars for the chosen concept: produced, passed gate 1, reached exit and scaled, each as a share of produced',
+      table: { head: ['Concept', 'Produced', 'Gate 1', 'Exit', 'Scaled', 'Rate'], rows: Object.keys(D.cfunnel).map(function (k) { var r = D.cfunnel[k]; return [k, String(r[0]), String(r[1]), String(r[2]), String(r[3]), pct(r[3] / r[0] * 100)]; }) },
+      draw: function (plot, w) {
+        var v = plot._view, rowH = 48, bt = 20, T = 2, h = T + 4 * rowH, s = svgFor(plot, w, h), pw = w - 110;
+        v.vals.forEach(function (val, i) {
+          var y0 = T + i * rowH, share = val / v.vals[0], len = Math.max(3, share * pw);
+          tx(s, 0, y0 + 12, STAGES[i], 'lb');
+          var bar = dly(el('path', { d: hbar(0, y0 + 18, len, bt), fill: i === 3 ? S1 : GREY, 'class': 'mk gx' }, s), i * 0.12);
+          var t = el('text', { x: len + 8, y: y0 + 33, 'class': 'val' }, s);
+          var t1 = el('tspan', {}, t); t1.textContent = String(Math.round(val));
+          var t2 = el('tspan', { 'class': 'ax' }, t); t2.textContent = '  ' + Math.round(share * 100) + '%';
+          bind(hitRect(s, 0, y0, w, rowH - 2), bar, Math.round(val) + ' creatives', STAGES[i] + ' · ' + pct(share * 100) + ' of produced');
+        });
+      }
+    },
+
+    tracer: {
+      init: { s: 'lowgeo' },
+      controls: [{ type: 'seg', key: 's', label: 'Scenario at $70', options: [['insufficient', 'Low signal'], ['purchase', 'Purchase'], ['lowgeo', 'Low-CPM skew'], ['strong', 'Tier-1 strong'], ['weak', 'Weak metrics']] }],
+      model: function (s) { return { s: s.s }; },
+      figOf: function (v) { var sc = D.scen[v.s]; return { v: 0, f: function () { return sc.d[1]; }, unit: '', chip: { t: sc.d[0] === 'kill' ? 'Kill' : 'Continue', tone: sc.d[0] === 'kill' ? 'bad' : 'good' } }; },
+      aria: 'Checkpoint A decision trace: steps A1 to A4 and checkpoint B light up for the chosen scenario',
+      table: { head: ['Scenario', 'Path', 'Decision'], rows: Object.keys(D.scen).map(function (k) { var sc = D.scen[k]; return [k, Object.keys(sc.path).map(function (p) { return sc.path[p]; }).join(' → '), sc.d[1]]; }) },
+      draw: function (plot) {
+        var v = plot._view, sc = D.scen[v.s], keys = Object.keys(sc.path), box = plot.querySelector('.trace');
+        if (!box) {
+          plot.replaceChildren();
+          box = document.createElement('div'); box.className = 'trace';
+          [['signal', 'A1', 'Enough impressions + LPV?', 'No → under-delivered · Yes → check purchase'], ['purchase', 'A2', 'Purchase achieved?', 'Yes → continue · No → check geo'],
+           ['geo', 'A3', 'Where did the spend go?', 'Low-CPM → kill · Tier-1 → check metrics'], ['secondary', 'A4', 'Secondary metrics strong?', 'Strong → continue · Weak → kill'],
+           ['checkpoint', 'B', '$100 hard rule', '1+ purchase → pass · 0 → kill']].forEach(function (st) {
+            var row = document.createElement('div'); row.className = 'tstep'; row.dataset.step = st[0];
+            var b = document.createElement('b'); b.textContent = st[1];
+            var mid = document.createElement('div'), strong = document.createElement('strong'), small = document.createElement('small');
+            strong.textContent = st[2]; small.textContent = st[3]; mid.append(strong, small);
+            var ans = document.createElement('span'); ans.className = 'ans'; ans.textContent = '—';
+            row.append(b, mid, ans); box.appendChild(row);
+          });
+          plot.appendChild(box);
+        }
+        box.querySelectorAll('.tstep').forEach(function (row) {
+          var k = row.dataset.step, idx = keys.indexOf(k), ans = row.querySelector('.ans');
+          row.style.transitionDelay = (idx >= 0 ? idx * 120 : 0) + 'ms';
+          row.className = 'tstep ' + (idx >= 0 ? 'on' : 'skip');
+          ans.textContent = idx >= 0 ? sc.path[k] : '—';
+          ans.className = 'ans' + (idx === keys.length - 1 ? (sc.d[0] === 'kill' ? ' kill' : ' go') : idx >= 0 ? ' next' : '');
+        });
+      }
+    },
+
+    cpasignal: {
+      init: { th: 22 },
+      controls: [{ type: 'range', key: 'th', label: 'CPA line', min: 10, max: 40, step: 1, fmt: function (v) { return '$' + v; } }],
+      drag: { key: 'th', L: 8, R: 8, min: 10, max: 40, step: 1 },
+      model: function (s) { return { th: s.th }; },
+      figOf: function (v) {
+        var sp = sigSplit(v.th);
+        return { v: sp.r1 == null ? 0 : sp.r1, f: function (x) { return sp.r1 == null ? '—' : Math.round(x) + '%'; }, unit: 'held when CPA at exit ≤ $' + Math.round(v.th) + ' (n ' + sp.n1 + ')',
+                 chip: { t: 'Above line ' + (sp.r2 == null ? '—' : Math.round(sp.r2) + '%') + ' (n ' + sp.n2 + ')', tone: '' } };
+      },
+      legend: [[S1, 'Held CPA ≤ $35 after scaling'], [GREY, 'Missed']],
+      aria: 'Dot strip of 12 exited creatives by CPA at exit, split by a movable CPA line, with the share that held the $35 target on each side',
+      table: { head: ['Creative', 'CPA at exit', 'After scaling', 'Held $35'], rows: D.exited.map(function (e) { return [e[0], '$' + e[1].toFixed(2), '$' + e[2].toFixed(2), e[2] <= D.target ? 'Yes' : 'No']; }) },
+      draw: function (plot, w) {
+        var v = plot._view, L = 8, R = 8, h = 206, s = svgFor(plot, w, h), sp = sigSplit(v.th);
+        var sx = function (c) { return L + (c - 10) / 30 * (w - L - R); };
+        el('rect', { x: sx(10), y: 26, width: Math.max(0, sx(v.th) - sx(10)), height: 78, fill: 'rgba(201,122,30,.1)' }, s);
+        el('line', { x1: L, x2: w - R, y1: 104, y2: 104, 'class': 'base' }, s);
+        [10, 20, 30, 40].forEach(function (c) { tx(s, sx(c), 118, '$' + c, 'ax num', c === 10 ? 'start' : c === 40 ? 'end' : 'middle'); });
+        D.exited.forEach(function (e, i) {
+          var held = e[2] <= D.target, y = held ? 48 : 82;
+          var dot = dly(el('circle', { cx: sx(e[1]), cy: y, r: 5, fill: held ? S1 : GREY, stroke: WELL, 'stroke-width': 2, 'class': 'mk pop' }, s), i * 0.05);
+          bind(el('circle', { cx: sx(e[1]), cy: y, r: 12, fill: 'transparent', 'class': 'hit' }, s), dot, '$' + e[1].toFixed(2) + ' → $' + e[2].toFixed(2), e[0] + (held ? ' · held target' : ' · missed target'));
+        });
+        var xl = sx(v.th);
+        el('line', { x1: xl, x2: xl, y1: 24, y2: 104, 'class': 'ref' }, s);
+        tx(s, xl, 16, 'LINE $' + Math.round(v.th), 'ref-t', anchorFor(xl, w));
+        [['At or under the line', sp.r1, sp.n1, S1], ['Above the line', sp.r2, sp.n2, GREY]].forEach(function (g, i) {
+          var y0 = 140 + i * 34, pw = w - 60;
+          tx(s, 0, y0, g[0] + ' · n ' + g[2], 'lb');
+          el('rect', { x: 0, y: y0 + 6, width: pw, height: 12, rx: 2, fill: TRACK }, s);
+          var bar = el('path', { d: hbar(0, y0 + 6, (g[1] || 0) / 100 * pw, 12), fill: g[3], 'class': 'mk gx' }, s);
+          tx(s, w, y0 + 16, g[1] == null ? '—' : Math.round(g[1]) + '%', 'val', 'end');
+          bind(hitRect(s, 0, y0 - 10, w, 30), bar, g[1] == null ? 'no creatives' : Math.round(g[1]) + '% held', g[0] + ' · n ' + g[2]);
+        });
+      }
+    },
+
+    outcomes: {
+      init: { p: 'p2' },
+      controls: [{ type: 'seg', key: 'p', label: 'Proposal', options: [['p1', 'Point 1'], ['p2', 'Point 2'], ['p3', 'Point 3'], ['p4', 'Point 4']] }],
+      model: function (s) { return { p: s.p, rows: D.outcomes[s.p].map(function (r) { return Object.assign({}, r); }) }; },
+      figOf: function (v) {
+        var r0 = v.rows[0], better = v.rows.filter(function (r) { return r.lower ? r.b < r.a : r.b > r.a; }).length, proj = v.rows.some(function (r) { return r.proj; });
+        return { v: (r0.b - r0.a) / r0.a * 100, f: function (x) { return signed(x, '%'); }, unit: r0.label.charAt(0).toLowerCase() + r0.label.slice(1), chip: { t: better + ' of 3 better' + (proj ? ' · proj.' : ''), tone: 'good' } };
+      },
+      legend: [[GREY, 'Before'], [S1, 'After']],
+      aria: 'Dumbbell rows comparing before and after for the chosen proposal, each row on its own scale',
+      table: { head: ['Point', 'Metric', 'Before', 'After', 'Proj.'], rows: ['p1', 'p2', 'p3', 'p4'].reduce(function (acc, p) { return acc.concat(D.outcomes[p].map(function (r) { return [p.replace('p', 'Point '), r.label, fmtK(r.a, r.fmt), fmtK(r.b, r.fmt), r.proj ? 'Yes' : '']; })); }, []) },
+      draw: function (plot, w) {
+        var v = plot._view, rowH = 66, T = 2, h = T + v.rows.length * rowH, s = svgFor(plot, w, h), L = 8, pw = w - 8;
+        v.rows.forEach(function (r, i) {
+          var y0 = T + i * rowH, max = Math.max(r.a, r.b) * 1.15, sx = function (x) { return L + x / max * (pw - L); }, yl = y0 + 38;
+          tx(s, 0, y0 + 12, r.label, 'lb');
+          if (r.proj) tx(s, w, y0 + 12, 'PROJECTION', 'ax2', 'end');
+          el('line', { x1: L, x2: pw, y1: yl, y2: yl, 'class': 'gl' }, s);
+          el('line', { x1: sx(r.a), x2: sx(r.b), y1: yl, y2: yl, stroke: 'rgba(254,249,223,.35)', 'stroke-width': 2 }, s);
+          var da = dly(el('circle', { cx: sx(r.a), cy: yl, r: 6, fill: GREY, stroke: WELL, 'stroke-width': 2, 'class': 'mk pop' }, s), i * 0.1);
+          var db = dly(el('circle', { cx: sx(r.b), cy: yl, r: 6, fill: S1, stroke: WELL, 'stroke-width': 2, 'class': 'mk pop' }, s), 0.3 + i * 0.1);
+          var na = r.names ? r.names[0] + ' ' : '', nb = r.names ? r.names[1] + ' ' : '';
+          tx(s, sx(r.a), yl - 11, na + fmtK(r.a, r.fmt), 'ax', anchorFor(sx(r.a), w));
+          tx(s, sx(r.b), yl + 21, nb + fmtK(r.b, r.fmt), 'val-s', anchorFor(sx(r.b), w));
+          bind(hitRect(s, 0, y0, w, rowH - 4), [da, db], fmtK(r.a, r.fmt) + ' → ' + fmtK(r.b, r.fmt), r.label + (r.proj ? ' · projection' : ''));
+        });
+      }
+    },
+
+    fatigue: {
+      init: { m: 'cpm', day: 8 },
+      controls: [{ type: 'seg', key: 'm', label: 'Metric', options: [['freq', 'Frequency'], ['cpm', 'CPM'], ['reach', 'Reach'], ['gap', 'Days between']] },
+                 { type: 'range', key: 'day', label: 'Day', min: 1, max: 8, step: 1, fmt: function (v) { return 'Day ' + v; } }],
+      drag: { key: 'day', L: 48, R: 14, min: 1, max: 8, step: 1 },
+      model: function (s) { return { m: s.m, day: s.day, arr: D.dep[s.m].slice() }; },
+      figOf: function (v) {
+        var val = valAtDay(v.arr, v.day);
+        return { v: (val - v.arr[0]) / v.arr[0] * 100, f: function (x) { return signed(x, '%'); }, unit: NAME_F[v.m] + ' · day ' + Math.round(v.day) + ' vs day 1', chip: { t: FMT_F[v.m](val), tone: '' } };
+      },
+      aria: 'Line chart of the chosen fatigue metric over day 1 to 8 of the stall, with a movable day marker',
+      table: SPECS.dep.table,
+      draw: function (plot, w) {
+        var v = plot._view, arr = v.arr, n = arr.length, h = 220, L = 48, R = 14, T = 20, B = 26, s = svgFor(plot, w, h), pw = w - L - R, ph = h - T - B;
+        var mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr), pad = (mx - mn) * 0.12, lo = mn - pad, hi = mx + pad;
+        var sy = function (x) { return T + ph * (1 - (x - lo) / (hi - lo)); }, sx = function (d) { return L + (d - 1) / (n - 1) * pw; }, f = FMT_F[v.m];
+        [mn, (mn + mx) / 2, mx].forEach(function (t, i) { el('line', { x1: L, x2: w - R, y1: sy(t), y2: sy(t), 'class': i ? 'gl' : 'base' }, s); tx(s, L - 6, sy(t) + 3, f(t), 'ax num', 'end'); });
+        for (var d = 1; d <= n; d++) tx(s, sx(d), h - 8, 'D' + d, 'ax num', 'middle');
+        var pts = arr.map(function (x, j) { return [sx(j + 1), sy(x)]; });
+        el('path', { d: 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L'), fill: 'none', stroke: GREY, 'stroke-width': 2, 'stroke-linejoin': 'round' }, s);
+        var cut = pts.filter(function (_, j) { return j + 1 <= v.day; }), mx2 = sx(v.day), my2 = sy(valAtDay(arr, v.day));
+        cut.push([mx2, my2]);
+        var dl = 'M' + cut.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L');
+        el('path', { d: dl + 'L' + mx2 + ' ' + sy(mn) + 'L' + pts[0][0] + ' ' + sy(mn) + 'Z', fill: S1, 'fill-opacity': 0.1 }, s);
+        el('path', { d: dl, fill: 'none', stroke: S1, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', pathLength: 1, 'class': 'draw' }, s);
+        el('line', { x1: mx2, x2: mx2, y1: T - 4, y2: sy(lo), 'class': 'ref' }, s);
+        el('circle', { cx: mx2, cy: my2, r: 5, fill: S1, stroke: WELL, 'stroke-width': 2, 'class': 'pop' }, s);
+        var right = v.day > 6.5;
+        tx(s, mx2 + (right ? -10 : 10), my2 - 10, f(valAtDay(arr, v.day)), 'val', right ? 'end' : 'start');
+        var hit = hitRect(s, L, T, pw, ph); hit.style.cursor = 'ew-resize';
+        hit.addEventListener('pointermove', function (e) {
+          var r = hit.getBoundingClientRect(), j = Math.max(0, Math.min(n - 1, Math.round((e.clientX - r.left) / r.width * (n - 1))));
+          showTip(f(arr[j]), NAME_F[v.m] + ' · day ' + (j + 1) + ' · click or drag to set', e.clientX, e.clientY);
+        });
+        hit.addEventListener('pointerleave', hideTip);
+      }
+    },
+
+    briefs: {
+      init: { m: 16 },
+      controls: [{ type: 'range', key: 'm', label: 'Briefs moved', min: 0, max: 40, step: 1, fmt: function (v) { return String(v); } }],
+      model: function (s) {
+        var briefs = [60, 45 + s.m, 40 - s.m, 30];
+        return { m: s.m, briefs: briefs, wins: briefs.map(function (b, i) { return b * RATES[i]; }) };
+      },
+      figOf: function (v) {
+        var total = v.wins.reduce(function (a, b) { return a + b; }, 0), delta = total - 45;
+        return { v: total, f: function (x) { return x.toFixed(1); }, unit: 'expected winners per 175 briefs · projection', chip: { t: (delta >= 0 ? '+' : '−') + Math.abs(delta).toFixed(1) + ' vs today', tone: delta > 0.05 ? 'good' : '' } };
+      },
+      legend: CONCEPTS.map(function (c, i) { return [CCOL[i], c + ' · ' + pct(RATES[i] * 100)]; }),
+      aria: 'Two stacked bars: 175 briefs split by concept, and the expected winners from each concept at its scale rate, as testimonial briefs move to Problem-agitate',
+      table: { head: ['Concept', 'Scale rate', 'Briefs today', 'Winners today'], rows: CONCEPTS.map(function (c, i) { var b = [60, 45, 40, 30][i]; return [c, pct(RATES[i] * 100), String(b), (b * RATES[i]).toFixed(2)]; }) },
+      draw: function (plot, w) {
+        var v = plot._view, rowH = 76, bt = 22, h = 2 * rowH - 4, s = svgFor(plot, w, h);
+        var total = v.wins.reduce(function (a, b) { return a + b; }, 0);
+        [['BRIEFS · 175', v.briefs, 175, false], ['EXPECTED WINNERS · ' + total.toFixed(1), v.wins, 60, true]].forEach(function (row, ri) {
+          var y0 = ri * rowH, y = y0 + 20, x = 0, n = row[1].length;
+          tx(s, 0, y0 + 11, row[0], 'hd');
+          row[1].forEach(function (val, j) {
+            var segW = val / row[2] * w, last = j === n - 1, ww = last ? segW : Math.max(0, segW - 2);
+            var mark = dly(last ? el('path', { d: hbar(x, y, ww, bt), fill: CCOL[j], 'class': 'mk gx' }, s)
+                                : el('rect', { x: x, y: y, width: ww, height: bt, fill: CCOL[j], 'class': 'mk gx' }, s), ri * 0.2 + j * 0.08);
+            var label = row[3] ? val.toFixed(1) : String(Math.round(val));
+            if (ww >= 34) { var t = tx(s, x + ww / 2, y + 15, label, 'inl', 'middle'); if (CCOL[j] === '#474747') t.setAttribute('fill', '#FFFFFF'); }
+            bind(hitRect(s, x, y - 4, segW, bt + 8), mark, label + (row[3] ? ' winners' : ' briefs'), CONCEPTS[j] + ' · scale rate ' + pct(RATES[j] * 100));
+            x += segW;
+          });
+          if (row[3]) {
+            var xt = 45 / 60 * w;
+            el('line', { x1: xt, x2: xt, y1: y - 6, y2: y + bt + 6, 'class': 'ref' }, s);
+            tx(s, xt, y + bt + 18, 'TODAY 45', 'ref-t', 'middle');
+          }
+        });
+      }
+    }
+  });
+
+  function lerp(a, b, t) {
+    if (typeof a === 'number' && typeof b === 'number') return a + (b - a) * t;
+    if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) return a.map(function (x, i) { return lerp(x, b[i], t); });
+    if (a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(b)) { var o = {}; for (var k in b) o[k] = lerp(a[k], b[k], t); return o; }
+    return b;
+  }
+  function applyFig(card, spec, view) {
+    var F = spec.figOf(view);
+    spec.fig = { v: F.v, f: F.f };
+    card._fig.textContent = F.f(F.v);
+    card._unit.textContent = F.unit;
+    card._chip.className = 'chip ' + (F.chip.tone || '');
+    card._chip.textContent = F.chip.t;
+  }
+  // tween from the current view to the new state's view, redrawing each frame
+  function runUpdate(card, spec, dur) {
+    cancelAnimationFrame(card._raf);
+    hideTip();
+    var plot = card._plot, from = plot._view, to = spec.model(card._state), t0 = performance.now();
+    if (reduce) dur = 0;
+    (function step() {
+      // clock read here and clamped: a rAF timestamp can precede t0, which would push the easing far outside 0–1
+      var k = dur ? Math.max(0, Math.min(1, (performance.now() - t0) / dur)) : 1, e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      plot._view = k < 1 ? lerp(from, to, e) : to;
+      if (plot._w && !card.classList.contains('show-table')) spec.draw(plot, plot._w);
+      applyFig(card, spec, plot._view);
+      if (k < 1) card._raf = requestAnimationFrame(step);
+    })(t0);
+  }
+  function setState(card, spec, key, val, dur) {
+    card._state[key] = val;
+    if (card._sync[key]) card._sync[key](val);
+    runUpdate(card, spec, dur);
+  }
+  function makeControls(card, spec) {
+    var box = document.createElement('div'); box.className = 'ctrls';
+    card._sync = {};
+    spec.controls.forEach(function (c) {
+      if (c.type === 'seg') {
+        var g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group'); g.setAttribute('aria-label', c.label);
+        var btns = c.options.map(function (o) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = o[1];
+          b.setAttribute('aria-pressed', String(card._state[c.key] === o[0]));
+          b.addEventListener('click', function () { setState(card, spec, c.key, o[0], 450); });
+          g.appendChild(b);
+          return [o[0], b];
+        });
+        card._sync[c.key] = function (val) { btns.forEach(function (p) { p[1].setAttribute('aria-pressed', String(p[0] === val)); }); };
+        box.appendChild(g);
+      } else {
+        var lab = document.createElement('label'); lab.className = 'slider';
+        var span = document.createElement('span'); span.textContent = c.label;
+        var inp = document.createElement('input'); inp.type = 'range'; inp.min = c.min; inp.max = c.max; inp.step = c.step; inp.value = card._state[c.key];
+        var out = document.createElement('output'); out.textContent = c.fmt(card._state[c.key]);
+        inp.addEventListener('input', function () { setState(card, spec, c.key, +inp.value, 180); });
+        lab.append(span, inp, out);
+        card._sync[c.key] = function (val) { inp.value = val; out.textContent = c.fmt(val); };
+        box.appendChild(lab);
+      }
+    });
+    return box;
+  }
+  // click or drag across the plot to set a value (the slider stays the keyboard route)
+  function attachDrag(card, spec) {
+    var plot = card._plot, d = spec.drag, dragging = false;
+    plot.style.cursor = 'ew-resize';
+    plot.style.touchAction = 'pan-y';
+    function valAt(e) {
+      var r = plot.getBoundingClientRect(), R = typeof d.R === 'function' ? d.R(r.width) : d.R;
+      var f = Math.max(0, Math.min(1, (e.clientX - r.left - d.L) / (r.width - d.L - R)));
+      return Math.round((d.min + f * (d.max - d.min)) / d.step) * d.step;
+    }
+    plot.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      dragging = true;
+      plot.setPointerCapture(e.pointerId);
+      setState(card, spec, d.key, valAt(e), 160);
+    });
+    plot.addEventListener('pointermove', function (e) { if (!dragging) return; var val = valAt(e); if (val !== card._state[d.key]) setState(card, spec, d.key, val, 0); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { plot.addEventListener(t, function () { dragging = false; }); });
+  }
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.dc'));
+
+  function build(card) {
+    var spec = SPECS[card.dataset.chart], well = card.querySelector('.well');
+    var figrow = document.createElement('div'); figrow.className = 'figrow';
+    var fig = document.createElement('span'); fig.className = 'fig';
+    var unit = document.createElement('span'); unit.className = 'unit';
+    var chip = document.createElement('span'); chip.className = 'chip';
+    figrow.append(fig, unit, chip);
+    var plot = document.createElement('div'); plot.className = 'plot'; plot.setAttribute('role', 'figure'); plot.setAttribute('aria-label', spec.aria);
+    card._fig = fig; card._unit = unit; card._chip = chip; card._plot = plot;
+    if (spec.init) {
+      card._state = Object.assign({}, spec.init);
+      plot._view = spec.model(card._state);
+      applyFig(card, spec, plot._view);
+      well.append(figrow, makeControls(card, spec), plot);
+      if (spec.drag) attachDrag(card, spec);
+    } else {
+      fig.textContent = spec.fig.f(spec.fig.v);
+      unit.textContent = spec.unit;
+      chip.className = 'chip ' + spec.chip.tone;
+      chip.textContent = spec.chip.t;
+      well.append(figrow, plot);
+    }
+    if (spec.legend) {
+      var lg = document.createElement('div'); lg.className = 'legend';
+      spec.legend.forEach(function (it) {
+        var sp = document.createElement('span'), i = document.createElement('i');
+        if (it[2] === 'ln') i.className = 'ln';
+        i.style.background = it[0];
+        sp.append(i, document.createTextNode(it[1]));
+        lg.appendChild(sp);
+      });
+      well.appendChild(lg);
+    }
+    var wrap = document.createElement('div'); wrap.className = 'tablewrap'; wrap.hidden = true;
+    var table = document.createElement('table'), thead = document.createElement('thead'), tbody = document.createElement('tbody'), hr = document.createElement('tr');
+    var numeric = spec.table.head.map(function (_, c) { return c > 0 && spec.table.rows.every(function (r) { return /^[\s$−+\d.,%×Kd]*$/.test(r[c]); }); });
+    spec.table.head.forEach(function (hd, c) { var th = document.createElement('th'); th.textContent = hd; if (numeric[c]) th.className = 'n'; hr.appendChild(th); });
+    thead.appendChild(hr);
+    spec.table.rows.forEach(function (r) {
+      var tr = document.createElement('tr');
+      r.forEach(function (v, c) { var td = document.createElement('td'); td.textContent = v; if (numeric[c]) td.className = 'n'; tr.appendChild(td); });
+      tbody.appendChild(tr);
+    });
+    table.append(thead, tbody); wrap.appendChild(table); well.appendChild(wrap);
+
+    var btn = card.querySelector('.tbl-btn');
+    btn.addEventListener('click', function () {
+      var on = card.classList.toggle('show-table');
+      wrap.hidden = !on;
+      btn.textContent = on ? 'Chart' : 'Table';
+      btn.setAttribute('aria-pressed', String(on));
+      hideTip();
+      if (!on) render(card, true);
+    });
+    card._fig = fig;
+    card._plot = plot;
+  }
+
+  function render(card, force) {
+    var plot = card._plot, w = Math.floor(plot.clientWidth);
+    if (!w || (!force && w === plot._w)) return;
+    plot._w = w;
+    SPECS[card.dataset.chart].draw(plot, w);
+  }
+
+  function countUp(card) {
+    var spec = SPECS[card.dataset.chart], fig = card._fig;
+    if (reduce) { fig.textContent = spec.fig.f(spec.fig.v); return; }
+    var t0 = performance.now();
+    (function step() {
+      var k = Math.max(0, Math.min(1, (performance.now() - t0) / 1000)), e = 1 - Math.pow(1 - k, 3);
+      fig.textContent = spec.fig.f(spec.fig.v * e);
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  function reveal(card) { card.classList.add('in'); countUp(card); }
+
+  cards.forEach(function (c) { build(c); render(c, true); });
+
+  if ('ResizeObserver' in window) {
+    var ro = new ResizeObserver(function (entries) {
+      entries.forEach(function (e) { var card = e.target.closest('.dc'); if (!card.classList.contains('show-table')) render(card); });
+    });
+    cards.forEach(function (c) { ro.observe(c._plot); });
+  }
+
+  if (reduce || !('IntersectionObserver' in window)) {
+    cards.forEach(function (c) { c.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        requestAnimationFrame(function () { reveal(e.target); });
+      });
+    }, { threshold: 0.25 });
+    cards.forEach(function (c) { io.observe(c); });
+  }
+
+  document.getElementById('replay').addEventListener('click', function () {
+    hideTip();
+    cards.forEach(function (c) { c.classList.remove('in'); if (!c.classList.contains('show-table')) render(c, true); });
+    void document.body.offsetHeight; // commit the collapsed state before re-revealing
+    requestAnimationFrame(function () {
+      cards.forEach(function (c, i) { setTimeout(function () { reveal(c); }, i * 90); });
+    });
+  });
+  window.addEventListener('scroll', hideTip, { passive: true });
+})();
+</script>
+</body>
+</html>
