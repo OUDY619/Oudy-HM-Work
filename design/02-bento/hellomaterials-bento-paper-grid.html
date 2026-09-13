@@ -1,0 +1,396 @@
+<!doctype html>
+<!--
+  Hellomaterials — Field Notes · Bento Paper Grid (v1 · 13 Sep 2026)
+  Explainer-style bento: paper cards, sketched figures, highlight sweeps.
+  Tokens & content: ../01-brand/design-system.html (palette, Oswald/Geist, radii,
+  B1.3 brand values, B2.2 voice). Mono label face from bento-components/styles.css.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hellomaterials — Field Notes Bento</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Hellomaterials core (design-system.html) */
+    --orange:     #DE8A25;
+    --orange-19:  #B4701E;
+    --orange-40:  #855316;
+    --charcoal:   #282828;
+    --graphite:   #343434;
+    --ink:        #202020;
+    --brown:      #4D473E;
+    --brown-19:   #6F695D;
+    --brown-60:   #B7B29F;
+    --cream:      #FEF9DF;
+    --white:      #FFFFFF;
+    --sale-red:   #C4301C;
+    /* Paper-grid roles */
+    --paper:      var(--cream);
+    --paper-edge: #F3ECCF;
+    --rule:       rgba(77, 71, 62, .18);
+    --muted:      var(--brown-19);
+    --accent-txt: var(--orange-19);
+    --hl:         rgba(222, 138, 37, .36);
+    /* Shape */
+    --r-block: 10px;
+    --r-medium: 6px;
+    /* Type */
+    --f-head: 'Oswald', 'Arial Narrow', sans-serif;
+    --f-body: 'Geist', 'Helvetica Neue', Arial, sans-serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --ease: cubic-bezier(.65, 0, .35, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: var(--charcoal); color: var(--white);
+    font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(900px 420px at 88% 0%, rgba(222,138,37,.16), transparent 60%),
+      repeating-linear-gradient(115deg, rgba(254,249,223,.025) 0 2px, transparent 2px 16px);
+  }
+  h1, h3, p { margin: 0; }
+
+  /* ── Announcement + header ─────────────────────────────── */
+  .announce { position: relative; z-index: 1; background: var(--orange); color: #000; font-size: 13px; font-weight: 500; text-align: center; padding: 7px 16px; }
+  .wrap { position: relative; z-index: 1; max-width: 1560px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 48px); }
+  .top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; padding-block: 44px 32px; }
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand img { width: 64px; height: 64px; flex: none; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--cream); opacity: .75; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--orange); border-radius: 2px; }
+  .top h1 { font-family: var(--f-head); font-weight: 600; text-transform: uppercase; font-size: clamp(28px, 4vw, 46px); line-height: 1.05; margin-top: 6px; }
+  .top h1 em { color: var(--orange); }
+  .top .meta { color: rgba(254,249,223,.62); font-size: 13px; margin-top: 8px; max-width: 60ch; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-head); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; line-height: 1; padding: 12px 18px; border-radius: var(--r-block); border: 1px solid rgba(254,249,223,.25); background: transparent; color: var(--cream); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+  .btn:hover, .btn:focus-visible { background: var(--orange); border-color: var(--orange); color: #000; outline: none; }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* ── Bento grid ────────────────────────────────────────── */
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-bottom: 40px; }
+  @media (max-width: 1120px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 720px)  { .grid { grid-template-columns: 1fr; gap: 18px; } }
+
+  .card {
+    position: relative; isolation: isolate;
+    display: flex; flex-direction: column; min-height: 600px;
+    padding: 26px 28px 30px;
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper-edge) 100%);
+    color: var(--ink); border-radius: var(--r-medium);
+    box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 34px 60px -34px rgba(0,0,0,.75);
+    transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+  }
+  .card::after { /* paper grain */
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: .9;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .30 0 0 0 0 .27 0 0 0 0 .22 0 0 0 .10 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 44px 70px -34px rgba(0,0,0,.85); }
+  .card.feature { box-shadow: 0 0 0 1px var(--orange), 0 0 0 5px rgba(222,138,37,.14), 0 34px 70px -30px rgba(222,138,37,.45); }
+  .card.feature:hover { box-shadow: 0 0 0 1px var(--orange), 0 0 0 6px rgba(222,138,37,.2), 0 44px 80px -30px rgba(222,138,37,.55); }
+
+  .card-head { display: flex; align-items: center; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); font-family: var(--f-mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; white-space: nowrap; min-width: 0; }
+  .card-head .num { color: var(--accent-txt); font-weight: 500; }
+  .card-head .lbl { color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+  .card-head .fig { font-family: var(--f-body); font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; color: var(--muted); }
+  .pill { margin-left: auto; font-size: 10.5px; letter-spacing: .18em; color: var(--accent-txt); background: rgba(222,138,37,.1); border: 1px solid var(--orange); border-radius: 999px; padding: 4px 11px; }
+
+  .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: 22px; }
+  .stage svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .card-foot h3 { font-family: var(--f-head); font-weight: 500; text-transform: uppercase; font-size: clamp(24px, 2.05vw, 31px); line-height: 1.1; letter-spacing: .005em; color: var(--ink); }
+  .card-foot h3 em { font-style: italic; color: var(--accent-txt); }
+  .card-foot p { margin-top: 10px; color: var(--brown); font-size: 15px; line-height: 1.55; max-width: 44ch; }
+
+  /* ── Sketch vocabulary (SVG) ───────────────────────────── */
+  .ink    { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .ink-lt { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .lead   { fill: none; stroke: var(--orange); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .guide  { fill: none; stroke: var(--brown-19); stroke-width: 1.3; stroke-dasharray: 5 5; }
+  .dot    { fill: var(--paper); stroke: var(--ink); stroke-width: 2.2; }
+  .note   { font-family: var(--f-head); font-weight: 400; font-size: 17px; fill: var(--accent-txt); letter-spacing: .01em; }
+  .mono   { font-family: var(--f-mono); font-size: 12px; letter-spacing: .2em; fill: var(--brown); text-transform: uppercase; }
+  .mono-in { font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em; fill: var(--brown-19); }
+
+  /* ── Text stages ───────────────────────────────────────── */
+  .kicker { font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+  .journal { margin-top: 16px; font-size: 15.5px; line-height: 1.85; color: var(--brown); }
+  .journal + .journal { margin-top: 10px; }
+  .ref { margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--rule); font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .stage.text { justify-content: flex-start; gap: 0; }
+
+  .rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .rules li { display: grid; grid-template-columns: 40px 1fr; align-items: baseline; font-size: 16px; color: var(--ink); line-height: 1.45; }
+  .rules .rn { font-family: var(--f-head); font-size: 20px; font-style: italic; color: var(--accent-txt); }
+  .rules small { display: block; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+  .quote-mark { font-family: var(--f-head); font-size: 64px; line-height: .6; color: var(--orange); opacity: .55; }
+  .quote { margin-top: 18px; font-size: 20px; line-height: 1.6; color: var(--ink); font-weight: 400; }
+  .strike { position: relative; display: inline-block; margin-top: 18px; font-size: 14px; color: var(--muted); }
+  .strike::after { content: ""; position: absolute; left: -2px; right: -2px; top: 54%; height: 2px; background: var(--sale-red); opacity: .7; transform-origin: left; }
+  .strike-tag { font-family: var(--f-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--sale-red); margin-left: 10px; opacity: .85; }
+  .attrib { display: flex; justify-content: space-between; gap: 12px; margin-top: 22px; padding-top: 12px; border-top: 1px dashed var(--rule); font-size: 13px; color: var(--muted); }
+  .attrib i { font-style: italic; }
+  .attrib span:last-child { font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; }
+
+  /* Highlighter */
+  .hl {
+    padding: 0 .18em; margin: 0 -.05em;
+    background-image: linear-gradient(var(--hl), var(--hl));
+    background-repeat: no-repeat; background-position: 0 58%; background-size: 100% 78%;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    color: var(--ink);
+  }
+  h3 .hl { --hl: rgba(222,138,37,.42); }
+
+  /* ── Motion (only when JS is on; content stays visible otherwise) ── */
+  .js .draw { stroke-dasharray: 1 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.5s var(--ease) var(--d, 0s); }
+  .js .fade { opacity: 0; transform: translateY(5px); transition: opacity .7s ease var(--d, 0s), transform .7s var(--ease) var(--d, 0s); }
+  .js text.fade { transform: none; }
+  .js .hl { background-size: 0% 78%; transition: background-size 1s var(--ease) var(--d, .2s); }
+  .js .strike::after { transform: scaleX(0); transition: transform .8s var(--ease) var(--d, 0s); }
+  .js .card.in .draw { stroke-dashoffset: 0; }
+  .js .card.in .fade { opacity: 1; transform: none; }
+  .js .card.in .hl { background-size: 100% 78%; }
+  .js .card.in .strike::after { transform: scaleX(1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .draw { stroke-dashoffset: 0; transition: none; }
+    .js .fade { opacity: 1; transform: none; transition: none; }
+    .js .hl { background-size: 100% 78%; transition: none; }
+    .js .strike::after { transform: scaleX(1); transition: none; }
+    .card, .card:hover { transition: none; transform: none; }
+  }
+
+  /* ── Footer / token strip ──────────────────────────────── */
+  .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; padding-block: 8px 48px; color: rgba(254,249,223,.6); font-size: 12.5px; }
+  .tokens { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tok { display: inline-flex; align-items: center; gap: 7px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; padding: 5px 10px 5px 6px; border: 1px solid rgba(254,249,223,.14); border-radius: 999px; }
+  .tok i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
+  .foot a { color: var(--cream); }
+
+  @media (max-width: 720px) {
+    .card { min-height: 0; padding: 22px 20px 24px; }
+    .card-head { gap: 10px; letter-spacing: .16em; }
+    .pill { padding: 3px 8px; letter-spacing: .12em; }
+    .brand img { width: 48px; height: 48px; }
+    .quote { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Shared hand-drawn wobble for sketch strokes -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="t"/>
+    <feDisplacementMap in="SourceGraphic" in2="t" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="announce">Show up ready — field notes from the Hellomaterials brand book</div>
+
+<header class="wrap top">
+  <div class="brand">
+    <img src="../01-brand/hellomaterials-logo.svg" alt="Hellomaterials logo">
+    <div>
+      <span class="eyebrow">Field notes · Bento explainer</span>
+      <h1>How a kit earns <em>its place</em></h1>
+      <p class="meta">Six paper cards that walk through the brand logic: mission, kit, value, trust, voice.</p>
+    </div>
+  </div>
+  <button class="btn" id="replay" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+    Replay sketches
+  </button>
+</header>
+
+<main class="wrap grid">
+
+  <!-- 01 · OBSERVATION ───────────────────────────────────── -->
+  <article class="card">
+    <header class="card-head"><span class="num">01</span><span class="lbl">Observation</span><span class="fig">fig. 1</span></header>
+    <div class="stage">
+      <svg viewBox="0 0 400 300" role="img" aria-label="Cross section: the mission at the centre, the gear around it, a trust shell on the outside">
+        <text class="mono fade" x="12" y="22" style="--d:.1s">Cross section</text>
+        <g filter="url(#rough)">
+          <ellipse class="ink draw" cx="200" cy="162" rx="152" ry="90" pathLength="1" style="--d:.15s"/>
+          <ellipse class="ink draw" cx="200" cy="162" rx="100" ry="58" pathLength="1" style="--d:.4s"/>
+          <ellipse class="ink draw" cx="200" cy="162" rx="48" ry="28" pathLength="1" style="--d:.65s"/>
+          <path class="lead draw" d="M200 162 L302 72" pathLength="1" style="--d:1.1s"/>
+          <path class="lead draw" d="M294 181 L352 204" pathLength="1" style="--d:1.3s"/>
+          <path class="lead draw" d="M92 186 L40 250" pathLength="1" style="--d:1.5s"/>
+        </g>
+        <circle class="dot fade" cx="200" cy="162" r="6" style="--d:.9s"/>
+        <text class="note fade" x="306" y="64" style="--d:1.5s">the mission</text>
+        <text class="note fade" x="322" y="228" style="--d:1.7s">the gear</text>
+        <text class="note fade" x="14" y="276" style="--d:1.9s">trust shell</text>
+      </svg>
+    </div>
+    <footer class="card-foot">
+      <h3>Every kit has <em>layers</em></h3>
+      <p>The job at the centre, the gear around it, and a shell of shipping, returns and reviews on the outside.</p>
+    </footer>
+  </article>
+
+  <!-- 02 · BRAND LINE (feature) ─────────────────────────── -->
+  <article class="card feature">
+    <header class="card-head"><span class="num">02</span><span class="lbl">Brand line</span><span class="fig">excerpt</span><span class="pill">The promise</span></header>
+    <div class="stage text">
+      <p class="kicker fade" style="--d:.1s">Field journal · Brand book · Vol. I</p>
+      <p class="journal fade" style="--d:.25s">People don't come to browse a huge catalogue. They come with a <span class="hl" style="--d:.9s">job to do</span>: a hunt, a campsite, a cold morning on the water. So every product has to answer <span class="hl" style="--d:1.3s">what outdoor job it does</span>.</p>
+      <p class="journal fade" style="--d:.45s">Doubt about an unknown store gets handled <span class="hl" style="--d:1.7s">before add-to-cart</span>. Shipping, returns, guarantee, reviews and specs all stay in view.</p>
+      <p class="ref fade" style="--d:.6s">Hellomaterials · Values B1.3 · Voice B2.2</p>
+    </div>
+    <footer class="card-foot">
+      <h3>From catalogue to <span class="hl" style="--d:2.1s">readiness kit</span></h3>
+      <p>The idea every page keeps coming back to. Sell the mission, not the part number.</p>
+    </footer>
+  </article>
+
+  <!-- 03 · SKETCH ────────────────────────────────────────── -->
+  <article class="card">
+    <header class="card-head"><span class="num">03</span><span class="lbl">Sketch</span><span class="fig">fig. 2</span></header>
+    <div class="stage">
+      <svg viewBox="0 0 400 300" role="img" aria-label="System map: job, kit and cart boxes in a frame, with shipping, returns and reviews underneath as trust signals">
+        <text class="mono fade" x="12" y="22" style="--d:.1s">System map</text>
+        <g filter="url(#rough)">
+          <rect class="ink draw" x="56" y="84" width="292" height="150" rx="8" pathLength="1" style="--d:.15s"/>
+          <rect class="ink-lt draw" x="78" y="104" width="72" height="44" rx="4" pathLength="1" style="--d:.5s"/>
+          <rect class="ink-lt draw" x="166" y="104" width="72" height="44" rx="4" pathLength="1" style="--d:.65s"/>
+          <rect class="ink-lt draw" x="254" y="104" width="72" height="44" rx="4" pathLength="1" style="--d:.8s"/>
+          <path class="ink-lt draw" d="M151 126 H163 M157 121 L163 126 L157 131" pathLength="1" style="--d:.95s"/>
+          <path class="ink-lt draw" d="M239 126 H251 M245 121 L251 126 L245 131" pathLength="1" style="--d:1.05s"/>
+          <rect class="ink-lt draw" x="78" y="170" width="248" height="42" rx="4" pathLength="1" style="--d:1.1s"/>
+          <path class="lead draw" d="M104 58 H114 V104" pathLength="1" style="--d:1.4s"/>
+          <path class="lead draw" d="M202 50 V104" pathLength="1" style="--d:1.55s"/>
+          <path class="lead draw" d="M202 212 V262 H132" pathLength="1" style="--d:1.7s"/>
+        </g>
+        <text class="mono-in fade" x="114" y="130" text-anchor="middle" style="--d:1s">JOB</text>
+        <text class="mono-in fade" x="202" y="130" text-anchor="middle" style="--d:1.05s">KIT</text>
+        <text class="mono-in fade" x="290" y="130" text-anchor="middle" style="--d:1.1s">CART</text>
+        <text class="mono-in fade" x="202" y="195" text-anchor="middle" style="--d:1.2s">SHIP · RETURNS · REVIEWS</text>
+        <text class="note fade" x="98" y="63" text-anchor="end" style="--d:1.8s">mission</text>
+        <text class="note fade" x="210" y="44" style="--d:1.9s">readiness kit</text>
+        <text class="note fade" x="124" y="268" text-anchor="end" style="--d:2s">trust signals</text>
+      </svg>
+    </div>
+    <footer class="card-foot">
+      <h3>Three boxes, one <em>mission</em></h3>
+      <p>Job, kit, cart. The rough map every product page redraws, with proof sitting under all three.</p>
+    </footer>
+  </article>
+
+  <!-- 04 · PRINCIPLES ────────────────────────────────────── -->
+  <article class="card">
+    <header class="card-head"><span class="num">04</span><span class="lbl">Principles</span><span class="fig">list</span></header>
+    <div class="stage">
+      <ol class="rules">
+        <li class="fade" style="--d:.15s"><span class="rn">i.</span><span>Name the <span class="hl" style="--d:.8s">job</span>, not the specs<small>Practical readiness</small></span></li>
+        <li class="fade" style="--d:.3s"><span class="rn">ii.</span><span>Price it as <span class="hl" style="--d:1s">smart value</span><small>Smart value</small></span></li>
+        <li class="fade" style="--d:.45s"><span class="rn">iii.</span><span>Cut the <span class="hl" style="--d:1.2s">research load</span><small>Simple confidence</small></span></li>
+        <li class="fade" style="--d:.6s"><span class="rn">iv.</span><span>Earn <span class="hl" style="--d:1.4s">trust</span> before the cart<small>Trust before transaction</small></span></li>
+        <li class="fade" style="--d:.75s"><span class="rn">v.</span><span>Cross-sell <span class="hl" style="--d:1.6s">kits</span>, not accessories<small>Outdoor utility</small></span></li>
+      </ol>
+    </div>
+    <footer class="card-foot">
+      <h3>Five rules of <em>readiness</em></h3>
+      <p>The brand values, one line each. Pinned to the back of every product brief.</p>
+    </footer>
+  </article>
+
+  <!-- 05 · MECHANISM ─────────────────────────────────────── -->
+  <article class="card">
+    <header class="card-head"><span class="num">05</span><span class="lbl">Mechanism</span><span class="fig">fig. 3</span></header>
+    <div class="stage">
+      <svg viewBox="0 0 400 300" role="img" aria-label="Value curve: usefulness rising with price, with good, better and best tiers marked along it">
+        <text class="mono fade" x="12" y="22" style="--d:.1s">Value curve</text>
+        <path class="guide" d="M48 44 V250 H372"/>
+        <g filter="url(#rough)">
+          <path class="guide draw" d="M108 171 V250 M240 92 V250 M331 68 V250" pathLength="1" style="--d:1.2s;opacity:.35"/>
+          <path class="ink draw" d="M48 238 C120 150 170 112 240 92 S340 66 368 60" pathLength="1" style="--d:.3s"/>
+          <path class="lead draw" d="M112 177 L150 204" pathLength="1" style="--d:1.4s"/>
+          <path class="lead draw" d="M236 86 L204 52" pathLength="1" style="--d:1.55s"/>
+          <path class="lead draw" d="M334 62 L352 32" pathLength="1" style="--d:1.7s"/>
+        </g>
+        <circle class="dot fade" cx="108" cy="171" r="6" style="--d:.8s"/>
+        <circle class="dot fade" cx="240" cy="92" r="6" style="--d:1s"/>
+        <circle class="dot fade" cx="331" cy="68" r="6" style="--d:1.2s"/>
+        <text class="note fade" x="154" y="220" style="--d:1.7s">good</text>
+        <text class="note fade" x="198" y="44" text-anchor="end" style="--d:1.85s">better</text>
+        <text class="note fade" x="340" y="22" style="--d:2s">best</text>
+        <text class="mono fade" x="58" y="56" style="--d:.2s">Use</text>
+        <text class="mono fade" x="372" y="276" text-anchor="end" style="--d:.2s">Price</text>
+      </svg>
+    </div>
+    <footer class="card-foot">
+      <h3>Good, better, <em>best</em></h3>
+      <p>Three tiers on one curve. Affordable isn't cheap, and every step up has to earn its price.</p>
+    </footer>
+  </article>
+
+  <!-- 06 · MARGIN NOTE ───────────────────────────────────── -->
+  <article class="card">
+    <header class="card-head"><span class="num">06</span><span class="lbl">Margin note</span><span class="fig">quote</span></header>
+    <div class="stage">
+      <div class="quote-mark fade" aria-hidden="true" style="--d:.1s">&ldquo;</div>
+      <p class="quote fade" style="--d:.25s">The line that sets the voice is also the plainest: <span class="hl" style="--d:.9s">here's exactly what's in the kit and when to use it</span>.</p>
+      <div class="fade" style="--d:.5s"><span class="strike" style="--d:1.8s">Shop our huge catalog now.</span><span class="strike-tag">cut</span></div>
+      <div class="attrib fade" style="--d:.6s"><span><i>— voice guide, helpful</i></span><span>B2.2</span></div>
+    </div>
+    <footer class="card-foot">
+      <h3>One <em>plain line</em> sets the voice</h3>
+      <p>Helpful beats hype. That's the whole brand in a sentence.</p>
+    </footer>
+  </article>
+
+</main>
+
+<footer class="wrap foot">
+  <div class="tokens" aria-label="Design tokens used">
+    <span class="tok"><i style="background:#DE8A25"></i>orange #DE8A25</span>
+    <span class="tok"><i style="background:#FEF9DF"></i>cream #FEF9DF</span>
+    <span class="tok"><i style="background:#282828"></i>charcoal #282828</span>
+    <span class="tok"><i style="background:#4D473E"></i>brown #4D473E</span>
+    <span class="tok"><i style="background:#B4701E"></i>orange-19 #B4701E</span>
+  </div>
+  <span>Built on <a href="../01-brand/design-system.html">design-system.html</a> · Oswald · Geist · JetBrains Mono</span>
+</footer>
+
+<script>
+  (function () {
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function reveal(card) { card.classList.add('in'); }
+
+    if (reduce || !('IntersectionObserver' in window)) {
+      cards.forEach(reveal);
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.3 });
+      cards.forEach(function (c) { io.observe(c); });
+    }
+
+    document.getElementById('replay').addEventListener('click', function () {
+      cards.forEach(function (c) { c.classList.remove('in'); });
+      void document.body.offsetWidth; // restart transitions
+      cards.forEach(function (c, i) { setTimeout(function () { reveal(c); }, 80 + i * 140); });
+    });
+  })();
+</script>
+</body>
+</html>

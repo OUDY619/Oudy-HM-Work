@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hellomaterials — Meta Testing SOP (10 Animated Components)</title>
+
+  <!-- Hellomaterials Official Fonts: Oswald (Headings) & Geist (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Hellomaterials Design System Stylesheet -->
+  <style>
+/* ==========================================================================
+   Hellomaterials — Official Design System Stylesheet for Meta Testing SOP
+   Sources: design-system.html, Color Palete.png
+   ========================================================================== */
+
+:root {
+  /* Core Brand Colors */
+  --orange:     #DE8A25;
+  --charcoal:   #282828;
+  --white:      #FFFFFF;
+  --brown:      #4D473E;
+  --cream:      #FEF9DF;
+  --graphite:   #343434;
+  --ink:        #202020;
+  --btn-ink:    #494949;
+  --subtext:    #666666;
+  --surface:    #F5F7F8;
+  --card:       #F6F6F6;
+  --field:      #EDEDED;
+  --border:     #CFCFCF;
+  --border-soft:#E6E6E6;
+  --logo-black: #020100;
+
+  /* Status & Action Colors */
+  --sale-green: #00975A;
+  --sale-red:   #C4301C;
+  --new:        #0D8756;
+  --hot:        #1D349A;
+  --soon:       #7A34D6;
+  --soldout:    #ADADAD;
+  --bubble:     #D63A2F;
+
+  /* Tints */
+  --orange-19:  #B4701E;
+  --orange-40:  #855316;
+  --brown-19:   #6F695D;
+
+  /* Shape & Radii */
+  --r-block: 10px;
+  --r-medium: 6px;
+  --r-badge: 5px;
+
+  /* Typography */
+  --f-head: 'Oswald', 'Arial Narrow', sans-serif;
+  --f-body: 'Geist', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body.hellomaterials-theme {
+  background-color: var(--charcoal);
+  color: var(--white);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+.announce {
+  background: var(--orange);
+  color: #000;
+  font-family: var(--f-head);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 7px 16px;
+}
+
+.app-masthead {
+  background: var(--charcoal);
+  border-bottom: 1px solid var(--brown);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.mast-left .brand-logo { display: flex; align-items: center; gap: 12px; }
+.logo-title h1 { font-family: var(--f-head); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.04em; color: var(--white); line-height: 1; }
+.sub-tag { font-family: var(--f-head); font-size: 0.72rem; color: var(--orange); letter-spacing: 0.12em; }
+.narrative-pill { display: flex; align-items: center; gap: 8px; background: rgba(222, 138, 37, 0.12); border: 1px solid var(--orange); color: var(--cream); padding: 6px 16px; border-radius: var(--r-block); font-family: var(--f-head); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.pill-sq { width: 8px; height: 8px; background: var(--orange); border-radius: 2px; }
+.mast-right { display: flex; gap: 10px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--f-head); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; font-size: 14px; line-height: 1; padding: 12px 20px; border-radius: var(--r-block); border: 0; cursor: pointer; text-decoration: none; transition: all 0.2s ease; }
+.btn-sm { font-size: 12px; padding: 8px 14px; }
+.btn-primary { background: var(--orange); color: #000; font-weight: 600; }
+.btn-primary:hover { background: #f59e0b; transform: translateY(-1px); }
+.btn-secondary { background: var(--brown); color: var(--cream); border: 1px solid rgba(254, 249, 223, 0.2); }
+.btn-secondary:hover { background: var(--brown-19); color: var(--white); }
+
+.icon-btn { background: var(--graphite); border: 1px solid var(--brown); color: var(--cream); width: 34px; height: 34px; border-radius: var(--r-medium); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+.icon-btn:hover { background: var(--orange); color: #000; }
+
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--cream); margin-bottom: 6px; }
+.eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--orange); border-radius: 2px; }
+.eyebrow-problem::before { background: var(--sale-red); }
+.eyebrow-evidence::before { background: var(--orange); }
+.eyebrow-solution::before { background: var(--sale-green); }
+.eyebrow-summary::before { background: var(--soon); }
+
+.badge { display: inline-block; font-family: var(--f-body); font-weight: 600; font-size: 11px; line-height: 1; padding: 5px 8px; border-radius: var(--r-badge); text-transform: uppercase; }
+.b-sale { background: var(--sale-red); color: #fff; }
+.b-new { background: var(--sale-green); color: #fff; }
+.b-hot { background: var(--hot); color: #fff; }
+.b-soon { background: var(--soon); color: #fff; }
+
+.bento-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; max-width: 1600px; margin: 28px auto; padding: 0 24px; }
+.col-span-12 { grid-column: span 12; }
+.lg\:col-span-8 { grid-column: span 8; }
+.lg\:col-span-7 { grid-column: span 7; }
+.lg\:col-span-6 { grid-column: span 6; }
+.lg\:col-span-5 { grid-column: span 5; }
+.lg\:col-span-4 { grid-column: span 4; }
+
+@media (max-width: 1024px) {
+  .lg\:col-span-8, .lg\:col-span-7, .lg\:col-span-6, .lg\:col-span-5, .lg\:col-span-4 { grid-column: span 12; }
+}
+
+.bento-card { background: var(--graphite); border: 1px solid var(--brown); border-radius: var(--r-block); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; transition: transform 0.25s ease, border-color 0.25s ease; }
+.bento-card:hover { border-color: var(--orange); transform: translateY(-2px); }
+
+.card-mast-texture::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px 350px at 90% 0%, rgba(222,138,37,.15), transparent 60%), repeating-linear-gradient(115deg, rgba(254,249,223,.02) 0 2px, transparent 2px 16px); pointer-events: none; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; position: relative; z-index: 2; }
+.card-header h2 { font-family: var(--f-head); font-size: 1.3rem; font-weight: 600; text-transform: uppercase; color: var(--white); letter-spacing: 0.02em; }
+.component-desc { font-size: 0.875rem; color: var(--cream); opacity: 0.8; margin-bottom: 16px; }
+.card-body { flex: 1; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; }
+.card-footer { margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(254, 249, 223, 0.1); position: relative; z-index: 2; }
+.caption-line { font-size: 0.8rem; color: var(--cream); opacity: 0.85; display: flex; align-items: center; gap: 6px; }
+.caption-line i { width: 14px; height: 14px; color: var(--orange); }
+
+.headline-quote { display: flex; align-items: flex-start; gap: 12px; background: rgba(196, 48, 28, 0.12); border-left: 3px solid var(--sale-red); padding: 12px 16px; border-radius: var(--r-medium); margin-bottom: 16px; }
+.headline-quote p { font-size: 0.95rem; font-style: italic; color: var(--cream); }
+.quote-icon { width: 20px; height: 20px; color: var(--sale-red); flex-shrink: 0; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.kpi-box { background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.kpi-label { font-family: var(--f-head); font-size: 0.78rem; color: var(--cream); opacity: 0.75; letter-spacing: 0.06em; }
+.kpi-value-row { display: flex; align-items: baseline; justify-content: space-between; }
+.kpi-number { font-family: var(--f-head); font-size: 1.7rem; font-weight: 700; line-height: 1; }
+.box-danger .kpi-number { color: var(--sale-red); }
+.box-warning .kpi-number { color: var(--orange); }
+.box-info .kpi-number { color: var(--sale-green); }
+.box-purple .kpi-number { color: var(--soon); }
+.kpi-subtext { font-size: 0.72rem; color: var(--subtext); }
+
+.calculator-panel { background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 14px; }
+.calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.calc-title { display: flex; align-items: center; gap: 8px; font-family: var(--f-head); font-size: 0.88rem; color: var(--cream); }
+.calc-title i { width: 16px; height: 16px; color: var(--orange); }
+.calc-result { font-family: var(--f-head); font-size: 1.15rem; font-weight: 700; color: var(--orange); }
+.slider-group label { font-family: var(--f-head); font-size: 0.8rem; color: var(--cream); letter-spacing: 0.04em; }
+input[type=range] { width: 100%; accent-color: var(--orange); }
+
+.table-filter-bar { display: flex; gap: 8px; margin-bottom: 12px; }
+.filter-pill { background: var(--charcoal); border: 1px solid var(--brown); color: var(--cream); font-family: var(--f-head); font-size: 0.75rem; padding: 4px 10px; border-radius: var(--r-medium); cursor: pointer; transition: all 0.2s; }
+.filter-pill.active, .filter-pill:hover { background: var(--orange); color: #000; border-color: var(--orange); }
+
+.data-table, .summary-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.data-table th, .summary-table th { background: var(--charcoal); color: var(--cream); font-family: var(--f-head); font-weight: 500; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.06em; padding: 10px 12px; border-bottom: 1px solid var(--brown); text-align: left; }
+.data-table td, .summary-table td { padding: 10px 12px; border-bottom: 1px solid rgba(254, 249, 223, 0.08); }
+
+.low-cpm { color: var(--sale-green); font-weight: 600; }
+.high-cpm { color: var(--sale-red); font-weight: 600; }
+.high-lpv { color: var(--orange); }
+.low-lpv { color: var(--subtext); }
+.pur-zero { color: var(--sale-red); font-weight: 700; }
+.pur-active { color: var(--sale-green); font-weight: 700; }
+
+.scenario-simulator-bar { display: flex; align-items: center; gap: 10px; background: var(--charcoal); padding: 10px 14px; border-radius: var(--r-medium); border: 1px solid var(--brown); margin-bottom: 14px; }
+.sim-label { font-family: var(--f-head); font-size: 0.82rem; color: var(--orange); display: flex; align-items: center; gap: 6px; }
+#scenario-selector { background: var(--charcoal); color: var(--white); border: 1px solid var(--brown); padding: 6px 12px; border-radius: var(--r-medium); font-family: var(--f-body); font-size: 0.8rem; flex: 1; outline: none; }
+.flowchart-container { display: flex; flex-direction: column; gap: 10px; }
+.flow-stage-header { background: rgba(222, 138, 37, 0.12); border-left: 3px solid var(--orange); padding: 6px 12px; border-radius: 4px; }
+.stage-title { font-family: var(--f-head); font-size: 0.78rem; color: var(--orange); letter-spacing: 0.06em; }
+.flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 900px) { .flow-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.flow-node { background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 10px; display: flex; flex-direction: column; gap: 4px; transition: all 0.3s ease; }
+.flow-node.node-active { border-color: var(--orange); box-shadow: 0 0 14px rgba(222, 138, 37, 0.3); }
+.flow-node.node-highlight-kill { border-color: var(--sale-red); background: rgba(196, 48, 28, 0.15); }
+.flow-node.node-highlight-continue { border-color: var(--sale-green); background: rgba(0, 151, 90, 0.15); }
+.node-step { font-family: var(--f-head); font-size: 0.68rem; color: var(--cream); opacity: 0.6; }
+.node-title { font-family: var(--f-head); font-size: 0.8rem; color: var(--white); }
+.node-actions { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.node-branch { font-family: var(--f-body); font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.branch-no { background: rgba(255, 255, 255, 0.05); color: var(--cream); }
+.branch-yes { background: rgba(222, 138, 37, 0.2); color: var(--orange); }
+.branch-yes-green { background: rgba(0, 151, 90, 0.2); color: var(--sale-green); }
+.branch-kill { background: rgba(196, 48, 28, 0.2); color: var(--sale-red); }
+
+.flow-hard-gate { display: flex; gap: 10px; }
+.gate-branch { flex: 1; padding: 10px; border-radius: var(--r-medium); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; font-family: var(--f-head); }
+.kill-gate { background: rgba(196, 48, 28, 0.12); border: 1px solid var(--sale-red); color: var(--sale-red); }
+.pass-gate { background: rgba(0, 151, 90, 0.12); border: 1px solid var(--sale-green); color: var(--sale-green); }
+
+.sim-verdict-box { display: flex; align-items: flex-start; gap: 10px; background: var(--charcoal); border: 1px solid var(--orange); padding: 10px 14px; border-radius: var(--r-medium); font-size: 0.82rem; }
+.verdict-icon { width: 18px; height: 18px; color: var(--orange); flex-shrink: 0; }
+
+.action-badge { font-family: var(--f-head); font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; }
+.badge-continue { background: rgba(222, 138, 37, 0.2); color: var(--orange); }
+.badge-kill { background: rgba(196, 48, 28, 0.25); color: var(--sale-red); }
+.badge-pass { background: rgba(0, 151, 90, 0.25); color: var(--sale-green); }
+
+.chart-controls-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.control-label { font-family: var(--f-head); font-size: 0.78rem; color: var(--cream); }
+.btn-sm.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: 600; }
+.chart-container-box { position: relative; height: 220px; width: 100%; }
+
+.signal-benchmark-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.signal-item { display: flex; flex-direction: column; gap: 4px; }
+.signal-name { font-family: var(--f-head); font-size: 0.78rem; color: var(--cream); }
+.signal-bar { font-family: var(--f-head); font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; color: #fff; }
+.bar-current { background: var(--sale-red); }
+.bar-proposed { background: var(--sale-green); }
+
+.recovery-metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.rec-metric { background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 8px 12px; text-align: center; }
+.rec-val { font-family: var(--f-head); font-size: 1.2rem; font-weight: 700; color: var(--sale-green); }
+.rec-lbl { font-family: var(--f-head); font-size: 0.72rem; color: var(--cream); opacity: 0.7; }
+
+.concept-brief-generator { background: var(--charcoal); border: 1px solid var(--soon); padding: 10px 14px; border-radius: var(--r-medium); margin-top: 12px; }
+.brief-title { display: flex; align-items: center; gap: 6px; font-family: var(--f-head); font-size: 0.8rem; color: var(--soon); margin-bottom: 4px; }
+
+.mismatch-grid { display: flex; align-items: center; gap: 12px; }
+@media (max-width: 768px) { .mismatch-grid { flex-direction: column; } }
+
+.mismatch-card { flex: 1; background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 12px; }
+.mismatch-hdr { display: flex; align-items: center; gap: 6px; font-family: var(--f-head); font-size: 0.82rem; margin-bottom: 8px; color: var(--orange); }
+.mismatch-metrics { display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; }
+.m-row { display: flex; justify-content: space-between; }
+.text-danger { color: var(--sale-red); }
+.text-success { color: var(--sale-green); }
+.mismatch-arrow { display: flex; flex-direction: column; align-items: center; color: var(--orange); font-family: var(--f-head); font-size: 0.75rem; }
+
+/* COMPONENT 11: MAP & GEO SKEW SPECIFIC */
+.open-items-banner { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+
+.open-item-box { background: var(--charcoal); border: 1px solid var(--orange); border-radius: var(--r-medium); padding: 14px; display: flex; align-items: flex-start; gap: 12px; font-size: 0.82rem; }
+.flag-icon { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }
+
+.skew-threshold-control { background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 16px; margin-bottom: 16px; }
+.threshold-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.threshold-label { font-family: var(--f-head); font-size: 0.9rem; color: var(--cream); display: flex; align-items: center; gap: 8px; }
+.threshold-value { font-family: var(--f-head); font-size: 1.2rem; font-weight: 700; color: var(--orange); }
+
+.threshold-verdict-alert { margin-top: 12px; padding: 10px 14px; border-radius: var(--r-medium); font-family: var(--f-head); font-size: 0.88rem; display: flex; align-items: center; gap: 10px; }
+.verdict-alert-danger { background: rgba(196, 48, 28, 0.2); border: 1px solid var(--sale-red); color: var(--sale-red); }
+.verdict-alert-safe { background: rgba(0, 151, 90, 0.2); border: 1px solid var(--sale-green); color: var(--sale-green); }
+
+.map-table-grid { display: flex; flex-direction: column; gap: 20px; }
+
+.world-map-wrapper { background: #1a1a1a; border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 16px; position: relative; min-height: 360px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+.map-overlay-title { font-family: var(--f-head); font-size: 0.85rem; color: var(--cream); opacity: 0.9; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+
+.world-map-svg { width: 100%; height: 280px; overflow: visible; }
+.map-pin { cursor: pointer; transition: transform 0.2s ease; }
+.map-pin:hover { transform: scale(1.2); }
+
+.pin-pulse { animation: pin-pulse-anim 2s infinite ease-in-out; opacity: 0.6; transform-origin: center; }
+@keyframes pin-pulse-anim { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.5); opacity: 0.15; } }
+
+.pin-pulse-green { fill: var(--sale-green); }
+.pin-pulse-red { fill: var(--sale-red); }
+.pin-pulse-amber { fill: var(--orange); }
+
+.pin-dot { stroke: #fff; stroke-width: 1.5; }
+.pin-green { fill: var(--sale-green); }
+.pin-red { fill: var(--sale-red); }
+.pin-amber { fill: var(--orange); }
+
+.map-pin-label { font-family: var(--f-head); font-size: 12px; fill: var(--white); font-weight: 700; stroke: #000000; stroke-width: 3px; paint-order: stroke fill; stroke-linejoin: round; }
+
+.map-legend { display: flex; gap: 16px; font-size: 0.78rem; color: var(--cream); margin-top: 12px; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: var(--r-medium); border: 1px solid rgba(255,255,255,0.05); }
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-green { background: var(--sale-green); box-shadow: 0 0 8px var(--sale-green); }
+.dot-red { background: var(--sale-red); box-shadow: 0 0 8px var(--sale-red); }
+
+.country-tier-table-wrapper { overflow-x: auto; background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 12px; width: 100%; }
+
+.tier-toggle-btn { font-family: var(--f-head); font-size: 0.75rem; padding: 4px 10px; border-radius: var(--r-badge); border: 0; cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.04em; }
+.tier-btn-high { background: rgba(0, 151, 90, 0.25); color: var(--sale-green); border: 1px solid var(--sale-green); }
+.tier-btn-high:hover { background: var(--sale-green); color: #fff; }
+.tier-btn-low { background: rgba(196, 48, 28, 0.25); color: var(--sale-red); border: 1px solid var(--sale-red); }
+.tier-btn-low:hover { background: var(--sale-red); color: #fff; }
+
+/* COMPONENT 12: CBO VS ABO AUDIENCE CANNIBALIZATION SPECIFIC */
+.cbo-simulator-grid { display: flex; flex-direction: column; gap: 20px; }
+
+.cbo-sliders-card { background: var(--charcoal); border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.cbo-slider-group { display: flex; flex-direction: column; gap: 6px; }
+.cbo-slider-group label { font-family: var(--f-head); font-size: 0.85rem; color: var(--cream); display: flex; justify-content: space-between; }
+
+.venn-visual-container { background: #181818; border: 1px solid var(--brown); border-radius: var(--r-medium); padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; min-height: 320px; box-shadow: inset 0 0 24px rgba(0,0,0,0.6); }
+.venn-svg { width: 100%; max-width: 440px; height: 250px; overflow: visible; }
+
+.circle-abo { fill: rgba(29, 52, 154, 0.25); stroke: #1D349A; stroke-width: 2.5; transition: all 0.4s ease; }
+.circle-cbo { fill: rgba(222, 138, 37, 0.25); stroke: #DE8A25; stroke-width: 2.5; transition: all 0.4s ease; }
+.circle-overlap-clip { fill: rgba(196, 48, 28, 0.55); stroke: #C4301C; stroke-width: 2; animation: pulse-hazard 1.5s infinite alternate; }
+
+@keyframes pulse-hazard {
+  0% { fill-opacity: 0.4; stroke-width: 2; }
+  100% { fill-opacity: 0.75; stroke-width: 3.5; filter: drop-shadow(0 0 8px var(--sale-red)); }
+}
+
+.venn-label-abo { font-family: var(--f-head); font-size: 13px; fill: #60a5fa; font-weight: 700; text-anchor: middle; }
+.venn-label-cbo { font-family: var(--f-head); font-size: 13px; fill: var(--orange); font-weight: 700; text-anchor: middle; }
+.venn-label-overlap { font-family: var(--f-head); font-size: 12px; fill: #ff8080; font-weight: 700; text-anchor: middle; text-shadow: 0 1px 4px #000; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: var(--graphite); border: 1px solid var(--orange); border-radius: var(--r-block); width: 90%; max-width: 900px; padding: 24px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--brown); padding-bottom: 12px; }
+.modal-close { background: transparent; border: none; color: var(--cream); font-size: 1.5rem; cursor: pointer; }
+
+
+.map-land-base { fill: #26262a; stroke: #3c3c44; stroke-width: 0.8; transition: fill 0.3s ease; }
+.map-country-path { fill: #323238; stroke: #4a4a54; stroke-width: 1; cursor: pointer; transition: all 0.3s ease; }
+.map-country-path:hover { fill: #DE8A25; stroke: #FFC069; filter: drop-shadow(0 0 8px rgba(222, 138, 37, 0.7)); }
+.map-country-path.active-highlight { fill: var(--orange) !important; stroke: #FFFFFF !important; stroke-width: 1.8 !important; filter: drop-shadow(0 0 12px var(--orange)) !important; }
+.map-pin.active-pin text { fill: var(--orange); font-size: 14px; font-weight: 800; }
+.map-pin.active-pin circle:nth-child(2) { stroke: var(--orange) !important; stroke-width: 3px !important; }
+
+/* Executive Presentation Navigation Bar */
+.deck-nav-bar {
+  display: flex;
+  gap: 10px;
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--brown);
+  border-radius: var(--r-medium);
+  padding: 8px 16px;
+  margin-bottom: 24px;
+  position: sticky;
+  top: 72px;
+  z-index: 99;
+  overflow-x: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.deck-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-head);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--cream);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: var(--r-badge);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.deck-nav-btn:hover {
+  background: rgba(222, 138, 37, 0.2);
+  border-color: var(--orange);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.deck-nav-btn.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #1A1A1A;
+  box-shadow: 0 0 12px rgba(222, 138, 37, 0.4);
+}
+
+.section-divider-banner {
+  grid-column: span 12;
+  background: linear-gradient(90deg, rgba(222, 138, 37, 0.15) 0%, rgba(40, 40, 40, 0.6) 100%);
+  border-left: 4px solid var(--orange);
+  border-radius: var(--r-small);
+  padding: 12px 18px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-divider-title {
+  font-family: var(--f-head);
+  font-size: 1.05rem;
+  color: var(--cream);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-badge-pill {
+  font-family: var(--f-head);
+  font-size: 0.72rem;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--brown);
+  color: var(--cream);
+  padding: 3px 10px;
+  border-radius: var(--r-badge);
+}
+
+</style>
+</head>
+
+<body class="hellomaterials-theme">
+
+  <!-- Top Announcement Bar (Hellomaterials Brand) -->
+  <div class="announce">
+    <span>HELLOMATERIALS MEDIA BUYING &amp; CREATIVE TESTING SOP PROPOSAL (V1)</span>
+  </div>
+
+  <!-- Top Masthead Header -->
+  <header class="app-masthead">
+    <div class="mast-left">
+      <!-- Hellomaterials Logo SVG -->
+      <div class="brand-logo">
+        <svg class="logo-svg" viewBox="0 0 3000 3000" width="36" height="36">
+          <circle r="1500" cy="1500" cx="1500" fill="#de8a25"></circle>
+          <path
+            d="M1028.05,825.61c4,14.69,12.75,30.3,13.29,46.74l2.23,67.07c.4,11.94,8.17,21.26,12.76,34.16-24.66,1.88-44.37-18.63-48.74-42.2-2.47-13.31-3.56-26.86-9.05-39.09-9.01-20.03-14.82-39.52-19.39-61.42-4.74,13.96-1.73,26.37,1.27,39.87-5.82-1.81-7.31-6.58-11.37-10.64-.71,11.03,4.87,18.56,10.49,26.43,9.76,13.65,19.16,39.81,15.1,47.13-3.71,6.7-32.28-5.48-48.32-17.75-6.04-4.63-8.3-11.94-7.46-19.55,2.73-24.55,7.68-48.59,17.21-71.44,6.25-14.98,17.25-25.84,26.24-39.6-16.66,8.7-34.56,20.66-39.75,39.16l-21.05,75.06c-3.36-20.06-6.95-40.55-6.34-61.94.45-15.53,7.23-28.74,9.52-45.08-16.07,16.29-20.68,38.37-18.92,60.63,1.46,18.4,2.16,36.32,7.14,53.75,6.64,23.22,33.47,25.56,41.49,35.33l32.06,39.04c3.02,3.68.14,12.34-2,15.8l-31.02,50.07c-27.71,44.73-54.47,20.44-78.04,27.61l-56.96,17.33c-26.26,3.27-53.1,3.5-79.61-.14-19.18-2.64-42.32-4.32-53.89,15.05-11.86,19.85-25.65,68.85-25.7,95.61-14.39,14.82-32.37,26.88-50.7,37.01l-33.85,18.71"
+            fill="#282828"></path>
+        </svg>
+        <div class="logo-title">
+          <h1>HELLOMATERIALS</h1>
+          <span class="sub-tag">META TESTING SOP DECK</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mast-center">
+      <div class="narrative-pill">
+        <span class="pill-sq"></span>
+        <span>FLOW: PROBLEM &rarr; EVIDENCE &rarr; ROOT CAUSE &rarr; SOLUTION &rarr; OUTCOME</span>
+      </div>
+    </div>
+
+    <div class="mast-right">
+      <button class="btn btn-secondary btn-sm" id="toggle-data-missing-btn" onclick="toggleDataMissing()">
+        <i data-lucide="alert-triangle"></i>
+        <span id="missing-btn-text">TOGGLE MISSING DATA</span>
+      </button>
+
+      <button class="btn btn-primary btn-sm" onclick="reanimateAll()">
+        <i data-lucide="refresh-cw"></i>
+        <span>RE-ANIMATE DECK</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Presentation Executive Navigation Bar -->
+  <nav class="deck-nav-bar" id="deck-navigation">
+    <a href="#section-1" class="deck-nav-btn active"><i data-lucide="alert-circle"></i> 1. THE PROBLEM (COMP 1-4)</a>
+    <a href="#section-2" class="deck-nav-btn"><i data-lucide="trending-down"></i> 2. EVIDENCE (COMP 5-6, 10)</a>
+    <a href="#section-3" class="deck-nav-btn"><i data-lucide="globe"></i> 3. GEO GOVERNANCE (COMP 7, 11)</a>
+    <a href="#section-4" class="deck-nav-btn"><i data-lucide="layers"></i> 4. ABO VS CBO (COMP 8, 12)</a>
+    <a href="#section-5" class="deck-nav-btn"><i data-lucide="check-square"></i> 5. SOP RULES (COMP 9)</a>
+  </nav>
+
+
+  <!-- Main Bento Dashboard Container -->
+  <main class="bento-container">
+
+    <div class="section-divider-banner" id="section-1"><div class="section-divider-title"><i data-lucide="alert-circle"></i> SECTION 1: THE PROBLEM &amp; FALSE-KILL DIAGNOSTIC</div><span class="section-badge-pill">COMPONENTS 1 – 4</span></div>
+
+    <!-- COMPONENT 1: Executive Headline KPI & Problem Deck -->
+    <section class="bento-card col-span-12 lg:col-span-8 card-mast-texture" id="component-1">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-problem">SECTION 1 — THE PROBLEM</span>
+          <h2>COMPONENT 1: EXECUTIVE KPI &amp; WASTED BUDGET ESTIMATOR</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-1-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <div class="headline-quote">
+          <i data-lucide="quote" class="quote-icon"></i>
+          <p>"Creatives are being killed prematurely at the $70–$100 gate based on misleading soft metrics instead of
+            real conversion performance."</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-box box-danger">
+            <span class="kpi-label">FALSE-KILL RATE</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number count-up" data-target="42.8" data-prefix="" data-suffix="%">0.0%</span>
+              <span class="badge b-sale"><i data-lucide="trending-up"></i> CRITICAL</span>
+            </div>
+            <span class="kpi-subtext">Cut before fair audience test</span>
+          </div>
+
+          <div class="kpi-box box-warning">
+            <span class="kpi-label">WASTED / CREATIVE</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number count-up" data-target="30" data-prefix="$" data-suffix="">$0</span>
+              <span class="badge b-hot">DELAYED KILL</span>
+            </div>
+            <span class="kpi-subtext">$100 vs $70 early cutoff</span>
+          </div>
+
+          <div class="kpi-box box-info">
+            <span class="kpi-label">AVG STALL DURATION</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number count-up" data-target="8.4" data-prefix="" data-suffix=" DAYS">0 DAYS</span>
+              <span class="badge b-soon">$10/DAY BURN</span>
+            </div>
+            <span class="kpi-subtext">Stuck in 3–5 result window</span>
+          </div>
+
+          <div class="kpi-box box-purple">
+            <span class="kpi-label">LOST WINNER ASSETS</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number count-up" data-target="18" data-prefix="" data-suffix="/MO">0</span>
+              <span class="badge b-new">RECOVERABLE</span>
+            </div>
+            <span class="kpi-subtext">Discarded top concepts</span>
+          </div>
+        </div>
+
+        <!-- Interactive Budget Impact Simulator -->
+        <div class="calculator-panel">
+          <div class="calc-header">
+            <div class="calc-title">
+              <i data-lucide="calculator"></i>
+              <span>LIVE ANNUAL BUDGET WASTE ESTIMATOR</span>
+            </div>
+            <span class="calc-result" id="annual-waste-display">$43,200 / YEAR WASTED</span>
+          </div>
+          <div class="slider-group">
+            <label for="creative-volume-slider">MONTHLY TESTED CREATIVES: <strong
+                id="creative-vol-val">120</strong></label>
+            <input type="range" id="creative-volume-slider" min="20" max="500" value="120" step="10"
+              oninput="updateBudgetCalculator()">
+          </div>
+        </div>
+
+        <div class="missing-data-alert missing-data-flag" style="display:none;">
+          <i data-lucide="alert-triangle"></i>
+          <span>⚠️ DATA MISSING: False-kill rate requires sheet column 'Exit_Reason_Tag' from Meta export.</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Current $100 fixed gate burns $30
+          extra per killed creative without improving conversion accuracy.</p>
+      </div>
+    </section>
+
+    <!-- COMPONENT 2: Geo / CPM Distortion Matrix -->
+    <section class="bento-card col-span-12 lg:col-span-4" id="component-2">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-evidence">SECTION 2 — THE EVIDENCE</span>
+          <h2>COMPONENT 2: GEO CPM DISTORTION MATRIX</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-2-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Proves low-CPM cheap geos absorb spend while inflating soft metrics (LPV) with 0
+          purchases.</p>
+
+        <div class="table-filter-bar">
+          <button class="filter-pill active" onclick="filterGeoTable('all')">ALL GEOS</button>
+          <button class="filter-pill" onclick="filterGeoTable('low')">CHEAP / LOW CPM</button>
+          <button class="filter-pill" onclick="filterGeoTable('high')">HIGH QUALITY (USA)</button>
+        </div>
+
+        <div class="table-responsive compact-table-wrapper">
+          <table class="data-table" id="geo-data-table">
+            <thead>
+              <tr>
+                <th>COUNTRY</th>
+                <th>SPEND %</th>
+                <th>CPM</th>
+                <th>LPV RATE</th>
+                <th>PURCHASES</th>
+                <th>QUALITY TIER</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-tier="low">
+                <td>🇵🇭 PH / SEA</td>
+                <td>38.4%</td>
+                <td><span class="cpm-val low-cpm">$4.20</span></td>
+                <td><span class="lpv-val high-lpv">84.2%</span></td>
+                <td><span class="pur-zero">0</span></td>
+                <td><span class="badge b-sale">LOW CPM DRIFT</span></td>
+              </tr>
+              <tr data-tier="low">
+                <td>🇮🇳 IN / SA</td>
+                <td>26.1%</td>
+                <td><span class="cpm-val low-cpm">$2.80</span></td>
+                <td><span class="lpv-val high-lpv">88.5%</span></td>
+                <td><span class="pur-zero">0</span></td>
+                <td><span class="badge b-sale">LOW CPM DRIFT</span></td>
+              </tr>
+              <tr data-tier="high">
+                <td>🇺🇸 USA (TARGET)</td>
+                <td>22.5%</td>
+                <td><span class="cpm-val high-cpm">$38.50</span></td>
+                <td><span class="lpv-val low-lpv">42.1%</span></td>
+                <td><span class="pur-active">3</span></td>
+                <td><span class="badge b-new">HIGH QUALITY</span></td>
+              </tr>
+              <tr data-tier="high">
+                <td>🇨🇦 CANADA</td>
+                <td>13.0%</td>
+                <td><span class="cpm-val high-cpm">$31.20</span></td>
+                <td><span class="lpv-val low-lpv">46.0%</span></td>
+                <td><span class="pur-active">1</span></td>
+                <td><span class="badge b-new">HIGH QUALITY</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Low-CPM geos absorb 64.5% of test
+          budget with 0 purchases, starving USA delivery before $70.</p>
+      </div>
+    </section>
+
+    <!-- COMPONENT 3: Two-Stage Testing Gate Flowchart ($70 -> $100) -->
+    <section class="bento-card col-span-12 lg:col-span-7" id="component-3">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-solution">SECTION 4 — THE SOLUTION</span>
+          <h2>COMPONENT 3: INTERACTIVE TWO-STAGE DECISION TREE</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-3-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <div class="scenario-simulator-bar">
+          <span class="sim-label"><i data-lucide="play-circle"></i> TEST SCENARIO SIMULATOR:</span>
+          <select id="scenario-selector" onchange="runScenarioSimulation()">
+            <option value="scenario-1">Scenario 1: Low-CPM Geo Skew (0 Purchases @ $70)</option>
+            <option value="scenario-2">Scenario 2: USA High CPM + Strong Secondary Metrics (0 Purchases @ $70)</option>
+            <option value="scenario-3">Scenario 3: Purchase Achieved @ $70</option>
+            <option value="scenario-4">Scenario 4: $100 Gate — 0 Purchases</option>
+            <option value="scenario-5">Scenario 5: $100 Gate — 2 Purchases</option>
+          </select>
+        </div>
+
+        <div class="flowchart-container" id="flowchart-tree">
+          <div class="flow-stage-header">
+            <span class="stage-title">CHECKPOINT A: DAY 7 / $70 SPEND (SIGNAL CHECK)</span>
+          </div>
+
+          <div class="flow-grid">
+            <div class="flow-node" id="node-start">
+              <span class="node-step">STEP 1</span>
+              <span class="node-title">SUFFICIENT IMPRESSIONS / LPV?</span>
+              <div class="node-actions">
+                <span class="node-branch branch-no">NO &rarr; CONTINUE $100</span>
+                <span class="node-branch branch-yes">YES &rarr; STEP 2</span>
+              </div>
+            </div>
+
+            <div class="flow-node" id="node-purchase">
+              <span class="node-step">STEP 2</span>
+              <span class="node-title">PURCHASE ACHIEVED?</span>
+              <div class="node-actions">
+                <span class="node-branch branch-yes-green">YES &rarr; CONTINUE TO $100</span>
+                <span class="node-branch branch-no">NO &rarr; STEP 3</span>
+              </div>
+            </div>
+
+            <div class="flow-node" id="node-geo">
+              <span class="node-step">STEP 3</span>
+              <span class="node-title">SPEND SKEWED TO CHEAP GEOS?</span>
+              <div class="node-actions">
+                <span class="node-branch branch-kill">YES &rarr; KILL @ $70</span>
+                <span class="node-branch branch-yes">NO (USA HIGH CPM) &rarr; STEP 4</span>
+              </div>
+            </div>
+
+            <div class="flow-node" id="node-metrics">
+              <span class="node-step">STEP 4</span>
+              <span class="node-title">SECONDARY METRICS CHECK</span>
+              <div class="node-actions">
+                <span class="node-branch branch-yes-green">STRONG &rarr; CONTINUE $100</span>
+                <span class="node-branch branch-kill">WEAK &rarr; KILL @ $70</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-stage-header stage-b">
+            <span class="stage-title">CHECKPOINT B: DAY 10 / $100 SPEND (HARD RULE)</span>
+          </div>
+
+          <div class="flow-hard-gate">
+            <div class="gate-branch kill-gate" id="gate-b-kill">
+              <i data-lucide="x-circle"></i>
+              <span>0 PURCHASES &rarr; <strong>KILL IMMEDIATELY</strong></span>
+            </div>
+            <div class="gate-branch pass-gate" id="gate-b-pass">
+              <i data-lucide="check-circle-2"></i>
+              <span>1+ PURCHASES &rarr; <strong>PASS TO SCALING</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sim-verdict-box" id="sim-verdict">
+          <i data-lucide="compass" class="verdict-icon"></i>
+          <div>
+            <strong id="sim-verdict-title">SCENARIO VERDICT:</strong>
+            <p id="sim-verdict-text">Select a scenario above to test the media buyer decision path.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Decision tree cuts bad delivery at
+          $70 while protecting high-CPM creatives until $100.</p>
+      </div>
+    </section>
+
+    <!-- COMPONENT 4: Media Buyer 1-Page Summary Reference Card -->
+    <section class="bento-card col-span-12 lg:col-span-5" id="component-4">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-summary">SECTION 5 — RULES SUMMARY</span>
+          <h2>COMPONENT 4: MEDIA BUYER SOP CHEAT SHEET</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-4-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Printable reference matrix for media buyers to execute gate decisions instantly.</p>
+
+        <div class="table-responsive">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>SPEND</th>
+                <th>CONDITION OBSERVED</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>$70</strong></td>
+                <td>Not enough impressions / LPV signal</td>
+                <td><span class="action-badge badge-continue">CONTINUE</span></td>
+              </tr>
+              <tr>
+                <td><strong>$70</strong></td>
+                <td>1+ Purchase achieved</td>
+                <td><span class="action-badge badge-continue">CONTINUE</span></td>
+              </tr>
+              <tr>
+                <td><strong>$70</strong></td>
+                <td>High CPM (USA) + Good Hook/CTR, 0 Purchases</td>
+                <td><span class="action-badge badge-continue">CONTINUE</span></td>
+              </tr>
+              <tr>
+                <td><strong>$70</strong></td>
+                <td>Low-CPM cheap geo skew, 0 Purchases</td>
+                <td><span class="action-badge badge-kill">KILL</span></td>
+              </tr>
+              <tr>
+                <td><strong>$70</strong></td>
+                <td>Enough signal + Weak soft metrics + 0 Purchases</td>
+                <td><span class="action-badge badge-kill">KILL</span></td>
+              </tr>
+              <tr>
+                <td><strong>$100</strong></td>
+                <td>1+ Purchases achieved</td>
+                <td><span class="action-badge badge-pass">PASS</span></td>
+              </tr>
+              <tr>
+                <td><strong>$100</strong></td>
+                <td>0 Purchases achieved</td>
+                <td><span class="action-badge badge-kill">KILL</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Standalone media buyer rulebook
+          eliminating subjective guesswork.</p>
+      </div>
+    </section>
+
+    <div class="section-divider-banner" id="section-2"><div class="section-divider-title"><i data-lucide="trending-down"></i> SECTION 2: EMPIRICAL PERFORMANCE EVIDENCE &amp; WATERFALL</div><span class="section-badge-pill">COMPONENTS 5, 6, 10</span></div>
+
+    <!-- COMPONENT 5: Exit Gate Correlation Scatter Plot & Slope Chart -->
+    <section class="bento-card col-span-12 lg:col-span-6" id="component-5">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-evidence">POINT 2 — EVIDENCE</span>
+          <h2>COMPONENT 5: EXIT GATE CPA CORRELATION ENGINE</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-5-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <div class="chart-controls-row">
+          <span class="control-label">VIEW CHART:</span>
+          <button class="btn-sm active" id="btn-scatter" onclick="switchComp5Chart('scatter')">EXIT CPA VS SCALED
+            CPA</button>
+          <button class="btn-sm" id="btn-slope" onclick="switchComp5Chart('slope')">$10/DAY VS SCALED CPA
+            MIGRATION</button>
+        </div>
+
+        <div class="chart-container-box">
+          <canvas id="comp5Canvas"></canvas>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> 10-result gate shows weak
+          correlation (R² = 0.18) with scaled performance due to $10/day audience mismatch.</p>
+      </div>
+    </section>
+
+    <!-- COMPONENT 6: Exit Gate Success Rate Comparison Visualizer -->
+    <section class="bento-card col-span-12 lg:col-span-6" id="component-6">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-solution">POINT 2 — SOLUTION</span>
+          <h2>COMPONENT 6: EXIT GATE SUCCESS RATE VISUALIZER</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-6-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Comparing scaling survival rate: Current 10-Result Count Gate vs Proposed Multi-Signal
+          Exit.</p>
+
+        <div class="chart-container-box">
+          <canvas id="comp6Canvas"></canvas>
+        </div>
+
+        <div class="signal-benchmark-list">
+          <div class="signal-item">
+            <span class="signal-name">Current Gate: Fixed 10 Results</span>
+            <div class="signal-bar bar-current" style="width: 32%;">32% POST-SCALE SURVIVAL</div>
+          </div>
+          <div class="signal-item">
+            <span class="signal-name">Proposed: CPA Stability + Speed Signal</span>
+            <div class="signal-bar bar-proposed" style="width: 68%;">68% POST-SCALE SURVIVAL</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Multi-signal exit point increases
+          7-day scaling survival rate from 32% to 68%.</p>
+      </div>
+    </section>
+
+    <div class="section-divider-banner" id="section-3"><div class="section-divider-title"><i data-lucide="globe"></i> SECTION 3: OPEN DECISIONS &amp; GEO-SKEW GOVERNANCE</div><span class="section-badge-pill">COMPONENTS 7 &amp; 11</span></div>
+
+    <!-- COMPONENT 7: Zombie Campaign Recovery Pipeline & Net Profit Waterfall -->
+    <section class="bento-card col-span-12 lg:col-span-6" id="component-7">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-solution">POINT 3 — SOLUTION</span>
+          <h2>COMPONENT 7: ZOMBIE CAMPAIGN NET PROFIT WATERFALL</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-7-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Recovers false-killed &amp; stalled (3-5 result) creatives lost to cold testing side
+          effects.</p>
+
+        <div class="chart-container-box">
+          <canvas id="comp7Canvas"></canvas>
+        </div>
+
+        <div class="recovery-metrics-row">
+          <div class="rec-metric">
+            <span class="rec-val">$14,250</span>
+            <span class="rec-lbl">STALL BUDGET SAVED</span>
+          </div>
+          <div class="rec-metric">
+            <span class="rec-val">14 ASSETS</span>
+            <span class="rec-lbl">WINNERS SCALED</span>
+          </div>
+          <div class="rec-metric">
+            <span class="rec-val">+31.4%</span>
+            <span class="rec-lbl">NET TESTING ROI</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Zombie campaign turns net-negative
+          stalled test spend into $14,250 net recovered profit.</p>
+      </div>
+    </section>
+
+    <div class="section-divider-banner" id="section-4"><div class="section-divider-title"><i data-lucide="layers"></i> SECTION 4: ABO VS CBO BIDDING MECHANICS &amp; CANNIBALIZATION</div><span class="section-badge-pill">COMPONENTS 8 &amp; 12</span></div>
+
+    <!-- COMPONENT 8: Stall Window & Audience Depletion Monitor -->
+    <section class="bento-card col-span-12 lg:col-span-6" id="component-8">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-evidence">POINT 3 — EVIDENCE</span>
+          <h2>COMPONENT 8: COLD AUDIENCE DEPLETION MONITOR</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-8-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Tracks metrics during 3–5 result stall: Frequency rising, Reach dropping, CPM spiking
+          at $10/day.</p>
+
+        <div class="chart-container-box">
+          <canvas id="comp8Canvas"></canvas>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> $10/day cold campaigns exhaust
+          audience pool by day 6, causing conversions to stall before gate exit.</p>
+      </div>
+    </section>
+
+    <div class="section-divider-banner" id="section-5"><div class="section-divider-title"><i data-lucide="check-square"></i> SECTION 5: STANDARD OPERATING PROTOCOL &amp; TESTING MATRIX</div><span class="section-badge-pill">COMPONENT 9</span></div>
+
+    <!-- COMPONENT 9: Concept-Family Performance Matrix -->
+    <section class="bento-card col-span-12 lg:col-span-6" id="component-9">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-solution">POINT 4 — STRATEGY</span>
+          <h2>COMPONENT 9: CONCEPT-FAMILY SUCCESS MATRIX</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-9-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Evaluates concept families (Angles, Demos, UGC) instead of isolated assets to direct
+          creative production.</p>
+
+        <div class="chart-container-box">
+          <canvas id="comp9Canvas"></canvas>
+        </div>
+
+        <div class="concept-brief-generator">
+          <div class="brief-title"><i data-lucide="sparkles"></i> DATA-BACKED PRODUCTION BRIEF RECOMMENDATION:</div>
+          <p id="brief-text">Reallocate 40% of production budget from <strong>Testimonials</strong> to
+            <strong>Problem-Agitate Hooks</strong> (+34% higher scaling success rate).</p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Production budget allocated by
+          concept success rate yields 2.4x more winning assets.</p>
+      </div>
+    </section>
+
+    <!-- COMPONENT 10: Funnel Stage Mismatch & Testimonial Case Visualizer -->
+    <section class="bento-card col-span-12 lg:col-span-6" id="component-10">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-evidence">POINT 4 — EVIDENCE</span>
+          <h2>COMPONENT 10: TOFU VS RETARGETING MISMATCH CASE</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-10-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Worked case study: Why Testimonials fail on cold TOFU test campaigns but succeed at
+          scale &amp; retargeting.</p>
+
+        <div class="mismatch-grid">
+          <div class="mismatch-card card-tofu">
+            <div class="mismatch-hdr">
+              <i data-lucide="snowflake"></i>
+              <span>COLD AUDIENCE TESTING (TOFU)</span>
+            </div>
+            <div class="mismatch-metrics">
+              <div class="m-row"><span>CPM:</span> <strong>$36.20</strong></div>
+              <div class="m-row"><span>1st Gate Pass Rate:</span> <strong class="text-danger">12.5%</strong></div>
+              <div class="m-row"><span>Avg CPA:</span> <strong class="text-danger">$84.50</strong></div>
+              <div class="m-row"><span>Verdict:</span> <span class="badge b-sale">FALSE KILLED</span></div>
+            </div>
+          </div>
+
+          <div class="mismatch-arrow">
+            <i data-lucide="arrow-right"></i>
+            <span>MISMATCH</span>
+          </div>
+
+          <div class="mismatch-card card-mofu">
+            <div class="mismatch-hdr">
+              <i data-lucide="flame"></i>
+              <span>WARM / RETARGETING &amp; SCALING</span>
+            </div>
+            <div class="mismatch-metrics">
+              <div class="m-row"><span>CPM:</span> <strong>$28.40</strong></div>
+              <div class="m-row"><span>Conversion Rate:</span> <strong class="text-success">4.8%</strong></div>
+              <div class="m-row"><span>Avg CPA:</span> <strong class="text-success">$24.10</strong></div>
+              <div class="m-row"><span>Verdict:</span> <span class="badge b-new">TOP SCALER</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPONENT 11: Interactive Global Geo-Skew & Country Tier Analyzer -->
+      <section class="bento-card col-span-12 card-mast-texture" id="component-11">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="eyebrow eyebrow-problem">OPEN ITEMS TO CONFIRM — GEO DEF &amp; SKEW THRESHOLD</span>
+            <h2>COMPONENT 11: INTERACTIVE GLOBAL GEO-SKEW &amp; COUNTRY TIER MAP</h2>
+          </div>
+          <button class="icon-btn" onclick="openModal('comp-11-detail')" title="Inspect Fullscreen">
+            <i data-lucide="maximize-2"></i>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <p class="component-desc">Interactive World Map &amp; Rule Simulator for defining High-Quality vs. Cheap Geos
+            and setting the % spend skew threshold before triggering Step 3 Kill decisions.</p>
+
+          <!-- Open Items Flag Alert -->
+          <div class="open-items-banner">
+            <div class="open-item-box">
+              <i data-lucide="alert-circle" class="flag-icon"></i>
+              <div>
+                <strong>OPEN ITEM #1 — COUNTRY TIER DEFINITION:</strong>
+                <p>Classify countries into High-Quality vs Cheap Low-CPM Drift based on CVR %, AOV ($), and Historical
+                  ROAS.</p>
+              </div>
+            </div>
+            <div class="open-item-box">
+              <i data-lucide="sliders" class="flag-icon"></i>
+              <div>
+                <strong>OPEN ITEM #2 — GEO-SKEW THRESHOLD %:</strong>
+                <p>Fixed spend threshold percentage in low-quality countries that triggers Checkpoint A Step 3 Kill
+                  decision.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Threshold Simulator Control -->
+          <div class="skew-threshold-control">
+            <div class="threshold-header">
+              <span class="threshold-label"><i data-lucide="target"></i> CONFIGURABLE SKEW THRESHOLD SLIDER:</span>
+              <span class="threshold-value" id="skew-threshold-val">50% SPEND THRESHOLD</span>
+            </div>
+            <input type="range" id="skew-threshold-slider" min="30" max="80" value="50" step="5"
+              oninput="updateGeoSkewSimulator()">
+            <div class="threshold-verdict-alert" id="skew-verdict-banner">
+              <!-- Dynamic JS -->
+            </div>
+          </div>
+
+          <!-- Map & Table Grid Split -->
+          <div class="map-table-grid">
+
+            <!-- Interactive SVG World Map View -->
+            <div class="world-map-wrapper">
+              <div class="map-overlay-title">GLOBAL DELIVERY &amp; QUALITY TIER MAP (CLICK PINS TO HIGHLIGHT)</div>
+              <svg class="world-map-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+  <!-- Ocean Background & Grid -->
+  <rect width="1000" height="500" fill="#141416" rx="8" />
+
+  <!-- Latitude / Longitude Coordinate Grid -->
+  <g stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="3 3">
+    <!-- Longitude lines -->
+    <line x1="155" y1="0" x2="155" y2="500" />
+    <line x1="324" y1="0" x2="324" y2="500" />
+    <line x1="493" y1="0" x2="493" y2="500" />
+    <line x1="662" y1="0" x2="662" y2="500" />
+    <line x1="831" y1="0" x2="831" y2="500" />
+
+    <!-- Equator and Tropics -->
+    <line x1="0" y1="165" x2="1000" y2="165" /> <!-- 60N -->
+    <line x1="0" y1="256" x2="1000" y2="256" stroke="rgba(255,255,255,0.1)" stroke-dasharray="none" /> <!-- Equator / Mid -->
+    <line x1="0" y1="347" x2="1000" y2="347" /> <!-- 30S -->
+    <line x1="0" y1="438" x2="1000" y2="438" /> <!-- 60S -->
+  </g>
+
+  <!-- World Base Continents -->
+  <path class="map-land-base" d="M 994.7,408.2 L 995.4,407.8 996.4,408.6 995.9,410 994.2,410.4 992.6,410.1 992.4,408.8 993.4,407.9 994.7,408.2 Z M -14.1,404.2 L -13.5,404.1 -13.9,405.4 -14.1,405.6 998.2,406.2 996.4,406.8 996,405.8 997.5,405.2 998.3,405.1 1000,404.2 -14.1,404.2 Z M 603.4,372.8 L 602.1,376.1 602.3,377.7 604.1,378.7 604.1,379.4 603.4,381 603.5,381.9 603.3,383.2 604.3,384.9 605.5,387.6 606.5,388.2 607,389.5 606.9,392.2 607.2,394.6 607.3,399 607.8,400.4 607,402.3 605.9,404.3 604.1,406 601.5,407.1 598.3,408.4 595.2,411.5 594.1,412 592.1,414 590.9,414.7 590.7,416.7 592.1,418.8 592.6,420.5 592.6,421.4 593.1,421.2 593.1,424 592.6,425.4 593.3,425.9 592.8,427.1 591.7,428.1 589.3,429.1 586,430.6 584.7,431.7 585,432.9 585.7,433.1 585.4,434.7 584.7,436.8 584.4,439.3 583.7,440.6 581.7,442.1 581.2,442.5 580,444 579.2,445.6 577.6,447.7 574.4,450.8 572.4,452.7 570.3,454.1 567.4,455.2 565.9,455.4 565.6,456.2 563.9,455.8 562.5,456.4 559.4,455.8 557.7,456.2 556.5,456 553.6,457.2 551.2,457.7 549.5,458.9 548.2,458.9 547,457.8 546.1,457.8 544.9,456.4 544.7,456.8 544.3,456 544.4,454.2 543.5,452.2 544.4,451.6 544.3,449.3 542.4,446.5 541,444 541,443.9 539,440.1 536.9,437.9 535.8,435.7 535.2,432.9 534.5,430.7 533.5,426.3 533.5,422.8 533.1,421.3 532,420.1 530.6,417.7 529.1,414.3 528.5,412.6 526.2,409.8 526,407.7 525.7,405.9 526.1,403.4 527.1,400.9 527.3,399.7 528.2,397.2 528.8,396 530.5,394.2 531.4,393 531.7,390.9 531.5,389.4 530.7,388.4 529.9,386.7 529.2,385.1 529.4,384.5 530.2,383.4 529.4,380.8 528.8,378.9 527.4,377.2 527.7,376.7 527.3,375.8 526.5,373.8 524.2,370.9 521.3,368.1 519.5,365.8 517.7,363 517.8,362.1 518.4,361.3 519.1,359.3 519.7,357.2 519.2,356.8 520.1,353.8 520.5,351.6 519.5,349.8 518.2,349.3 517.6,348.1 516.9,347.7 516.9,347 514,348 512.9,347.8 511.8,348.4 509.6,348.4 508.1,346.7 507.1,344.7 505.1,342.9 503,342.9 500.5,342.9 498.2,343.2 495.9,343.8 491.5,345.4 490,346.4 487.4,347.1 484.9,346.4 483.6,346.4 481.7,345.9 479.9,345.9 476.5,346.4 474.6,347.2 471.8,348.2 471.2,348.1 470.5,348.1 467.6,346.8 465,344.7 462.6,343.2 460.7,341.5 460,341.3 457.9,340.2 456.5,338.7 456,337.7 455.6,335.7 454.4,334 453.3,333 452.6,332.6 451.9,332 451.6,330.8 451.2,330.2 450.3,329.8 448.8,328.6 447.6,328.4 447,327.7 447,327.2 446.2,326.7 446,326.1 445.5,323.9 445.9,322.7 444.7,320.5 443.3,319.5 444.5,319 445.9,317.1 446.6,315.6 446.3,314.1 447.1,312.7 447.5,310.1 447.2,307.3 446.8,305.9 447.1,304.5 446.4,303.1 444.9,301.9 445,300.7 445.1,299.4 446.2,298.6 447.1,297.1 447,296.1 447.9,294.1 449.5,292.2 450.5,291.8 451.2,290.1 451.3,288.5 452.3,286.7 454.2,285.7 455.9,282.7 456,282.6 457.4,281.5 460,281.2 462.2,279.2 463.7,278.4 466,275.9 465.3,272.2 466.4,269.6 466.8,268 468.6,265.9 471.4,264.5 473.5,263.2 475.4,260.1 476.3,258.2 478.3,258.2 480,259.5 482.7,259.3 485.6,260 486.8,260 489.6,258.3 492.6,257.8 494.4,256.5 497.1,255.5 501.9,255 506.5,254.7 507.9,255.2 510.6,253.9 513.6,253.9 514.8,254.6 516.7,254.5 519.7,253.2 521.7,253.6 521.6,255.1 524,254 524.2,254.6 522.8,256.1 522.8,257.6 523.8,258.3 523.4,261 521.6,262.6 522.1,264.2 523.5,264.3 524.2,265.7 525.3,266.2 528.6,267.3 529.8,267 532.2,267.5 535.9,268.9 537.2,271.6 539.8,272.1 543.7,273.4 546.7,274.9 548.1,274.1 549.4,272.7 548.8,270.4 549.7,269 551.7,267.5 553.6,267.1 557.4,267.7 558.4,269.1 559.5,269.1 560.4,269.6 563.2,270 563.8,271 567.6,270.9 570.3,271.7 573.1,272.6 574.4,273.1 576.6,272.1 577.7,271.3 580.2,271 582.2,271.4 583,272.9 583.6,271.9 585.9,272.6 588.1,272.8 589.5,272 590.3,271 590.1,270.9 590.9,269.5 591.4,267.2 591.8,266.4 591.9,266.4 592.9,263.9 594.3,261.7 594.4,261.6 594.1,259.2 594.8,258 593.8,256.6 594.8,255.4 593.1,255.6 590.7,254.9 588.8,256.7 584.5,257.1 582.3,255.4 579.2,255.3 578.6,256.6 576.6,257 573.9,255.3 570.8,255.4 569.2,252.2 567.1,250.5 568.5,248 566.7,246.5 569.8,243.4 574.1,243.3 575.3,240.8 580.7,241.2 584.1,239.1 587.4,238.2 592,238.1 596.9,240.4 601,241.7 604.3,241.2 606.7,241.5 610,239.8 610.4,238.4 609.7,236.2 608.1,234.9 606.5,234.6 605.5,233.5 601.9,230.7 598.7,229.5 596.3,227.5 598.3,226.9 600.7,224.1 599.1,222.7 603.2,221.3 603.2,220.6 600.6,221.1 598.4,221.4 596.5,222.5 593.9,222.7 591.4,224 591.6,225.8 591.6,226.1 593,226.9 595.9,226.7 595.3,227.9 592.2,228.5 588.4,230.5 586.8,229.8 587.5,228.2 584.4,227.2 584.9,226.6 587.6,225.4 587.1,225 586.8,224.6 582.4,223.8 582.2,222.5 579.6,222.9 578.5,224.8 576.4,227.3 576.4,228.2 575,228.9 574.2,228.6 573.4,232.6 571.9,234 570.9,236.4 571.8,238.2 572.2,239.5 574.6,240.6 574.1,241.3 570.8,241.5 569.6,242.5 567.2,244.3 566.3,242.8 566.4,242.1 564.6,242 563.2,241.7 559.8,242.5 561.7,244.4 560.3,244.9 558.7,244.9 557.2,243.2 556.7,243.9 557.3,245.9 558.7,247.4 557.7,248.1 559.2,249.5 560.6,250.4 560.7,252.2 558.1,251.4 558.9,253 557.1,253.3 558.2,256.1 556.3,256.1 554,254.8 552.9,252.3 552.4,250.2 551.4,248.7 549.9,246.9 549.7,246 549.2,245.7 549.2,245 547.6,244 547.4,242.4 547.6,240.2 548,239.2 547.5,238.7 546.9,238.4 546.1,237.3 544.9,236.7 542.3,235.5 540.6,234.3 538.1,233.3 535.7,230.8 536.3,230.6 535,229.2 534.9,228 533.1,227.5 532.3,229 531.4,227.8 531.5,226.7 531.6,226.6 532.2,226.3 530,225.8 527.7,227 527.8,228.7 527.5,229.6 528.4,231.4 531.1,233 532.5,235.8 535.6,238.4 537.8,238.4 538.5,239.1 537.7,239.8 540.2,240.9 542.3,241.9 544.7,243.6 545,244.2 544.5,245.4 542.9,243.9 540.5,243.3 539.3,245.4 541.3,246.6 541,248.3 539.8,248.5 538.3,251.2 537.1,251.4 537.1,250.5 537.7,248.8 538.3,248.1 537.2,246.2 536.4,244.6 535.2,244.2 534.4,242.8 532.6,242.2 531.3,240.9 529.3,240.7 527.1,239.2 524.5,237.1 522.6,235.2 521.7,231.9 520.3,231.5 518,230.4 516.7,230.9 515.1,232.4 513.9,232.7 511.3,234.6 505.8,233.7 501.7,234.7 501.4,236.7 501.5,238.6 498.9,240.8 495.2,241.5 495,242.6 493.3,244.4 492.2,247 493.3,248.8 491.6,250.2 491,252.3 488.9,252.9 486.9,255.3 483.3,255.4 480.7,255.3 478.9,256.4 477.8,257.6 476.4,257.3 475.4,256.3 474.6,254.5 472,254 470.8,254.8 469.3,254.3 467.9,254.7 468.3,252.2 468.1,250.3 466.8,250 466.1,248.8 466.3,246.7 467.5,245.5 467.7,244.2 468.3,242.3 468.2,240.9 467.6,239.8 467.5,238.7 467.7,236.3 466.5,234.9 470.5,232.5 473.9,233.1 477.7,233.1 480.7,233.6 483,233.5 487.6,233.6 489.1,231.6 489.6,224.9 486.7,221.3 484.6,219.5 480.3,218.2 480,215.6 483.7,214.9 488.4,215.8 487.5,211.8 490.2,213.3 496.7,210.5 497.6,207.6 500,206.9 502.3,206.2 503.7,205.2 506.2,199.8 510.1,198.2 512.4,198.3 513,197.5 515.3,197.3 515.8,198.2 517.7,196.3 517.1,194.9 517,192.8 515.8,190.7 515.7,186.7 516.2,185.7 517,184.5 519.5,184.3 520.5,183.2 522.8,182.1 522.7,184.1 521.8,185.4 522.2,186.5 523.7,187 523,188.5 522.2,188.1 520.1,190.8 520.9,192.7 521,194.2 523.8,195 523.8,196.4 526.6,195.7 528.2,194.6 531.4,196.1 532.7,197.3 534.7,196.2 539.1,194.5 542.6,193.2 545.4,193.8 545.6,194.8 548.3,194.8 549,193.1 552.9,191.9 552.3,188.7 552.4,185.8 553.7,183.3 556.4,182 558.6,184.9 560.9,184.8 561.4,181.8 561.8,179.5 560.7,180 558.9,178.6 558.7,176.3 562.3,175.2 565.8,174.6 568.9,175.2 571.8,175.1 575,172.9 572,170.9 566.9,171.3 562,172.8 557.4,173.6 555.7,171.4 553,170 553.6,166 552.3,162.1 553.6,159.7 556.2,156.9 562.6,152.2 564.5,151.3 564.2,149.4 560.3,147.3 555.4,148.5 552.7,151.7 553.1,154.3 548.7,157.8 543.2,161.5 541.2,167.5 543.2,170.4 545.9,172.7 543.3,177.2 540.4,178.2 539.3,184.8 537.7,188.4 534.3,188 532.7,191.1 529.4,191.3 528.5,187.6 526.2,183.2 524,177.6 522.1,175.1 516.6,179.8 512.8,180.7 508.9,178.7 507.9,174.4 507,164.8 509.6,162.1 517,158.5 522.6,154 527.8,147.8 534.5,139 539.3,135.5 547,129.4 553.2,127.3 557.8,127.6 562.1,123.5 567.2,123.7 572.3,122.7 581.1,126.3 577.5,127.6 580.6,130.7 583.5,129 588.1,131.9 595.8,133.1 606.5,138.4 608.6,140.6 608.8,143.7 605.7,146.1 601.1,147.3 588.5,143.8 586.4,144.4 591,147.7 591.2,149.8 591.4,154.3 595,155.7 597.2,156.8 597.6,154.7 595.9,152.8 597.7,151.1 604.5,153.9 606.9,152.8 605,149.6 611.5,145.1 614.1,145.4 616.8,147 618.4,143.9 616.1,141.1 617.4,138.3 615.4,135.4 623.2,136.9 624.8,139.6 621.3,140.1 621.3,142.7 623.5,144.3 627.9,143.3 628.6,140.3 634.4,138.1 644.3,134.1 646.4,134.3 643.6,137.2 647.1,137.6 649.1,136 654.4,135.9 658.6,133.9 661.8,136.8 665,133.7 662.1,130.9 663.5,129.3 671.8,130.7 675.7,132.2 685.9,137.7 687.8,135.2 685,132.7 684.9,131.7 681.5,131.2 682.4,128.9 680.9,125.1 680.8,123.5 686,118.9 687.9,114.3 690,113.2 697.4,114.6 698,117.5 695.3,121.6 697.1,123.2 698,126.6 697.4,133.3 700.5,136.2 699.3,139.3 693.7,145.8 697,146.5 698.1,144.9 701.2,143.7 701.9,141.4 704.4,139.2 702.7,136.6 704,133.4 701,133 700.3,130.4 702.5,125.4 698.9,121.4 703.9,118 703.3,114.3 704.7,114.2 706.1,117.1 705,121.9 708.1,122.9 706.8,119.2 711.5,117.2 717.3,116.9 722.5,119.9 720,115.6 719.7,110 724.6,109 731.4,109.2 737.5,108.5 735.2,105.7 738.5,102.1 741.7,102 747.2,99.3 754.6,98.5 755.6,97 763,96.5 765.3,97.7 771.6,94.7 776.8,94.8 777.6,92.4 780.3,89.9 786.9,87.6 791.7,89.4 787.9,90.9 794.3,91.7 795,94.6 797.6,93.2 805.9,93.3 812.2,96 814.5,98.1 813.8,101 810.6,102.6 803.2,105.6 801.1,107.2 804.6,108 808.8,109.3 811.3,108.3 812.8,111.7 814,110.3 818.5,109.5 827.5,110.4 828.2,112.8 840,113.6 840.2,109.6 846.1,110.5 850.6,110.5 855.2,113.2 856.5,116.5 854.8,118.7 858.4,122.7 862.8,124.7 865.5,119.4 870,121.7 874.8,120.3 880.3,121.9 882.3,120.5 887,121.2 884.9,116.5 888.6,114.2 914.1,117.6 916.5,120.6 923.9,124.4 935.2,123.5 940.8,124.3 943.2,126.3 942.8,129.9 946.3,131.3 950.1,130.3 955.1,130.2 960.4,131.1 965.7,130.6 970.6,134.8 974.1,133.3 971.9,130.2 973.1,128.1 982.1,129.4 988,129.1 996.1,131.5 -14.1,133.5 -7.2,137.2 0.2,141.8 0,144.6 1.9,145.8 1.2,142.5 8.9,143.1 14.4,147.4 11.6,149.4 7,149.8 6.9,154.1 5.8,155.1 3.1,154.9 1,153.4 -2.8,152.1 -3.4,150.2 -6.3,149.5 -9.5,150 -11,148.5 -10.4,146.8 -13.8,147.9 -12.5,150 -14.1,151.9 1000,151.9 996.4,153.8 992.7,153.5 995.2,155.8 996.9,159.4 998.2,160.5 998.5,162.3 997.8,163.4 992.6,162.5 984.7,165.7 982.2,166.2 977.9,169.1 973.8,171.6 972.8,173.5 968.7,170.6 961.4,173.9 960.1,172.3 957.4,174.1 953.6,173.5 952.7,176.2 949.3,180.1 949.4,181.7 952.7,182.5 952.3,188.2 949.7,188.3 948.5,191.5 949.6,193.2 944.7,195.1 943.7,199.4 939.5,200.3 938.7,204 934.6,207.4 933.6,204.9 932.4,199.5 930.8,191.2 932.2,185.9 934.5,183.5 934.7,181.7 939.1,180.8 944.1,175.8 948.9,171.6 954,168.3 956.3,162.4 952.8,162.7 951.2,166.2 944,170.8 941.7,165.7 934.4,167.1 927.4,174 929.7,176.5 923.4,177.5 919.1,177.9 919.3,175 914.9,174.4 911.4,176.4 902.8,175.7 893.5,176.9 884.4,184.6 873.6,193.7 878,194.1 879.4,196.5 882.2,197.3 884,195.5 887.1,195.7 891.1,199.8 891.2,202.9 889,206.5 888.8,210.8 887.5,216.5 883.3,221.5 882.3,223.9 878.5,227.8 874.7,231.7 872.9,233.7 869.1,235.6 867.3,235.6 865.6,234 861.8,236.5 861.4,237.5 860.3,237.3 859.1,238.5 858.2,239.6 858.3,241.9 856.9,242.6 856.4,243.2 855.3,244.1 853.4,244.7 852.2,245.5 852.1,246.9 851.8,247.3 852.9,247.8 854.5,249.2 856.9,252.9 857.6,255 857.7,258.6 856.6,260.3 854,260.8 851.8,262.1 849.3,262.4 848.9,260.7 849.5,258.4 848.2,255.1 850.3,254.6 848.4,251.9 847,251.3 846.7,251.9 845.8,252.2 845.7,251.6 845,251.3 844.3,250.8 845,249.4 845.7,249 845.4,248.4 846.2,246.7 846,246.2 844.3,245.8 843,245 839.1,245.9 837,247.4 834,248.3 835.5,246.8 834.9,245.6 837.1,243.4 835.6,241.7 833.2,242.8 830,245.1 828.2,247.2 825.5,247.3 824,248.8 825.5,250.9 827.8,251.5 827.9,252.9 830.1,253.8 833.3,251.5 835.8,252.8 837.6,252.9 838.1,254.5 834.1,255.4 832.8,257.1 830,258.6 828.6,260.8 831.6,262.5 832.7,265.5 834.4,268.3 836.4,270.6 836.3,272.8 834.6,273.7 835.2,275.3 836.9,276.2 836.4,278.6 835.7,281 834.2,281.2 832.1,284.4 829.8,288.2 827.2,291.7 823.3,294.4 819.4,296.8 816.2,297.1 814.5,298.4 813.5,297.5 811.9,298.9 808,300.3 805,300.8 804.1,303.8 802.5,303.9 801.8,301.9 802.4,300.8 798.7,299.9 797.3,300.3 793.6,302.8 791.2,305.4 790.6,307.4 792.7,310.4 795.4,314 797.9,315.8 799.7,318 800.9,323.2 800.6,328 798.2,329.9 795,331.6 792.7,333.9 789.2,336.5 788.2,334.7 788.9,332.9 786.9,331.3 784.5,330.9 783.4,329.5 781.9,326.6 779.4,325.3 777,325.4 777.4,323.2 774.9,323.2 774.7,326.3 773.2,330.3 772.3,332.7 772.5,334.7 774.3,334.8 775.4,337.3 775.9,339.7 777.5,341.3 779.2,341.6 780.7,343 781.3,343.3 783,344.9 784.2,346.8 784.3,348.6 784,349.8 784.3,350.8 784.5,352.4 785.5,353.1 786.6,355.6 786.6,356.5 784.6,356.7 781.9,354.6 778.6,352.5 778.2,351.1 776.6,349.3 776.2,347 775.2,345.5 775.5,343.5 774.9,342.3 773.8,341.3 773.3,339.9 771.8,338.4 770.4,337.1 770,338.7 769.4,337.2 769.7,335.5 770.6,332.8 770.3,330.8 771.2,328.7 770.2,327 770.4,324 769.3,322.6 768.4,319.2 767.9,315.7 766.7,313.4 764.8,314.8 761.6,316.8 760,316.5 758.3,315.9 759.3,312.4 758.7,309.8 756.5,306.5 756.8,305.5 755.1,305.1 753.1,302.8 752.3,301.3 752.2,299.9 751.6,298.5 750.5,296.8 747.9,296.7 748.1,297.9 747.2,299.5 746.1,298.9 745.6,299.4 744.8,299.1 743.7,298.9 743.4,299.9 741.4,299.9 738,300.5 738.1,302.6 736.6,304.3 732.6,306.2 729.4,309.5 727.3,311.3 724.5,313.2 724.5,314.4 723.1,315.1 720.5,316.1 719.2,316.3 718.4,318.4 719,322 719.1,324.3 717.9,327 717.9,331.7 716.4,331.8 715.2,333.9 716,334.8 713.5,335.6 712.5,337.4 711.4,338.2 708.7,335.7 707.4,331.8 706.3,329 705.3,327.7 703.8,325.1 703.1,321.6 702.7,319.9 700.1,316 698.9,310.6 698.1,307 698.1,303.5 697.5,300.9 693.4,302.6 691.5,302.2 687.8,298.8 689.1,297.7 688.3,296.6 685,294.2 682.9,293.4 682.1,291.4 679.9,289.2 674.7,289.7 670.2,289.8 666.2,290.2 660.9,289.3 657.8,288.6 654.6,288.2 653.4,284.7 652.1,284.1 649.9,284.7 647.1,286.1 643.6,285.1 640.8,282.9 638.1,282 636.2,279.2 634.1,275.2 632.6,275.7 630.8,274.7 629.8,275.9 628.1,275.8 628.7,277.1 628.4,277.8 629.3,280 630.4,282.5 631.8,283.2 632.3,284.2 634.2,285.5 634.4,286.7 634.1,287.6 634.5,288.6 635.3,289.4 635.7,290.4 636.1,291.1 635.9,289 636.7,287.5 637.4,287.1 638.3,288.1 638.3,289.8 637.7,291.5 638.3,292.6 638.7,292.4 638.9,293.2 641.1,292.8 643.4,292.9 645.1,292.9 647,291 649.1,289.1 650.9,287.3 651.7,286.3 652.1,286.6 651.8,287.8 651.4,288.3 651.8,290.6 653.1,292.6 654.7,293.6 656.7,294 658.4,294.5 659.7,296.2 660.4,297.1 661.4,297.5 661.4,298.1 660.4,299.9 660,300.7 658.8,301.6 657.7,303.5 656.4,303.4 655.8,304 655.4,305.5 655.7,307.4 655.5,307.7 654.2,307.7 652.4,308.8 652.1,310.1 651.5,310.7 649.8,310.7 648.6,311.4 648.7,312.6 647.3,313.3 645.7,313.1 643.9,314 642.6,314.2 640.5,314.9 640,316.2 639.9,317.1 637.1,318.3 632.6,319.6 630.1,321.6 628.8,321.7 628,321.6 626.3,322.7 624.6,323.2 622.2,323.4 621.5,323.5 620.9,324.3 620.1,324.5 619.7,325.2 618.3,325.1 617.4,325.5 615.4,325.4 614.7,323.7 614.8,322.2 614.3,321.4 613.8,319.3 613,318.2 613.5,318.1 613.2,316.8 613.6,316.2 613.5,315 613.1,313.8 612.3,313 612,311.9 610.6,310.9 609.1,308.5 608.3,306.2 606.3,304.2 605.1,303.8 603.2,301.1 602.9,299.1 603,297.4 601.4,294.2 600.1,293.1 598.6,292.5 597.6,290.8 597.8,290.2 597,288.6 596.2,288 595.1,285.8 593.3,283.5 591.9,281.4 590.5,281.4 591,279.8 591.1,278.8 591.4,277.6 591.3,277.2 590.5,278.4 589.9,280.6 589.2,282.1 588.5,282.7 587.6,281.7 586.3,280.4 584.3,276.1 584,276.4 585.2,279.5 586.9,282.5 589,287.1 590.1,288.7 591,290.3 593.5,293.5 592.9,294 593,295.9 596.3,298.5 596.8,299 597.7,301.8 597.1,302.4 597.5,305.3 598.5,308.7 599.6,309.4 601.2,310.4 602.8,313.6 603.6,316.2 605.1,317.6 609,320.2 610.5,321.8 612,323.4 612.9,324.3 614.3,325.2 615,326 614.9,327.2 613.3,327.9 614.5,328.6 615.4,329.1 616,330.3 617.2,331.4 618.6,331.4 621.3,330.7 624.3,330.4 626.8,329.5 628.2,329.3 629.2,328.8 630.8,328.8 631.7,328.7 633,328.3 634.5,328 635.9,327.1 636.9,327.1 637,327.8 636.7,329.4 636.8,330.9 636.2,331.9 635.4,334.8 634,337.9 632.3,341.4 629.8,345.4 627.4,348.5 624.1,352.2 621.3,354.4 617.1,357.1 614.5,359.2 611.4,362.5 610.7,363.9 610.1,364.6 608.1,365.7 607.4,366.8 606.4,367 606,368.9 605.1,370 604.5,371.9 603.4,372.8 Z M 630.7,250.1 L 631.5,252.5 634.2,253.1 636.2,254.7 640.2,255.2 644.6,254.4 644.9,253.7 644.3,251.4 644.7,248.1 642.5,247 643.3,244.8 641.4,244.7 642,241.9 644.7,242.7 647.1,241.7 645.1,239.7 644.3,237.9 642,238.7 641.7,241.1 640.8,239 640.7,238.2 641.4,236.8 640.8,235.7 637.6,234.5 636.3,231.6 634.8,230.7 634.7,229.6 637.4,229.9 637.5,227.5 639.9,226.9 642.4,227.4 642.9,224.1 642.4,222 639.6,222.2 637.2,221.3 633.9,222.8 631.3,223.6 630,225.6 627.3,226.1 624.5,229.6 627,232.8 626.7,235 629.8,238.9 631.3,240.6 632.7,242.9 634,243.1 634.9,243.9 632.6,244.2 632.1,246.7 631.6,247.8 630.6,248.5 630.7,250.1 Z M 95.8,129.9 L 101.1,131.1 105.5,133.4 108.4,133.9 110.9,131.9 114.3,130.4 118.5,130.9 122.7,128.8 127.3,127.6 129.3,129.6 131.4,128.5 132,126.2 134,126.7 138.7,131.1 142.5,127.8 142.8,131.5 146.3,130.7 147.4,129.2 150.8,129.5 155.1,131.6 161.7,133.3 165.6,134.1 168.3,133.8 172.1,136.2 168.2,138.6 173.2,139.6 180.9,139 183.2,138.2 186.2,141 189.3,138.6 186.4,136.6 188.3,135 191.7,134.8 193.9,134.3 196.2,135.5 199,138 202.2,137.6 207.2,139.8 211.5,139 215.6,139.1 215.3,136.2 217.8,135.4 222.2,137 222.2,141.4 224,137.7 226.2,137.8 227.5,133 224.5,130.1 221.2,128.1 221.4,122.6 224.8,119 228.5,119.8 231.3,122 235.2,127.6 232.7,130 237.9,131 237.9,135.9 241.6,132.1 245,135.2 244.2,138.7 246.9,141.8 249.8,138.5 251.9,134.4 252.1,129.1 256.1,129.5 260.2,130.2 264,132.6 264.2,135 262.1,137.5 264.1,140 263.7,142.2 258.2,145.4 254.3,146.1 251.4,144.8 250.5,147 247.8,150.8 247,152.8 243.7,155.7 239.7,156 237.5,157.8 237.3,160.6 234,161.2 230.5,164.6 227.5,169.3 226.4,172.5 226.2,177.2 230.4,177.9 231.7,181.6 233,184.6 236.9,183.8 242.1,185.5 245,187 247,188.8 250.5,189.9 253.5,191.5 258.1,191.7 261.2,192.1 260.7,195.3 261.6,199.1 263.7,203.2 267.9,206.7 270,205.5 271.5,201.7 270.1,195.9 268.1,193.9 272.6,192.1 275.8,189.4 277.3,186.8 277.1,184.2 275.2,180.8 271.8,177.8 275.1,173.6 273.9,169.9 272.9,163.4 274.9,162.4 279.7,163.5 282.6,163.9 285,162.8 287.6,164.3 291,166.7 291.9,168.3 296.9,168.6 296.8,172.1 297.8,177.2 300.4,177.8 302.4,180.2 306.5,178 309.2,173.5 311,171.6 313.2,175.3 316.9,180.4 320,185.1 318.9,187.5 322.6,189.7 325.2,191.9 329.6,192.8 331.5,194 332.6,197.2 334.8,197.7 335.9,199.1 336.1,203.3 334.1,204.6 332,205.9 327.4,207.2 323.9,210.1 319.1,210.7 313.1,210 308.8,209.9 305.9,210.2 303.6,212.7 300,214.3 295.9,218.9 292.7,222.1 295.1,221.5 299.6,217 305.5,214.1 309.7,213.7 312.2,215.4 309.5,217.8 310.4,221.5 311.3,224.1 315,225.8 319.7,225.3 322.5,221.5 322.7,224 324.5,225.2 321,227.4 314.8,229.4 312,230.8 308.8,233.2 306.7,232.9 306.6,230.1 311.5,227.3 307,227.4 303.8,227.8 304.3,228.9 301.3,230.6 298.4,231.7 295.4,232.7 294,234.7 293.5,235.4 293.4,237.2 294.4,238.9 295.5,239 295.3,237.8 296.1,238.5 295.9,239.5 294,240 292.6,239.9 290.5,240.5 289.3,240.7 287.7,240.8 285.3,241.8 289.5,241.1 290.3,241.8 286.4,242.7 284.6,242.7 284.6,242.3 283.8,243.2 284.6,243.4 284,245.7 282,248.2 281.7,247.3 281.1,247.2 280.2,246.4 280.8,248.1 281.5,248.7 281.5,249.9 280.6,251.1 279,253.6 278.8,253.5 279.7,251.3 278.2,250.1 277.9,247.5 277.3,248.9 277.9,250.9 276.1,250.4 278,251.4 278.1,254.4 278.9,254.6 279.2,255.7 279.6,258.8 277.9,261.1 274.9,262 273.1,263.8 271.7,264 270.2,265.1 269.9,266.2 266.8,268.1 265.2,269.6 263.8,271.4 263.4,273.5 263.9,275.6 264.8,278.1 266.1,280.2 266.1,281.5 267.4,284.9 267.4,286.9 267.2,288 266.5,289.8 265.7,290.2 264.3,289.8 263.9,288.5 262.8,287.9 261.3,285.4 260,283.1 259.6,282 260.1,280 259.4,278.4 257.2,275.9 256.1,275.4 253.2,276.8 252.7,276.6 251.3,275.2 249.6,274.5 246.4,274.9 243.9,274.5 241.7,274.7 240.6,275.2 241.1,276 241,277.2 241.6,277.8 241.1,278.2 240.1,277.7 239,278.3 237,278.2 234.9,276.7 232.4,277 230.4,276.3 228.6,276.5 226.2,277.2 223.7,279.4 220.9,280.7 219.3,282.1 218.7,283.4 218.7,285.5 218.8,286.9 219.3,287.9 218.2,290.4 217.7,292.5 217.5,296.4 217.3,297.8 217.7,299.3 218.6,300.7 219.2,302.9 221.1,305 221.7,306.7 222.8,308.1 225.8,308.8 227,310 229.4,309.2 231.6,308.9 233.7,308.4 235.5,307.9 237.3,306.8 237.9,305.1 238.2,302.7 238.6,301.9 240.6,301.1 243.5,300.5 246,300.6 247.7,300.3 248.4,300.9 248.3,302.3 246.8,304 246.1,305.7 246.7,306.2 246.2,307.5 245.5,309.7 244.8,308.9 244.2,309 244.2,309.4 244.8,309.4 244.7,310.2 244.3,311.4 244.5,311.8 244.2,312.8 244.4,313.1 244.1,314.5 243.5,315.3 243,315.3 242.5,316.3 243.4,316.8 243.6,316.4 244.4,316.8 244.7,316.9 245.4,316.4 246.2,316.3 246.4,316.6 246.9,316.4 248.2,316.7 249.5,316.6 250.4,316.3 250.7,316 251.6,316.1 252.3,316.3 253,316.3 253.6,316 254.9,316.4 255.3,316.5 256.2,317 257,317.6 258,318 258.7,318.8 258.5,319.1 258.4,319.7 258.6,320.7 258,321.7 257.7,322.8 257.6,324 257.8,324.7 257.8,326 257.4,326.2 257.1,327.4 257.3,328.1 256.7,328.9 256.9,329.6 257.3,330.1 258,331.5 259.1,332.7 260.4,333.8 261.4,334.8 261.4,335.4 262.5,335.5 262.8,335.3 263.6,336 264.9,335.8 266.1,335.1 267.8,334.5 268.8,333.7 270.4,333.9 270.3,334.1 271.8,334.2 273.1,334.7 274,335.5 275.1,336.3 276.5,336.4 278.6,334.5 279.8,334.2 279.8,333.3 280.3,330.9 282,329.7 283.7,329.6 283.9,329 286.2,329.3 288.4,327.9 289.5,327.2 290.8,325.9 291.8,326.1 292.6,326.8 292,327.7 291.9,328.4 290.3,328.7 291.2,330 291.2,331.4 289.9,333 291,335.2 292.2,335 292.8,333 292,332.1 291.8,330 295.3,328.8 295,327.5 295.9,326.7 296.9,328.6 298.9,328.7 300.8,330.2 300.9,331.1 303.4,331.1 306.4,330.9 308,332.1 310.2,332.4 311.7,331.6 311.8,330.9 315.3,330.7 318.7,330.7 316.3,331.5 317.2,332.8 319.5,333 321.6,334.3 322.1,336.5 323.5,336.5 324.6,337.1 326.5,338.1 328.2,339.9 328.3,341.3 329.4,341.4 330.9,342.7 332,343.7 335.4,344.2 335.7,343.7 337.9,343.5 341,344.3 341.9,344.6 344,345.2 347,347.5 347.4,348.7 348.4,348.5 349.1,350 350.7,354.8 352.2,355.3 352.3,357.1 350.1,359.4 351,360.2 356,360.6 356.1,363.4 358.2,361.6 361.8,362.6 366.5,364.2 367.8,365.8 367.4,367.3 370.7,366.5 376.1,367.9 380.3,367.8 384.5,370.1 388.1,373.2 390.3,373.9 392.7,374.1 393.7,374.9 394.7,378.4 395.1,380.1 394,384.6 392.6,386.4 388.6,390.2 386.8,393.4 384.7,395.8 384,395.8 383.2,397.9 383.4,403.1 382.6,407.4 382.3,409.2 381.5,410.4 381,414.1 378.1,417.8 377.6,420.8 375.3,422 374.7,423.7 371.6,423.7 367.2,424.8 365.2,426.1 362.1,427 358.7,429.3 356.4,432.2 355.9,434.3 356.4,436 355.9,438.9 355.2,440.4 353.3,442 350.1,447.3 347.7,449.7 345.8,451.1 344.5,454 342.6,455.7 341.4,457.6 338.2,459.3 336.1,458.7 334.6,459.1 332,457.7 330.1,457.8 328.4,456.1 328.2,457.7 331.8,460.4 331.4,462.5 333.1,463.9 333,465.4 330.3,469.4 326.1,471.1 320.5,471.8 317.4,471.5 318,473.4 317.4,475.8 317.9,477.4 316.2,478.6 313.3,479 310.6,477.8 309.5,478.7 309.9,481.9 311.8,482.9 313.4,481.9 314.2,483.6 311.6,484.6 309.4,486.7 308.9,490 308.3,491.8 305.6,491.8 303.4,493.6 302.6,496.1 305.4,498.6 308.1,499.3 307.1,502.4 303.8,504.4 301.9,508.5 299.4,510 298.2,511.6 299.1,515.4 301,517.5 299.8,517.3 297.3,517.3 295.9,518.2 293.4,519.5 292.9,523 291.7,523.1 288.6,521.9 285.3,519.3 281.8,517.2 281,514.9 281.8,512.7 280.3,510.4 280,504.3 281.2,501 284.2,498.3 279.9,497.3 282.6,494.3 283.5,488.7 286.6,489.9 288.1,483 286.2,482.1 285.3,486.2 283.6,485.8 284.5,481.1 285.4,475.1 286.7,472.9 285.9,469.8 285.7,466.2 286.9,466.1 288.6,461.1 290.5,456.1 291.7,451.6 291.1,447.1 291.9,444.6 291.6,440.9 293.2,437.3 293.7,431.7 294.6,425.6 295.5,419.2 295.3,414.6 294.7,410.6 291.9,409 291.7,407.8 286.1,405 281,402 278.8,400.2 277.7,397.9 278.1,397.1 275.8,393.5 273,388.4 270.3,382.9 269.2,381.7 268.3,379.7 266.1,377.9 264.1,376.8 265,375.5 263.6,372.9 264.5,371 266.7,369.3 268.2,367.2 267.6,366.1 266.6,367.3 264.9,366.1 265.5,365.4 265,362.9 266,362.5 266.5,360.8 267.5,359 267.3,357.9 268.9,357.3 270.8,356.2 270.5,355.4 271.5,355.2 271.4,353.8 272,352.8 273.4,352.6 274.6,350.9 275.7,349.5 274.7,348.8 275.2,347.3 274.6,344.8 275.2,344 274.7,341.7 273.6,340.3 272.6,339.5 272,338 272.7,337.3 272,337.1 271.5,336.2 270.1,335.4 268.8,335.6 268.3,336.5 267.1,337.2 266.5,337.3 266.3,337.9 267.6,339.4 266.8,339.7 266.4,340.1 265.1,340.3 264.6,338.6 264.3,339.1 263.3,338.9 262.8,337.8 261.6,337.7 260.9,337.3 259.7,337.3 259.6,337.9 259.3,337.5 257.7,336.9 257.2,336.3 257.5,335.9 257.4,335.3 256.6,334.6 255.5,334.1 254.5,333.7 254.3,332.9 253.6,332.4 253.8,333.2 253.2,333.9 252.6,333.1 251.7,332.8 251.3,332.3 251.3,331.4 251.7,330.6 250.9,330.2 251.5,329.6 250.5,328.8 249.2,327.7 248.6,326.7 247.4,325.9 246,324.6 246.3,324.2 246.8,324.6 247,324.4 246.5,323.5 245.7,323.3 245.3,323.9 243.7,323.9 242.7,323.6 241.5,323.1 240,322.9 239.2,322.3 237.7,321.8 236,321.8 234.7,321.2 233.2,320.1 230,317.1 228.5,316.2 226.2,315.4 224.6,315.6 222.4,316.7 221,317 219,316.2 216.9,315.7 214.2,314.4 212.1,314 208.9,312.7 206.6,311.4 205.9,310.6 204.3,310.5 201.4,309.6 200.2,308.3 197.2,306.7 195.8,304.9 195.1,303.5 196.1,303.2 195.8,302.4 196.4,301.7 196.4,300.7 195.5,299.4 195.2,298.3 194.3,296.8 191.8,294 189,291.7 187.6,289.9 185.2,288.7 184.7,288 185.1,286.2 183.7,285.5 182,284.1 181.3,282 179.8,281.8 178.1,280.2 176.8,278.8 176.7,277.9 175.2,275.6 174.2,273.3 174.2,272.2 172.2,271 171.3,271.1 169.6,270.3 169.2,271.5 169.7,272.9 169.9,275.2 170.9,276.4 173,278.5 173.5,279.2 173.9,279.4 174.3,280.4 174.8,280.4 175.3,282.3 176.2,283 176.8,284.1 178.5,285.5 179.5,288.3 180.3,289.5 181.1,290.9 181.3,292.4 182.6,292.5 183.7,293.8 184.8,295.1 184.7,295.6 183.5,296.7 183,296.7 182.3,294.9 180.4,293.3 178.4,291.9 177,291.2 177,289 176.6,287.5 175.3,286.5 173.3,285.2 173,285.6 172.3,284.9 170.5,284.1 168.9,282.4 169.1,282.2 170.2,282.4 171.3,281.3 171.4,279.9 169.2,277.8 167.5,277 166.5,275.1 165.5,273.2 164.2,270.8 163,268.1 162.6,266.5 160.7,264.7 159.4,264.4 159.1,263.5 157.5,263.3 156.5,262.5 153.9,262.2 153.2,261.7 152.8,260 150.1,256.9 147.8,252.6 147.9,251.8 146.6,250.8 144.4,248.1 144,245.5 142.5,243.7 143.2,241.1 143.1,238.3 142.2,235.8 143.3,232.6 143.6,229.6 143.9,226.5 143.4,222 142.5,219 141.7,217.4 142.1,216.7 146.1,217.9 147.6,221.2 148.3,220.3 147.9,217.4 146.9,214.5 146.5,214.5 141.1,211 139.1,209.5 134,208 132.4,204.8 132.8,202.6 129.2,201 128.7,198 125.3,195.3 125.3,193.4 123.7,192 121.2,190.7 120.4,187.4 116.8,184.3 115.3,180.5 112.6,180.3 108.1,180.2 104.8,179 99,174.9 96.3,174.1 91.3,172.6 87.4,173 81.9,171.1 78.6,169.4 75.4,170.2 76,173.1 74.4,173.3 71.2,174.2 68.7,175.6 65.6,176.4 65.2,174 66.5,170 69.4,168.7 68.7,167.7 65.1,170 63.2,172.7 59.1,175.6 61.2,177.6 58.5,180.4 55.5,182.1 52.7,183.3 52,185 47.6,187 46.7,188.8 43.4,190.5 41.4,190.2 38.8,191.3 36,192.5 33.6,193.8 28.8,194.9 28.3,194.3 31.4,192.5 34.2,191.3 37.2,189.2 40.7,188.8 42.1,187.2 46,184.9 46.6,184.1 48.7,182.7 49.2,179.7 50.6,177.4 47.3,178.6 46.4,177.9 44.9,179.3 43.1,177.3 42.3,178.7 41.3,176.8 38.4,178.4 36.7,178.4 36.5,176 37,174.5 35.2,173 31.5,173.8 29.1,171.9 27.2,170.9 27.2,168.6 25,166.8 26.1,164.4 28.4,162 29.4,159.8 31.7,159.5 33.6,160.2 35.9,158.1 37.9,158.5 40.1,157.2 39.6,155.2 38,154.4 40.1,152.7 38.3,152.8 35.3,153.7 34.5,154.7 32.3,153.7 28.3,154.2 24.2,153.1 23,151.4 19.4,148.8 23.4,146.9 29.7,144.7 32,144.7 31.6,147 37.5,146.8 35.2,144 31.8,142.2 29.8,139.9 27.1,137.9 23.2,136.4 24.8,133.9 29.8,133.8 33.3,131.6 34,129.2 36.9,126.9 39.6,126.3 45,124.2 47.6,124.5 51.9,121.8 56.2,122.9 58.2,125.1 59.4,124.2 64.2,124.5 64,125.6 68.3,126.4 71.2,125.9 77.1,127.5 82.6,128 84.7,128.6 88.5,127.8 92.8,129.3 95.8,129.9 Z M 256.4,162.8 L 258.5,160.8 262.3,160.9 262.3,161.7 259,164 257,163.9 256.4,162.8 Z M 268.2,114.5 L 265.1,111.7 265.3,109.8 266.6,109.5 273.1,110 277.9,112.9 278.2,114.3 275.2,114.2 272.1,114.1 269.1,114.8 268.2,114.5 Z M 266.7,164.4 L 267.8,163.1 269,163.2 269.7,164 268.6,166.3 267.3,165.9 266.6,164.6 266.7,164.4 Z M 229.3,102.9 L 227.7,105 223.6,104.6 220.2,103.2 221.7,100.7 225.8,99.2 228.2,101.2 229.3,102.9 Z M 228.6,88.6 L 227.3,88.8 222.1,88.4 221.3,86.8 227,86.9 229,87.9 228.6,88.6 Z M 220.4,81.2 L 223.8,83.3 223,85.5 218.8,86.7 216.6,85.3 215.3,83.1 215.1,80.6 218.8,80.8 220.4,81.2 Z M 244.7,106.1 L 240.1,105.4 232.6,103.7 231.6,100.7 231.3,97.9 228.5,95.5 222.6,94.8 219.4,93 220.4,90.7 226.2,91 229.4,92.9 234.9,92.9 237.4,94.7 236.7,96.8 239.9,98.1 241.7,99.4 245.5,99.7 249.6,100.1 254.1,98.9 259.9,98.5 264.4,98.9 267.4,100.9 268.1,103.2 266.3,104.6 262.1,105.8 258.5,105.1 250.4,106 244.7,106.1 Z M 179.5,84.9 L 183.5,85.8 182.6,87.6 177.3,89.2 173.1,87.4 175.4,85.5 179.5,84.9 Z M 180.4,81 L 184,82.2 180.6,83.4 175.9,83.4 176,82.5 178.9,80.7 180.4,81 Z M 336.3,206.3 L 334.8,208.5 333,211.7 334.8,210.5 336.7,211.2 335.7,212.5 338.2,213.4 339.5,212.6 342.3,213.7 341.4,216.2 343.4,215.6 343.8,217.5 344.7,219.6 343.5,222.7 342.2,222.8 340.3,222.2 341,219.3 340.2,218.9 336.9,221.9 335.2,221.8 337.2,220.2 334.5,219.3 331.5,219.5 326,219.4 325.6,218.4 327.3,217.2 326.1,216.2 328.5,214.1 331.4,208.4 333.1,206.4 335.6,205.1 336.9,205.3 336.3,206.3 Z M 256.7,151.3 L 259.8,152.8 263,154.2 263.2,156.2 265.3,155.9 267.3,157.3 264.8,158.7 260.4,157.7 258.8,155.7 256.1,158 252,160.2 251.1,157.7 247.3,158.1 249.7,156 250.1,152.6 251,148.5 253.1,148.8 253.6,150.8 255,150.1 256.7,151.3 Z M 271.1,116.8 L 273.7,114.7 280,117.3 283.9,119.8 284.2,122 289.5,120.8 292.4,124 299.2,126 301.6,128 304.3,132.5 299.1,134.7 305.8,137.8 310.2,138.8 314.3,143.1 318.7,143.4 317.8,146.6 312.9,151.8 309.4,149.9 305,145.5 301.4,146.1 301,148.7 304,151.3 307.8,153.3 309,154.5 310.8,158.8 309.8,161.9 306.3,160.7 299.2,157.3 303.2,161 306.1,163.5 306.6,165 298.9,163.3 292.9,160.9 289.5,158.8 290.5,157.5 286.3,155.3 282.2,153.2 282.2,154.5 274.1,155.2 271.7,153.6 273.5,150.4 278.8,150.3 284.6,149.7 283.7,148.1 284.7,145.9 288.3,141.4 287.5,139.4 286.4,137.8 282.1,135.5 276.4,133.9 278.2,132.7 275.2,129.7 272.8,129.4 270.5,127.7 269,129.2 263.9,129.8 253.7,128.7 247.7,127.3 243.2,126.5 240.8,124.8 243.7,122.5 239.8,122.5 238.9,117.4 241,112.8 243.9,110.6 251.2,109.2 249.1,112.6 251.3,115.9 253.9,111.7 261.1,109.5 265.9,114.9 265.5,118.3 271.1,116.8 Z M 226.8,107.5 L 232.6,107.6 238,108.9 233.8,113.6 230.4,114.6 227.4,118.5 224.2,118.3 222.4,113.7 222.5,111.1 224,108.9 226.8,107.5 Z M 146.9,96.6 L 151.7,92.4 157.4,88.6 161.8,88.7 165.6,87.9 165.2,92.3 163.1,94.3 160.5,94.6 155.2,97 150.7,97.8 146.9,96.6 Z M 119.1,196.3 L 121.8,196 121,200.2 123.4,203.1 122.3,203.1 120.6,201.4 119.6,199.8 118.2,198.6 117.6,197 117.8,195.8 119.1,196.3 Z M 195.8,78 L 201.3,78.8 208.9,81 211.1,83.9 212.2,86.3 207.6,85.7 203,83.8 196.7,83.5 199.4,81.8 196,80.3 195.8,78 Z M 145,216.3 L 143.6,216.7 139,215.1 138.2,213.9 135.6,212.7 135.1,211.7 132.2,211 131.1,209.1 131.4,208.2 134.3,209 136.1,209.6 138.7,209.9 139.7,211.2 141.1,212.9 143.9,214.3 145,216.3 Z M 150.6,105.8 L 154.6,106.9 161.8,107.2 164.5,108.7 167.6,111 164,112.3 157.1,115.9 153.6,119.5 153.6,121.7 146.2,124.1 144.7,121.9 138.2,119.3 139.4,117.1 141.4,113.3 143.8,109.9 141.1,106.6 150.6,105.8 Z M 189.2,98.1 L 191.7,97.2 194.7,97.4 195.2,100.1 193.5,102.8 183.9,103.6 176.8,105.9 172.5,106.1 172.2,104.3 178,101.9 165.3,102.5 161.4,101.6 165.2,96.1 167.9,94.6 175.8,96.5 180.8,99.8 185.7,100.2 181.7,94.8 184.3,92.8 187.2,93.4 188.1,96.1 189.2,98.1 Z M 192.9,113 L 196,115.1 197.8,120.1 198.7,123.7 203.4,126.1 208.5,128.4 208.2,130.6 203.6,131 205.4,132.8 204.4,134.6 199.3,133.8 194.5,132.5 191.2,132.8 185.9,134.4 178.8,135.1 173.8,135.6 172.2,133.3 168.4,132 165.9,132.6 162.4,128.7 164.3,128.2 168.6,127.4 172.6,127.6 176.3,126.7 170.8,125.6 164.8,126 160.8,125.9 159.3,124.1 165.9,122.1 161.5,122.1 156.6,120.8 159,117 160.9,115 168.5,111.8 171.4,112.8 170,115.2 176.2,113.7 180.1,116.3 183.3,113.6 185.9,115.3 188.2,120.3 189.6,118.3 187.6,113 190.1,112.2 192.9,113 Z M 210,115 L 206.9,111.6 210.3,109 213.6,110.1 218.7,109.4 219.4,111 216.8,113.5 221,115.7 220.5,120.3 215.9,122.3 213.2,121.8 211.2,119.9 204.2,116 204.3,114.3 210,115 Z M 192.7,110.3 L 196.5,110.1 198.6,111.2 196.1,114.7 191.7,111 192.7,110.3 Z M 215.5,93.2 L 217.6,95.8 217.7,98.7 216.4,102.8 211.8,103.3 208.8,102.5 208.8,99.3 204.2,99.7 204,95.4 207.1,95.5 211.3,93.6 215.3,93.9 215.5,93.2 Z M 222.5,69.9 L 224.4,68 227.3,67.5 226.1,66.1 232.6,65.7 236.2,69.1 241,70.5 245.6,71.7 247.8,75.8 251.2,77.8 247.4,79.6 242.2,84.1 237.2,84.5 231.3,83.8 228.3,81.3 228.3,79.1 230.6,77.5 225.4,77.6 222.3,75.5 220.5,72.7 222.5,69.9 Z M 235,61.6 L 239.2,60.3 242.4,60.1 248,59 252.1,56.5 255.6,56.9 258.6,58.8 260.8,55.1 264.5,54 269.6,53.3 278.2,53 279.7,53.7 287.8,52.6 293.9,53 300,53.4 307.5,54 313.6,54.8 318.7,56.7 318.6,58.5 311.7,61.4 304.9,62.7 302.4,64.1 308.5,64.1 301.9,68 297.3,69.8 292.4,74.9 286.6,76 284.8,77.2 276.3,77.9 280.2,78.6 278.2,79.7 280.6,82.7 277.9,84.7 273.6,86.4 272.2,88.7 268.3,90.4 268.7,91.7 273.5,91.5 273.6,92.9 266,96.3 258.7,94.7 250.4,95.6 246.2,94.9 240.9,94.6 240.5,91.9 245.7,90.6 244.3,86.4 246.1,86 253.6,88.5 249.7,84.7 245.2,83.6 247.5,81.3 252.4,79.8 253.3,77.7 249.3,75.3 248.1,72.1 255.8,72.4 258,73.1 262.4,70.8 256.1,70.1 246.2,70.5 241.2,68.3 238.9,65.7 235.6,63.8 235,61.6 Z M 281.1,140.7 L 279.3,142.1 276.1,142.3 275.4,140 276.6,137.4 279.2,136.8 281.4,138.1 281.4,140 281.1,140.7 Z M 221.8,131 L 223.5,132.9 221.8,134.5 218,133.1 215.7,133.6 211.8,131.5 214.3,130 216.3,127.8 219.3,129.2 221,130.1 221.8,131 Z M 311.2,211.4 L 312.2,211.1 315.9,212 318.8,213.5 318.9,214.2 317.5,214.2 313.8,213.1 311.2,211.4 Z M 312.6,221.4 L 313.6,223 315.7,223.5 318.3,223.4 316.9,224.8 315.9,225 312.3,223.6 311.6,222.4 312.6,221.4 Z M 55.2,304.5 L 55.7,304.8 56.2,305.1 56.9,306.1 56.8,306.3 55.7,306.9 54.8,307.3 54.4,307.8 53.7,307.4 53.8,306.6 53.3,305.6 53.5,305.3 53.9,304.8 53.7,304.2 53.9,304 54.1,304 55.2,304.5 Z M 53.5,302.6 L 53.3,302.9 52.3,303.1 51.9,302.5 51.5,302.3 51.5,302.1 51.8,301.9 52.8,302.1 53.5,302.6 Z M 51.4,301.4 L 51.3,301.7 49.8,301.6 50,301.3 51.4,301.4 Z M 47.8,299.8 L 48,300 48.9,301 48.7,301.1 48.5,301.1 47.5,301 47.2,300.4 47.1,300.2 47.8,299.8 Z M 44,298.4 L 44.1,299.1 43.8,299.4 42.8,298.9 43,298.6 43.4,298.4 44,298.4 Z M 24,171.4 L 26.3,171.8 26.5,173.4 24.8,174 23,173.2 21.3,172.1 24,171.4 Z M 61.3,181.1 L 63.2,181.4 64.4,182.6 62,184.5 59.1,186 57.7,185 57.3,183.1 59.8,181.7 61.3,181.1 Z M 9.2,157.1 L 10.9,157.9 12.7,157.5 15,158.6 17.8,159.2 17.5,159.7 15.4,160.6 13.3,159.6 12.2,158.9 9.7,159.1 9,158.7 9.2,157.1 Z M 890.1,367.1 L 895,369 900.2,370.5 902.2,371.9 903.7,373.3 904.2,374.9 908.9,376.6 909.6,378.1 907,378.4 907.6,380.2 910.1,382 911.9,384.9 913.5,384.8 913.4,386 915.6,386.5 914.8,387 917.7,388.2 917.4,389 915.6,389.2 914.9,388.4 912.5,388.1 909.6,387.7 907.4,386 905.8,384.5 904.4,382 900.7,380.8 898.3,381.6 896.6,382.5 896.9,384.6 894.7,385.5 893.2,385 890.2,384.9 887.7,382.7 884.9,382.1 884.2,382.9 880.6,383 881.8,380.8 883.6,380 882.8,377 881.5,374.7 876,372.4 873.7,372.2 869.5,369.7 868.6,371 867.6,371.2 866.9,370.2 866.9,369 864.8,367.7 867.8,366.7 869.8,366.8 869.6,366 865.4,366 864.3,364.4 861.8,363.9 860.6,362.6 864.4,361.9 865.9,361 870.4,362.1 870.8,363.1 871.6,367.6 874.5,369.2 876.9,366.3 880.1,364.6 882.6,364.6 885,365.6 887.1,366.6 890.1,367.1 Z M 922.9,370 L 924,370.9 924.3,372.3 923.5,373 922.9,371.4 922.3,370.3 921,369.4 919.4,368.3 917.4,367.5 918.1,366.8 919.7,367.6 920.6,368.2 921.8,368.8 922.9,370 Z M 919.2,375.9 L 917.6,376.6 916.2,377.3 914.7,377.2 912.4,376.5 910.8,375.7 911,374.8 913.5,375.2 915.1,375 915.5,373.7 915.9,373.6 916.2,375.1 917.8,374.9 918.6,374 920.1,373 919.8,371.4 921.5,371.3 922.1,371.8 922,373.3 921.1,375 919.6,375.2 919.2,375.9 Z M 928.9,374.6 L 929.8,375.2 931.1,376.9 932.5,377.9 932.1,378.6 931.3,378.9 930,377.8 928.8,376.1 928.2,374 928.6,373.8 928.9,374.6 Z M 845.3,385.7 L 843.5,387.7 841.1,388.4 840.7,388 841,387.1 842.2,385.4 845,384.3 845.3,383.7 847.7,383 849.7,383 850.6,382.6 851.6,383 850.6,383.7 847.7,384.9 845.3,385.7 Z M 871,378.8 L 870.7,376.8 871.2,375.8 871.8,374.9 872.5,375.7 872.5,377 871,378.8 Z M 818.2,345.1 L 820.3,343.2 821.8,341.1 822.9,341.1 824.3,342.5 824.5,343.7 826.3,344.4 828.7,345.2 828.5,346.3 826.6,346.4 827.1,347.8 825,348.7 823.4,351.2 825.5,353.8 825,355 828.2,357.5 824.8,357.9 823.9,359.7 824,362.2 821.3,364.1 821.2,366.8 820.1,370.9 819.7,370 816.5,371.2 815.4,369.5 813.4,369.4 812,368.5 808.6,369.5 807.6,368.2 805.8,368.3 803.4,368 803,364.3 801.6,363.6 800.3,361.3 799.9,358.9 800.2,356.3 801.9,354.5 803.9,355.5 806.1,355 806.7,352.6 807.9,352.1 811.3,351.5 813.3,349.4 814.7,347.6 815.8,346.6 818.2,345.1 Z M 857.4,367.6 L 860.5,368.4 861.5,370.5 859.1,369.4 856.8,369.2 855.2,369.4 853.2,369.3 853.9,367.8 857.4,367.6 Z M 850.4,370.3 L 848.4,369.8 847.9,368.7 850.7,368.5 851.4,369.4 850.4,370.3 Z M 853.3,354.1 L 853.5,355.6 855.2,355.8 855.5,356.9 855.3,359.3 853.9,359 853.4,360.7 854.6,362.1 853.8,362.5 852.7,360.7 851.8,357.2 852.4,355.1 853.3,354.1 Z M 839.2,357.6 L 842.5,357.5 845.3,355.5 845.7,356.1 843.5,358.8 841.4,359.4 838.7,358.8 834,359 831.5,359.4 831.1,361.4 833.6,363.8 835.1,362.6 840.4,361.7 840.2,362.9 838.9,362.5 837.7,364.1 835.2,365.2 837.9,368.7 837.4,369.6 839.9,372.8 839.9,374.6 838.4,375.4 837.3,374.4 838.6,372.2 835.9,373.2 835.2,372.5 835.5,371.4 833.5,369.8 833.7,367.2 831.8,368 832.1,371.2 832.2,375.1 830.4,375.5 829.2,374.7 830,372.2 829.6,369.5 828.4,369.5 827.5,367.6 828.7,365.9 829.1,363.7 830.5,359.6 831.1,358.5 833.5,356.4 835.7,357.2 839.2,357.6 Z M 831.8,388.1 L 828.1,386.1 830.7,385.6 832.2,386.4 833.2,387.3 833,388 831.8,388.1 Z M 834.8,383.3 L 836.6,383.1 839.2,382.1 838.7,383.6 834.5,384.4 830.8,384.1 830.8,383.1 833,382.5 834.8,383.3 Z M 826.1,382.9 L 827.8,382.6 828.5,383.8 825.3,384.4 823.3,384.7 821.8,384.7 822.8,383.1 824.3,383.1 825.1,382.1 826.1,382.9 Z M 798.6,377.5 L 798.9,378.5 804.3,378.8 805,377.7 810.2,379 811.2,380.7 815.4,381.2 818.9,382.9 815.7,383.9 812.6,382.8 810,382.9 807.1,382.7 804.5,382.2 801.2,381.2 799.1,380.9 798,381.2 792.8,380.1 792.3,378.9 789.8,378.7 791.7,376.1 795.1,376.3 797.4,377.3 798.6,377.5 Z M 787,363 L 787.4,364.9 788.4,366.4 790.5,366.6 791.9,368.4 791.1,371.7 791,376 787.9,376 785.5,373.7 781.9,371.5 780.7,369.9 778.6,367.6 777.2,365.6 775,361.8 772.6,359.5 771.7,357.2 770.7,355 768.2,353.3 766.7,351 764.6,349.4 761.6,346.4 761.4,345 763.2,345.2 767.6,345.7 770.1,348.4 772.2,350.2 773.8,351.3 776.5,354.3 779.3,354.3 781.7,356.2 783.3,358.5 785.5,359.7 784.3,361.9 785.9,362.9 787,363 Z M 299.6,518.5 L 300.7,520.3 302.1,523 305.8,525.3 309.7,526.2 308.4,528.1 305.8,528.3 304.3,527 303.4,528.5 301,529.7 299.6,529.6 297.9,529.3 295.9,528.1 292.9,527.6 289.4,525.5 286.5,523.4 282.6,519.3 285,520.1 288.9,522.5 292.7,523.9 294.1,522.2 295,519.6 297.6,518.1 299.6,518.5 Z M 291,310.3 L 289.1,309.8 287.8,310 286,309.8 284.7,310.3 283.2,309.4 283.5,308.5 286.1,308.9 288.2,309.1 289.2,308.5 287.9,307.3 287.9,306.2 286.2,305.8 286.8,305 288.5,305.1 291,305.5 291.3,305.1 293.5,305.1 295.2,305.8 295.9,305.7 296.4,306.7 298,306.7 297.9,307.5 299.1,307.6 300.5,308.7 299.5,309.8 298.1,309.2 296.8,309.3 295.9,309.2 295.4,309.7 294.3,309.9 293.9,309.2 293,309.6 291.8,311.5 291.1,311.1 291,310.3 Z M 757.1,67.2 L 763.2,65.8 768.7,69 775.2,75.1 774.5,80.5 768.3,81.3 760.5,79.6 755.8,77.2 753.6,72.8 749.8,71.6 757.1,67.2 Z M 782.6,78.1 L 789.8,81.6 788.9,84 773.1,86.3 778.2,78.4 780.5,77.7 782.6,78.1 Z M 884,96.5 L 891.5,96.7 901.7,99.7 899.4,103.8 889.1,103.6 884.4,104.9 878.8,101.3 880.3,97.5 884,96.5 Z M 910.5,100.9 L 917.6,102.3 914.3,104.5 909.8,104 904.6,101.8 905.2,100.1 910.5,100.9 Z M 886.9,111.5 L 889.6,109.4 893.1,108.9 897.1,111 897.5,112.3 893.2,112.4 887.4,111.8 886.9,111.5 Z M 619.3,70 L 624.8,68.8 629.1,68.8 629.6,70.5 631.3,68.9 633.9,67.9 638.1,69.3 637,70.3 633.2,71.1 630.7,71.6 630.3,72.6 627,73.6 624,72.2 625.6,70.2 619.3,70 Z M 643.7,109.5 L 650.4,104.8 649.7,102.3 656,99.4 665.3,95.8 674.6,94.8 679.5,92.7 685,91.9 686.9,94.2 685,96 675,98.7 666.4,101.4 657.7,106.5 653.5,111.7 649.1,116.7 649.6,120.9 655,125 653.4,125.4 644.2,124.8 643.4,122.6 638.3,121.2 637.9,118.5 640.8,117.4 640.7,114.6 646.3,110.1 643.7,109.5 Z M 895.5,197.5 L 896.5,201.1 896.4,204.7 897.6,208.3 900.4,214.6 896.3,213.5 894.5,218.5 897.3,222.1 897.2,224.4 895.1,222.4 893.2,225 892.7,222.2 893,218.8 892.7,215 893.3,212.4 893.5,207.6 891.8,204 892.1,199 894.7,197.3 893.6,195.6 894.8,195 895.5,197.5 Z M -14.1,121 L -13.7,120.8 -11.3,120.8 -7.3,122.3 -7.5,123 -10.4,124.1 -14.1,124.4 996.9,124.7 996.4,123.1 -14.1,121 Z M 270.5,285.2 L 271.8,284.9 273.7,285 273.7,285.8 270.7,286.3 270.5,285.2 Z M 273.8,284.4 L 276.1,285.8 275.6,287.8 275.1,287.5 275.1,285.9 273.8,284.8 273.8,284.4 Z M 272.7,289.8 L 273.6,289.9 274.5,292.3 274.5,294 273.9,294.1 273.1,292.5 272.1,291.6 272.7,289.8 Z M 320.6,515.7 L 323.9,513.5 326.3,514.4 328,512.9 330.3,514.6 329.4,515.8 325.6,516.9 324.4,515.7 322,517.3 320.6,515.7 Z M 535.6,75.7 L 536.7,73.6 540.8,73.4 544.4,75.5 553.6,80.1 546.6,82.5 545,86.8 542.5,87.9 541.2,92.7 537.8,92.9 531.7,89.4 534.3,87.3 530.1,85.6 524.6,80.6 522.4,75.8 530.1,73.6 531.6,75.8 535.6,75.7 Z M 570.2,73.3 L 566,76.7 557.8,77.4 549.5,76.4 549,74.7 545,74.6 541.9,71.7 550.6,69.9 554.7,71.5 557.5,69.6 564.6,71.1 570.2,73.3 Z M 562.6,86.7 L 556.3,89 551.3,87.7 553.3,86.2 551.6,84.3 557.4,83.1 558.5,85.3 562.6,86.7 Z M 361.2,56.7 L 370.7,52.6 380.6,52.9 384.2,50.4 394.1,49.7 416.6,50.6 434.2,56 429,58.6 418.3,58.9 403.1,59.6 404.5,60.7 414.5,60 423,62.3 428.4,60.3 430.8,62.6 427.7,66.4 434.9,64 448.5,61.5 457,62.7 458.6,65.5 447.1,70.1 445.5,71.5 436.5,72.6 443,72.9 439.7,77.4 437.5,81.3 437.5,87.9 440.9,91.7 436.5,91.9 431.9,93.7 437.1,96.7 437.7,101.4 434.7,101.9 438.4,106.6 432.1,107 435.4,109.1 434.5,111 430.5,111.8 426.6,111.8 430.1,115.4 430.1,117.6 424.6,115.5 423.1,116.9 426.9,118.2 430.6,121.3 431.7,125.3 426.7,126.2 424.5,124.3 421,121.5 422,124.8 418.7,127.4 426.1,127.6 430,127.9 422.5,132.1 414.8,135.9 406.6,137.5 403.4,137.5 400.5,139.3 396.6,144.2 390.6,147.4 388.6,147.6 384.9,148.7 380.8,149.7 378.4,152.5 378.4,155.6 376.9,158.4 372.3,161.8 373.5,165.1 372.2,168.6 370.8,172.6 366.8,172.8 362.6,169.5 357,169.5 354.3,167.2 352.4,163.1 347.5,157.8 346.1,154.9 345.7,151 341.8,146.8 342.8,143.5 340.9,141.9 343.7,136.4 348,134.7 349.1,132.7 349.7,128.9 346.4,130.6 344.9,131.3 342.4,132 338.9,130.4 338.7,127.1 339.8,124.5 342.5,124.4 348.2,125.7 343.4,122.6 340.8,120.9 338,121.6 335.7,120.3 338.8,115.6 337.1,113.7 334.9,110 331.5,104.4 327.9,102.2 327.9,99.9 320.4,96.7 314.4,96.3 306.9,96.5 300,96.9 296.7,95.1 291.8,91.5 299.2,89.7 304.9,89.4 292.8,87.9 286.5,85.5 286.9,83.2 297.5,80.3 307.9,77.4 308.9,75.2 301.3,73 303.8,70.5 313.5,66 317.6,65.3 316.5,62.4 323.2,60.7 331.8,59.6 340.5,59.6 343.5,61.6 351,58 357.7,60.5 361.7,61 367.5,63.1 360.8,59.6 361.2,56.7 Z M 687.1,504.1 L 689,505.3 691.6,505.7 691.7,506.4 690.9,508 686.6,508.2 686.5,506.3 686.9,504.9 687.1,504.1 Z M 517.6,236.2 L 519.4,234.9 519.9,237.8 519,240.3 517.7,239.6 517,237.4 517.6,236.2 Z M 306.2,308.9 L 307.7,309.2 308.2,309.7 307.5,310.5 305.4,310.4 303.7,310.5 303.5,309.3 303.9,308.9 306.2,308.9 Z M 274.5,309 L 276.4,309.3 277.8,309.9 278.3,310.7 276.3,310.8 275.5,311.2 273.9,310.8 272.3,309.8 272.6,309.1 273.8,308.9 274.5,309 Z M 261.2,295.6 L 263.6,295.8 265.9,295.9 268.5,296.8 269.6,297.9 272.3,297.6 273.3,298.2 275.6,300 277.4,301.3 278.3,301.3 280,301.8 279.8,302.6 281.9,302.8 284,303.9 283.7,304.6 281.8,305 279.9,305.1 278,304.9 273.9,305.1 275.8,303.6 274.7,302.8 272.9,302.6 271.9,301.8 271.2,300.2 269.6,300.3 267,299.5 266.2,298.9 262.5,298.5 261.5,297.9 262.6,297.2 259.8,297.1 257.8,298.6 256.6,298.6 256.2,299.3 254.8,299.6 253.6,299.3 255.1,298.5 255.7,297.4 257,296.8 258.4,296.2 260.5,295.9 261.2,295.6 Z M 632.5,394.2 L 633.3,395.4 634,397.2 634.4,400.5 635.1,401.8 634.9,403.2 634.4,404 633.4,402.4 632.9,403.2 633.4,405.3 633.2,406.4 632.4,407.1 632.2,409.5 631.1,412.8 629.7,416.7 628,422.1 626.9,426.1 625.6,429.4 623.3,430.1 620.9,431.4 619.2,430.6 617,429.6 616.2,428 616.1,425.5 615.1,423.2 614.8,421.1 615.3,419.1 616.6,418.6 616.6,417.6 618,415.5 618.2,413.7 617.6,412.3 617,410.5 616.8,408 617.8,406.4 618.2,404.6 619.6,404.5 621.1,403.9 622.2,403.4 623.4,403.4 625,401.8 627.3,400.1 628.2,398.7 627.8,397.5 629,397.8 630.5,395.9 630.6,394.2 631.5,393 632.5,394.2 Z M 964,403.7 L 965.8,405.3 964.8,405.7 963.9,404.4 964,403.7 Z M 962.8,403.1 L 962.4,402.3 962.3,400.2 963.7,401 964.1,403.3 963.4,402.9 962.8,403.1 Z M 567,259.6 L 566.7,260.5 562.6,260.8 562.6,260.2 559.2,259.6 559.7,258.3 561.3,259.4 563.5,259.2 565.6,259.4 565.5,260 567,259.6 Z M 475.5,196.9 L 476,199.6 473.8,202.8 468.8,205 464.9,204.4 467.1,200.6 465.7,196.8 469.5,193.9 471.6,192.1 474,192 477,194.3 475.5,196.9 Z M 959.9,418.3 L 962.3,420.1 963.7,421.4 962.7,422.1 961.1,421.3 959.1,420 957.3,418.5 955.4,416.5 955,415.6 956.2,415.6 957.8,416.6 959,417.5 959.9,418.3 Z M 949.6,388.7 L 950.4,389.6 948.5,389.6 947.4,387.9 949.1,388.6 949.6,388.7 Z M 948.4,386.3 L 948,386.8 945.9,384.4 945.3,382.7 946.3,382.7 947.3,384.9 948.4,386.3 Z M 946.1,387 L 945,387.1 943.2,386.8 942.7,386.4 942.8,385.3 944.7,385.7 945.6,386.3 946.1,387 Z M 942.7,381.9 L 943.3,382.8 943.4,383.3 941.2,382.2 939.7,381.2 938.6,380.3 939,380 940.3,380.7 942.7,381.9 Z M 935.6,379.2 L 936.7,380.1 936.2,380.2 934.9,379.6 933.8,378.5 933.9,378 935.6,379.2 Z M 991.2,475.5 L 990.2,477.2 988.8,479.4 986.6,480.7 986.1,479.9 984.9,479.4 986.6,476.7 985.6,474.9 982.6,473.7 982.7,472.5 984.7,471.4 985.2,469 985.1,466.9 983.9,464.8 984,464.3 982.6,463 980.4,460.2 979.3,458 980.3,457.8 981.8,459.5 984,460.3 984.8,463.1 986.9,466.4 986.9,464.2 988.2,465.1 988.6,467.5 990.9,468.5 992.8,468.7 994.4,467.5 995.8,467.9 995.1,470.7 994.3,472.6 992.1,472.5 991.4,473.5 991.6,474.9 991.2,475.5 Z M 970.9,486.9 L 973.3,485.1 975,483.4 976.2,481 977.3,480.1 977.7,478.3 979.7,476.8 980.3,478.2 981,479.5 983,478.2 983.8,479.6 983.8,481 982.8,482.5 980.9,484.9 979.5,486.3 980.5,487.9 978.3,487.9 975.9,489.2 975.2,491.4 973.6,494.8 971.4,496.3 970,497.3 967.4,497.2 965.5,496.1 962.5,495.8 962,494.6 963.5,492.1 967.1,488.8 968.9,488.1 970.9,486.9 Z M 909,477.9 L 910.7,478.1 910.9,481.9 909.9,483.1 909.6,485.7 908.6,484.8 906.7,487.1 906.1,486.9 904.4,486.8 902.6,484 902.2,481.8 900.6,479 900.7,477.5 902.5,477.8 905.3,478.9 906.8,478.5 909,477.9 Z M 848.3,451 L 845.3,452.5 842.9,453.2 842.3,454.8 841.3,456.1 838.9,456.2 837.1,456.4 834.6,455.9 832.6,456.2 830.7,456.3 829,458 828.2,457.8 826.8,458.7 825.4,459.7 823.4,459.6 821.5,459.6 818.5,457.6 817,457 817,455.3 818.4,454.8 818.9,454.2 818.8,453.1 819.2,450.9 818.8,449.2 817.4,446.1 816.9,444.4 817,442.7 815.9,440.8 815.8,439.9 814.6,438.7 814.2,436.4 812.6,434.1 812.2,432.9 813.5,434.1 812.5,431.4 813.9,432.3 814.7,433.4 814.7,431.9 813.3,429.6 813,428.7 812.4,427.8 812.7,426.2 813.3,425.4 813.6,424 813.3,422.3 814.5,420.3 814.7,422.4 815.9,420.5 818.2,419.5 819.6,418.3 821.7,417.3 823,417 823.8,417.4 826,416.3 827.7,416 828.1,415.4 828.9,415.1 830.4,415.2 833.4,414.4 834.9,413.1 835.6,411.6 837.3,410.2 837.4,409 837.5,407.5 839.5,405.1 840.7,407.6 841.9,407 840.9,405.7 841.7,404.3 843,404.9 843.3,402.8 844.9,401.4 845.5,400.3 847,399.8 847,399.1 848.2,399.4 848.3,398.7 849.5,398.3 850.9,397.9 853,399.2 854.5,400.8 856.3,400.9 858.1,401.1 857.5,399.6 858.8,397.4 860.1,396.6 859.7,395.9 860.9,394.4 862.6,393.4 864,393.7 866.4,393.2 866.4,391.8 864.3,390.9 865.8,390.5 867.7,391.2 869.2,392.3 871.5,393 872.3,392.7 874.1,393.6 875.7,392.8 876.8,393 877.4,392.5 878.7,393.9 878,395.3 876.9,396.5 875.9,396.5 876.3,397.7 875.4,399 874.4,400.4 874.6,401.2 876.9,402.7 879.1,403.6 880.5,404.6 882.5,406.3 883.3,406.3 884.8,407 885.2,407.8 887.9,408.8 889.8,407.8 890.3,406.3 890.9,405.1 891.3,403.6 892.1,401.3 891.7,400 891.9,399.2 891.6,397.6 892,395.5 892.5,394.9 892.1,394 892.8,392.5 893.3,391 893.4,390.2 894.4,389.2 895.2,390.5 895.4,392.3 896.1,392.6 896.2,393.8 897.2,395.2 897.5,396.8 897.4,397.8 898.4,400 900.2,398.9 901.1,400.1 902.5,401.2 902.2,402.4 902.8,404.8 903.2,406.2 903.9,406.5 904.7,408.9 904.4,410.4 905.3,412.3 908.4,413.8 910.4,415.1 912.3,416.4 911.9,417.1 913.5,418.9 914.6,421.9 915.7,421.3 916.9,422.6 917.5,422.1 918,425.2 920,426.9 921.3,428 923.5,430.4 924.3,432.7 924.4,434.4 924.2,436.2 925.5,438.7 925.4,441.3 924.9,442.7 924.1,445.4 924.2,447.1 923.6,449.2 922.4,452 920.3,453.5 919.3,455.9 918.3,457.4 917.5,460 916.4,461.6 915.7,463.9 915.3,466.1 915.5,467.1 913.9,468.1 910.7,468.3 908.1,469.6 906.8,470.8 905.1,472.2 902.8,470.7 901.1,470.2 901.5,468.5 900,469.1 897.5,471.4 895.1,470.6 893.5,470.1 891.8,469.8 889.1,468.9 887.3,467 886.8,464.6 886.1,463 884.7,461.8 882,461.4 883,459.9 882.3,457.6 880.9,459.7 878.4,460.3 879.9,458.6 880.3,456.8 881.4,455.3 881.2,453.1 878.9,455.7 877.1,456.7 876,459.2 873.8,457.9 873.9,456.3 872.2,454 870.7,452.9 871.2,452.2 867.6,450.4 865.6,450.3 862.9,448.8 857.8,449.1 854.2,450.2 851,451.2 848.3,451 Z M 723.3,339.4 L 722.9,342.3 721.7,343.1 719.3,343.7 717.9,341.5 717.5,337.6 718.7,333.1 720.7,334.7 722,336.6 723.3,339.4 Z M 801.3,309.8 L 799,309 798.9,306.5 800.3,305.2 803.4,304.4 805,304.5 805.7,305.6 804.4,306.8 803.8,308.5 801.3,309.8 Z M 836,292.2 L 834.3,296.8 833.1,299.1 831.6,296.7 831.3,294.6 832.9,291.7 835.2,289.5 836.5,290.4 836,292.2 Z M 534.5,250.7 L 536.7,250.4 535.7,252.9 536.1,253.9 535.5,255.5 533.3,254.3 531.9,254 528,252.4 528.4,250.7 531.7,251 534.5,250.7 Z M 517.5,241.9 L 518.9,240.8 520.6,243.1 520.2,247.4 518.9,247.2 517.8,248.3 516.7,247.4 516.6,243.5 515.9,241.7 517.5,241.9 Z M 527.8,188.4 L 528.7,190.3 527,193.4 524.1,191.3 523.7,189.7 527.8,188.4 Z M 484.2,198.6 L 484.3,198.6 484.7,196.5 482.8,194.1 482.7,194.1 479.3,193.4 478.6,192.4 479.7,190.7 478.7,189.6 477.2,191.5 477.1,187.8 475.6,185.8 476.7,181.7 478.8,178.5 481.1,178.8 484.5,178.5 481.5,182.8 484.4,182.2 487.4,182.3 486.7,185.5 484.2,188.9 487.1,189.2 487.3,189.6 489.8,194.1 491.7,194.7 493.5,198.9 494.3,200.4 497.7,201.1 497.4,203.4 495.9,204.5 497,206.4 494.5,208.3 490.7,208.2 485.9,209.2 484.6,208.5 482.8,210.2 480.2,209.8 478.2,211.1 476.7,210.4 480.8,206.7 483.3,205.9 483.3,205.9 478.9,205.3 478.1,203.8 481.1,202.7 479.5,200.7 480.1,198.3 484.2,198.6 Z M 452.1,145.2 L 451.4,148.2 454.6,151.2 451,154.6 442.8,157.6 440.4,158.3 436.7,157.7 428.8,156.3 431.6,154.4 425.5,152.2 430.5,151.4 430.3,150.1 424.4,149 426.3,146.1 430.6,145.4 435,148.5 439.3,146 442.8,147.3 447.4,144.9 452.1,145.2 Z M 833.3,325.2 L 831.9,323.1 834.3,323.2 835.3,324.2 834.5,326.6 833.3,325.2 Z M 838.3,332.7 L 839,331.9 839.3,330.2 840.8,330 840.4,331.9 842.5,329.2 842.2,331.9 841.2,332.8 840.3,334.5 839.4,335.3 837.7,333.4 838.3,332.7 Z M 849,337 L 849.2,338.8 849.4,340.4 848.4,342.9 847.4,340.1 846.1,341.5 847,343.5 846.2,344.8 842.9,343.2 842.1,341.2 842.9,339.9 841.2,338.6 840.3,339.7 838.9,339.6 836.9,341.2 836.4,340.4 837.5,338 839.3,337.3 840.8,336.2 841.8,337.5 844,336.7 844.4,335.5 846.4,335.4 846.2,333.3 848.5,334.6 848.7,336 849,337 Z M 826.8,334.5 L 823,337.1 824.4,335.2 826.4,333.5 828.1,331.6 829.6,328.9 830.1,331.1 828.3,332.6 826.8,334.5 Z M 837.6,309.8 L 837.1,310.9 838.1,312.9 837.3,315.3 835.7,316.2 835.2,318.4 835.9,320.7 837.3,321 838.6,320.6 842.1,322.2 841.8,323.7 842.8,324.4 842.5,325.6 840.3,324.3 839.2,322.8 838.5,323.8 836.7,322.2 834.2,322.6 832.8,322 832.9,320.8 833.8,320.1 832.9,319.5 832.6,320.5 831.2,318.9 830.8,317.7 830.7,315 831.8,315.9 832.1,311.5 833,309 834.7,309 836.4,309.8 837.3,309 837.6,309.8 Z M 836.7,328.7 L 836.3,327.4 838,328.3 839.8,328.3 839.7,329.4 838.4,330.6 836.6,331.4 836.5,330.1 836.7,328.7 Z M 846.5,326.7 L 847.3,329.8 845.1,329 845.2,330 845.8,331.7 844.5,332.3 844.4,330.3 843.5,330.2 843.1,328.5 844.8,328.7 844.7,327.7 843,325.6 845.7,325.6 846.5,326.7 Z M 892.6,247.4 L 890,250.6 890.1,253.8 889,256.3 889.5,257.9 888,260.1 884.4,261.5 879.5,261.7 875.5,265.2 873.6,264.1 873.5,261.8 868.6,262.4 865.2,263.9 861.9,263.9 864.8,266.2 862.9,271.3 861.1,272.6 859.7,271.4 860.4,268.7 858.6,267.8 857.5,265.7 860.2,264.8 861.6,262.9 864.5,261.3 866.5,259.2 872.1,258.2 875.1,258.9 878.1,253.3 880,254.8 884.1,251.7 885.7,250.5 887.5,246.6 887,242.9 888.2,240.9 891.2,240.3 892.7,244.8 892.6,247.4 Z M 900.3,231.8 L 902.3,230.4 902.9,234.1 898.8,235 896.3,238.3 891.9,236 890.3,239.6 887.2,239.7 886.8,236.4 888.2,233.9 891.2,233.7 892,229.1 892.9,226.4 896.2,230 898.3,231.1 900.3,231.8 Z M 865.8,265.2 L 867.4,263.4 869,263.8 870.2,262.5 872.2,263.1 872.6,264.2 871,266 869.8,265.1 868.4,265.8 867.7,267.5 865.8,266.7 865.8,265.2 Z M 355.9,547 L 357.3,547 361.5,547 365.8,547 369.2,547 370.5,547 370.8,547 370.9,547 366.5,547 362,547 356.7,547 350.8,547 344.1,547 340.4,547 340.9,547 346.9,547 349.3,547 351.1,547 352.4,547 354.1,547 355.9,547 Z M 306.2,547 L 312.6,547 318.6,547 320.7,547 322.2,547 325.2,547 324.3,547 323.5,547 317.6,547 311.3,547 307.8,547 307.8,547 306.2,547 Z M 284.7,547 L 286.7,547 289.9,547 290.8,547 290.9,547 290.9,547 292.5,547 295.1,547 296.6,547 297.2,547 298.4,547 299.4,547 300.1,547 300.5,547 300,547 299.2,547 295.9,547 292.7,547 289,547 290.4,547 287.1,547 284,547 281.8,547 281.7,547 284.7,547 Z M 204.7,547 L 206.5,547 210.1,547 214.1,547 217.2,547 220.3,547 222,547 219.8,547 216.3,547 212.9,547 209.1,547 206.2,547 204.7,547 Z M 147.5,547 L 148.2,547 151.5,547 155.2,547 158.5,547 156.9,547 154.3,547 150.4,547 147.5,547 Z M 134.4,547 L 136.5,547 139.3,547 143.6,547 141.9,547 138.3,547 134.4,547 Z M 31.8,547 L 33.5,547 38.7,547 41.6,547 43.7,547 44.5,547 39.1,547 35.4,547 33.7,547 33.6,547 31.8,547 Z M -14.1,547 L -13.9,547 -11.4,547 -6.4,547 -6,547 -3.1,547 -2.7,547 -2.3,547 1.7,547 5.3,547 5.9,547 14.2,547 16.9,547 18.2,547 22.5,547 30.5,547 36.8,547 47.7,547 55.8,547 67.8,547 74.6,547 82,547 89.8,547 90.4,547 79.4,547 70.2,547 67.9,547 60.3,547 60.8,547 61.9,547 62.9,547 62.4,547 57.7,547 55.5,547 51.2,547 58,547 64.5,547 68.6,547 73.6,547 78.2,547 80.5,547 79.5,547 75.9,547 71.7,547 65.9,547 60.9,547 55.4,547 53.6,547 49.9,547 47.7,547 46.9,547 48.2,547 50.8,547 55.4,547 59.9,547 62.2,547 66.7,547 70.4,547 73.9,547 77.1,547 81.4,547 81.3,547 80.3,547 81.1,547 84.8,547 86.4,547 90.7,547 94,547 98,547 101.8,547 105.6,547 108.7,547 112.1,547 114.3,547 116.2,547 120.4,547 124.2,547 128,547 131.7,547 135.5,547 139.7,547 143.6,547 147.7,547 151.9,547 155.8,547 158.6,547 162.1,547 165.6,547 168.9,547 172,547 173.8,547 174.8,547 176.6,547 179.5,547 182.9,547 186.7,547 190,547 193.9,547 197.5,547 201.8,547 205.6,547 209.5,547 210.9,547 209.1,547 207.7,547 204.1,547 202.5,547 201.9,547 200.9,547 203.1,547 206.7,547 210.4,547 213.7,547 216.6,547 217.8,547 221.6,547 225.2,547 229.1,547 232.6,547 235.4,547 239.2,547 241.6,547 243.9,547 247.1,547 250.7,547 253,547 256.7,547 260.1,547 263.5,547 265.7,547 266.8,547 269.6,547 273.5,547 276.3,547 278.2,547 282,547 284.9,547 287.8,547 291.2,547 295.2,547 298.8,547 301.5,547 303.2,547 303.8,547 303.5,547 302.6,547 301.6,547 300.8,547 300,547 299.9,547 300.2,547 301.5,547 302.6,547 303,547 302.5,547 302.1,547 303.5,547 305.1,547 306.9,547 308.8,547 311.1,547 312.2,547 313.7,547 315.5,547 318.2,547 320,547 321.9,547 324.3,547 326.3,547 327.9,547 330.1,547 331.8,547 330.7,547 327.8,547 326.6,547 324.5,547 322.2,547 320.3,547 318.2,547 316.9,547 316.5,547 316.7,547 318,547 316,547 313.4,547 311.8,547 310.2,547 308.4,547 308,547 309,547 310.5,547 312.8,547 314.9,547 316.1,547 316.7,547 317.5,547 318.9,547 319.7,547 320.1,547 320.9,547 321.1,547 322,547 321.6,547 320.1,547 318.4,547 314.7,547 313.4,547 311.7,547 307.4,547 303.7,547 300.2,547 296.3,547 294.1,547 289.6,547 284.6,547 280.1,547 275.4,547 276.3,547 280.6,547 283.7,547 285.5,547 282.3,547 277.5,547 273.5,547 273.3,547 273.2,547 276.5,547 277.1,547 280.7,547 286.6,547 291.7,547 295.7,547 300.9,547 307.9,547 314.8,547 319.6,547 324.8,547 327.6,547 329,547 332.4,547 337,547 341.9,547 347.8,547 352.8,547 359.8,547 366.7,547 372.4,547 374.2,547 378.1,547 385.2,547 390.8,547 396.1,547 401.9,547 408.2,547 412.5,547 410.5,547 409.3,547 409.3,547 403.9,547 398.1,547 392.6,547 391.8,547 392.2,547 393.4,547 397.5,547 402.2,547 405.6,547 409.1,547 411.6,547 415.5,547 419.3,547 421.2,547 425.6,547 429.7,547 433.2,547 436.6,547 439.7,547 443.6,547 446.1,547 448.7,547 449.6,547 446.6,547 447.6,547 449.4,547 452.4,547 455.5,547 458.3,547 460.5,547 461.9,547 464,547 467.3,547 468.7,547 472.1,547 472.2,547 473.6,547 476.6,547 477.4,547 480.7,547 484.4,547 487.9,547 491.1,547 492.3,547 495.4,547 498.3,547 501.5,547 504.6,547 507.5,547 510.6,547 513.1,547 514.8,547 516.9,547 519.8,547 521.8,547 523.4,547 526.6,547 527.9,547 530.8,547 534.5,547 535.6,547 537.9,547 540.9,547 544.2,547 547.2,547 550.4,547 553.4,547 554.7,547 556.5,547 559.6,547 562.9,547 566.1,547 569.3,547 572.1,547 575.1,547 577.6,547 580.2,547 583.1,547 585.2,547 586.8,547 588.4,547 591.3,547 592.4,547 594.8,547 597.7,547 599.7,547 601.8,547 604.7,547 605.7,547 608.2,547 611.2,547 613.9,547 617.2,547 619.4,547 621.7,547 624,547 626.6,547 629.1,547 631,547 633.6,547 635.9,547 636.5,547 638.9,547 641.2,547 644,547 646.6,547 649.1,547 651.7,547 654,547 654.2,547 656.7,547 658.4,547 661.8,547 663.7,547 666,547 668.7,547 671,547 673.4,547 676,547 678.8,547 681.4,547 684.2,547 687,547 689.3,547 689.2,547 688.9,547 686.2,547 684,547 684.4,547 687.5,547 687.1,547 685.7,547 684.4,547 686.5,547 689.8,547 693,547 694.6,547 695.5,547 697.1,547 698.8,547 699.5,547 701,547 702.8,547 706,547 708.8,547 711.7,547 713.1,547 713.9,547 715.8,547 718.6,547 720.9,547 722.5,547 724.1,547 726.1,547 728.9,547 731.5,547 734.2,547 737.3,547 739.4,547 740.8,547 741.9,547 743.2,547 745.6,547 748.3,547 751,547 753.8,547 756.5,547 758.2,547 760.6,547 762.8,547 765.3,547 768.3,547 770.9,547 773.9,547 775.7,547 777.2,547 779.1,547 782.6,547 784.4,547 786.6,547 788.5,547 792.1,547 794.8,547 797.4,547 800.4,547 803.5,547 805.8,547 807.7,547 810.9,547 813,547 815.2,547 816.6,547 818.6,547 821.7,547 823.6,547 827,547 830.5,547 833.4,547 835.6,547 837.5,547 840.1,547 842.6,547 845.5,547 848.2,547 850.7,547 853.2,547 855.8,547 858.3,547 861.4,547 864.2,547 867.4,547 870,547 872.6,547 873.3,547 873.4,547 875.2,547 875.7,547 876.6,547 877.8,547 880.2,547 883.4,547 887.1,547 889.6,547 893.3,547 896,547 899.6,547 902.8,547 904.8,547 904.2,547 906,547 909.1,547 912.2,547 915.9,547 919.7,547 922.5,547 925.7,547 927.6,547 930,547 932.2,547 934.7,547 938.1,547 941.4,547 942.7,547 945.9,547 948.1,547 951.2,547 954.5,547 957.5,547 960.9,547 964.3,547 967.4,547 970.3,547 973.2,547 975.2,547 974.9,547 973.4,547 972.1,547 971.1,547 969.8,547 966.1,547 964.5,547 960.8,547 959.6,547 957.6,547 955.6,547 954.4,547 953.7,547 953.4,547 953.5,547 955.1,547 955.7,547 957,547 962.3,547 963.4,547 958.3,547 954,547 948.6,547 946.3,547 945.8,547 944.6,547 943.1,547 946.8,547 948.3,547 950.7,547 954.1,547 958,547 962.3,547 968.7,547 970.2,547 978.3,547 978.8,547 980.9,547 988.7,547 995.1,547 1000,547 -14.1,547 Z M 585.2,260.1 L 585.4,260.1 585.8,259.3 587.8,259.4 590.4,258.4 588.4,259.7 588.7,260.3 588.7,260.6 585.9,261.8 584.5,261.4 583.8,260.2 585.2,260.1 Z M 319.2,330.5 L 320.8,330.2 321.4,330.3 321.3,332.3 319,332.6 318.4,332.4 319.3,331.6 319.2,330.5 Z" fill="#2A2A2E" stroke="#3D3D44" stroke-width="0.8" />
+
+  <!-- High-Precision Country Highlight Layer -->
+  <path class="map-country-path" id="map-country-Canada" d="M 146.9,214.5 L 146.5,214.5 141.1,211 139.1,209.5 134,208 132.4,204.8 132.8,202.6 129.2,201 128.7,198 125.3,195.3 125.3,193.4 126.8,191.6 126.7,189.1 121.9,186.7 119.1,182.2 117.3,179.4 114.7,177.6 112.8,176 111.3,173.9 108.5,175.2 105.8,177.4 103.3,174.8 101.3,173 98.6,171.9 95.8,171.7 95.8,147.3 95.8,129.9 101.1,131.1 105.5,133.4 108.4,133.9 110.9,131.9 114.3,130.4 118.5,130.9 122.7,128.8 127.3,127.6 129.3,129.6 131.4,128.5 132,126.2 134,126.7 138.7,131.1 142.5,127.8 142.8,131.5 146.3,130.7 147.4,129.2 150.8,129.5 155.1,131.6 161.7,133.3 165.6,134.1 168.3,133.8 172.1,136.2 168.2,138.6 173.2,139.6 180.9,139 183.2,138.2 186.2,141 189.3,138.6 186.4,136.6 188.3,135 191.7,134.8 193.9,134.3 196.2,135.5 199,138 202.2,137.6 207.2,139.8 211.5,139 215.6,139.1 215.3,136.2 217.8,135.4 222.2,137 222.2,141.4 224,137.7 226.2,137.8 227.5,133 224.5,130.1 221.2,128.1 221.4,122.6 224.8,119 228.5,119.8 231.3,122 235.2,127.6 232.7,130 237.9,131 237.9,135.9 241.6,132.1 245,135.2 244.2,138.7 246.9,141.8 249.8,138.5 251.9,134.4 252.1,129.1 256.1,129.5 260.2,130.2 264,132.6 264.2,135 262.1,137.5 264.1,140 263.7,142.2 258.2,145.4 254.3,146.1 251.4,144.8 250.5,147 247.8,150.8 247,152.8 243.7,155.7 239.7,156 237.5,157.8 237.3,160.6 234,161.2 230.5,164.6 227.5,169.3 226.4,172.5 226.2,177.2 230.4,177.9 231.7,181.6 233,184.6 236.9,183.8 242.1,185.5 245,187 247,188.8 250.5,189.9 253.5,191.5 258.1,191.7 261.2,192.1 260.7,195.3 261.6,199.1 263.7,203.2 267.9,206.7 270,205.5 271.5,201.7 270.1,195.9 268.1,193.9 272.6,192.1 275.8,189.4 277.3,186.8 277.1,184.2 275.2,180.8 271.8,177.8 275.1,173.6 273.9,169.9 272.9,163.4 274.9,162.4 279.7,163.5 282.6,163.9 285,162.8 287.6,164.3 291,166.7 291.9,168.3 296.9,168.6 296.8,172.1 297.8,177.2 300.4,177.8 302.4,180.2 306.5,178 309.2,173.5 311,171.6 313.2,175.3 316.9,180.4 320,185.1 318.9,187.5 322.6,189.7 325.2,191.9 329.6,192.8 331.5,194 332.6,197.2 334.8,197.7 335.9,199.1 336.1,203.3 334.1,204.6 332,205.9 327.4,207.2 323.9,210.1 319.1,210.7 313.1,210 308.8,209.9 305.9,210.2 303.6,212.7 300,214.3 295.9,218.9 292.7,222.1 295.1,221.5 299.6,217 305.5,214.1 309.7,213.7 312.2,215.4 309.5,217.8 310.4,221.5 311.3,224.1 315,225.8 319.7,225.3 322.5,221.5 322.7,224 324.5,225.2 321,227.4 314.8,229.4 312,230.8 308.8,233.2 306.7,232.9 306.6,230.1 311.5,227.3 307,227.4 303.8,227.8 302,225.9 302,221.3 300.8,220.3 298.9,220.9 297.9,219.9 295.8,222.5 294.9,225.2 293.9,226.8 292.7,227.3 291.8,227.4 291.5,228.3 286.3,228.3 282.1,228.3 280.8,228.9 277.8,231.3 277.5,231.6 276.6,232.9 274,232.9 271.2,232.9 269.9,233.4 270.4,234.1 270.6,235.1 270.6,235.4 266.9,237.1 264,237.6 260.7,239.3 260,239.3 259.1,238.8 258.8,238.3 258.8,238 259.4,236.9 260.8,235 261.6,233.1 261,230.2 260.4,227.1 257.5,225.5 257.8,224.9 257.4,224.5 256.6,224.5 256.1,224 255.9,223.2 255.4,223.5 254.6,223.4 254.8,223.1 254.1,222.7 253.9,221.8 251.7,220.7 249.4,219.6 246.6,218.2 244,217 241.5,218 240.6,218 237.1,217.1 234.8,217.5 232.1,216.5 229.2,215.9 227.2,215.7 226.4,215.1 225.9,213.2 224.9,213.2 224.9,214.5 219.1,214.5 209.4,214.5 199.9,214.5 191.4,214.5 183,214.5 174.6,214.5 166.1,214.5 163.3,214.5 154.9,214.5 146.9,214.5 Z M 256.4,162.8 L 258.5,160.8 262.3,160.9 262.3,161.7 259,164 257,163.9 256.4,162.8 Z M 268.2,114.5 L 265.1,111.7 265.3,109.8 266.6,109.5 273.1,110 277.9,112.9 278.2,114.3 275.2,114.2 272.1,114.1 269.1,114.8 268.2,114.5 Z M 266.7,164.4 L 267.8,163.1 269,163.2 269.7,164 268.6,166.3 267.3,165.9 266.6,164.6 266.7,164.4 Z M 229.3,102.9 L 227.7,105 223.6,104.6 220.2,103.2 221.7,100.7 225.8,99.2 228.2,101.2 229.3,102.9 Z M 228.6,88.6 L 227.3,88.8 222.1,88.4 221.3,86.8 227,86.9 229,87.9 228.6,88.6 Z M 220.4,81.2 L 223.8,83.3 223,85.5 218.8,86.7 216.6,85.3 215.3,83.1 215.1,80.6 218.8,80.8 220.4,81.2 Z M 244.7,106.1 L 240.1,105.4 232.6,103.7 231.6,100.7 231.3,97.9 228.5,95.5 222.6,94.8 219.4,93 220.4,90.7 226.2,91 229.4,92.9 234.9,92.9 237.4,94.7 236.7,96.8 239.9,98.1 241.7,99.4 245.5,99.7 249.6,100.1 254.1,98.9 259.9,98.5 264.4,98.9 267.4,100.9 268.1,103.2 266.3,104.6 262.1,105.8 258.5,105.1 250.4,106 244.7,106.1 Z M 179.5,84.9 L 183.5,85.8 182.6,87.6 177.3,89.2 173.1,87.4 175.4,85.5 179.5,84.9 Z M 180.4,81 L 184,82.2 180.6,83.4 175.9,83.4 176,82.5 178.9,80.7 180.4,81 Z M 336.3,206.3 L 334.8,208.5 333,211.7 334.8,210.5 336.7,211.2 335.7,212.5 338.2,213.4 339.5,212.6 342.3,213.7 341.4,216.2 343.4,215.6 343.8,217.5 344.7,219.6 343.5,222.7 342.2,222.8 340.3,222.2 341,219.3 340.2,218.9 336.9,221.9 335.2,221.8 337.2,220.2 334.5,219.3 331.5,219.5 326,219.4 325.6,218.4 327.3,217.2 326.1,216.2 328.5,214.1 331.4,208.4 333.1,206.4 335.6,205.1 336.9,205.3 336.3,206.3 Z M 256.7,151.3 L 259.8,152.8 263,154.2 263.2,156.2 265.3,155.9 267.3,157.3 264.8,158.7 260.4,157.7 258.8,155.7 256.1,158 252,160.2 251.1,157.7 247.3,158.1 249.7,156 250.1,152.6 251,148.5 253.1,148.8 253.6,150.8 255,150.1 256.7,151.3 Z M 271.1,116.8 L 273.7,114.7 280,117.3 283.9,119.8 284.2,122 289.5,120.8 292.4,124 299.2,126 301.6,128 304.3,132.5 299.1,134.7 305.8,137.8 310.2,138.8 314.3,143.1 318.7,143.4 317.8,146.6 312.9,151.8 309.4,149.9 305,145.5 301.4,146.1 301,148.7 304,151.3 307.8,153.3 309,154.5 310.8,158.8 309.8,161.9 306.3,160.7 299.2,157.3 303.2,161 306.1,163.5 306.6,165 298.9,163.3 292.9,160.9 289.5,158.8 290.5,157.5 286.3,155.3 282.2,153.2 282.2,154.5 274.1,155.2 271.7,153.6 273.5,150.4 278.8,150.3 284.6,149.7 283.7,148.1 284.7,145.9 288.3,141.4 287.5,139.4 286.4,137.8 282.1,135.5 276.4,133.9 278.2,132.7 275.2,129.7 272.8,129.4 270.5,127.7 269,129.2 263.9,129.8 253.7,128.7 247.7,127.3 243.2,126.5 240.8,124.8 243.7,122.5 239.8,122.5 238.9,117.4 241,112.8 243.9,110.6 251.2,109.2 249.1,112.6 251.3,115.9 253.9,111.7 261.1,109.5 265.9,114.9 265.5,118.3 271.1,116.8 Z M 226.8,107.5 L 232.6,107.6 238,108.9 233.8,113.6 230.4,114.6 227.4,118.5 224.2,118.3 222.4,113.7 222.5,111.1 224,108.9 226.8,107.5 Z M 146.9,96.6 L 151.7,92.4 157.4,88.6 161.8,88.7 165.6,87.9 165.2,92.3 163.1,94.3 160.5,94.6 155.2,97 150.7,97.8 146.9,96.6 Z M 119.1,196.3 L 121.8,196 121,200.2 123.4,203.1 122.3,203.1 120.6,201.4 119.6,199.8 118.2,198.6 117.6,197 117.8,195.8 119.1,196.3 Z M 195.8,78 L 201.3,78.8 208.9,81 211.1,83.9 212.2,86.3 207.6,85.7 203,83.8 196.7,83.5 199.4,81.8 196,80.3 195.8,78 Z M 145,216.3 L 143.6,216.7 139,215.1 138.2,213.9 135.6,212.7 135.1,211.7 132.2,211 131.1,209.1 131.4,208.2 134.3,209 136.1,209.6 138.7,209.9 139.7,211.2 141.1,212.9 143.9,214.3 145,216.3 Z M 150.6,105.8 L 154.6,106.9 161.8,107.2 164.5,108.7 167.6,111 164,112.3 157.1,115.9 153.6,119.5 153.6,121.7 146.2,124.1 144.7,121.9 138.2,119.3 139.4,117.1 141.4,113.3 143.8,109.9 141.1,106.6 150.6,105.8 Z M 189.2,98.1 L 191.7,97.2 194.7,97.4 195.2,100.1 193.5,102.8 183.9,103.6 176.8,105.9 172.5,106.1 172.2,104.3 178,101.9 165.3,102.5 161.4,101.6 165.2,96.1 167.9,94.6 175.8,96.5 180.8,99.8 185.7,100.2 181.7,94.8 184.3,92.8 187.2,93.4 188.1,96.1 189.2,98.1 Z M 192.9,113 L 196,115.1 197.8,120.1 198.7,123.7 203.4,126.1 208.5,128.4 208.2,130.6 203.6,131 205.4,132.8 204.4,134.6 199.3,133.8 194.5,132.5 191.2,132.8 185.9,134.4 178.8,135.1 173.8,135.6 172.2,133.3 168.4,132 165.9,132.6 162.4,128.7 164.3,128.2 168.6,127.4 172.6,127.6 176.3,126.7 170.8,125.6 164.8,126 160.8,125.9 159.3,124.1 165.9,122.1 161.5,122.1 156.6,120.8 159,117 160.9,115 168.5,111.8 171.4,112.8 170,115.2 176.2,113.7 180.1,116.3 183.3,113.6 185.9,115.3 188.2,120.3 189.6,118.3 187.6,113 190.1,112.2 192.9,113 Z M 210,115 L 206.9,111.6 210.3,109 213.6,110.1 218.7,109.4 219.4,111 216.8,113.5 221,115.7 220.5,120.3 215.9,122.3 213.2,121.8 211.2,119.9 204.2,116 204.3,114.3 210,115 Z M 192.7,110.3 L 196.5,110.1 198.6,111.2 196.1,114.7 191.7,111 192.7,110.3 Z M 215.5,93.2 L 217.6,95.8 217.7,98.7 216.4,102.8 211.8,103.3 208.8,102.5 208.8,99.3 204.2,99.7 204,95.4 207.1,95.5 211.3,93.6 215.3,93.9 215.5,93.2 Z M 222.5,69.9 L 224.4,68 227.3,67.5 226.1,66.1 232.6,65.7 236.2,69.1 241,70.5 245.6,71.7 247.8,75.8 251.2,77.8 247.4,79.6 242.2,84.1 237.2,84.5 231.3,83.8 228.3,81.3 228.3,79.1 230.6,77.5 225.4,77.6 222.3,75.5 220.5,72.7 222.5,69.9 Z M 235,61.6 L 239.2,60.3 242.4,60.1 248,59 252.1,56.5 255.6,56.9 258.6,58.8 260.8,55.1 264.5,54 269.6,53.3 278.2,53 279.7,53.7 287.8,52.6 293.9,53 300,53.4 307.5,54 313.6,54.8 318.7,56.7 318.6,58.5 311.7,61.4 304.9,62.7 302.4,64.1 308.5,64.1 301.9,68 297.3,69.8 292.4,74.9 286.6,76 284.8,77.2 276.3,77.9 280.2,78.6 278.2,79.7 280.6,82.7 277.9,84.7 273.6,86.4 272.2,88.7 268.3,90.4 268.7,91.7 273.5,91.5 273.6,92.9 266,96.3 258.7,94.7 250.4,95.6 246.2,94.9 240.9,94.6 240.5,91.9 245.7,90.6 244.3,86.4 246.1,86 253.6,88.5 249.7,84.7 245.2,83.6 247.5,81.3 252.4,79.8 253.3,77.7 249.3,75.3 248.1,72.1 255.8,72.4 258,73.1 262.4,70.8 256.1,70.1 246.2,70.5 241.2,68.3 238.9,65.7 235.6,63.8 235,61.6 Z M 281.1,140.7 L 279.3,142.1 276.1,142.3 275.4,140 276.6,137.4 279.2,136.8 281.4,138.1 281.4,140 281.1,140.7 Z M 221.8,131 L 223.5,132.9 221.8,134.5 218,133.1 215.7,133.6 211.8,131.5 214.3,130 216.3,127.8 219.3,129.2 221,130.1 221.8,131 Z M 311.2,211.4 L 312.2,211.1 315.9,212 318.8,213.5 318.9,214.2 317.5,214.2 313.8,213.1 311.2,211.4 Z M 312.6,221.4 L 313.6,223 315.7,223.5 318.3,223.4 316.9,224.8 315.9,225 312.3,223.6 311.6,222.4 312.6,221.4 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('Canada')" />
+  <path class="map-country-path" id="map-country-USA" d="M 146.9,214.5 L 154.9,214.5 163.3,214.5 166.1,214.5 174.6,214.5 183,214.5 191.4,214.5 199.9,214.5 209.4,214.5 219.1,214.5 224.9,214.5 224.9,213.2 225.9,213.2 226.4,215.1 227.2,215.7 229.2,215.9 232.1,216.5 234.8,217.5 237.1,217.1 240.6,218 241.5,218 244,217 246.6,218.2 249.4,219.6 251.7,220.7 253.9,221.8 254.1,222.7 254.8,223.1 254.6,223.4 255.4,223.5 255.9,223.2 256.1,224 256.6,224.5 257.4,224.5 257.8,224.9 257.5,225.5 260.4,227.1 261,230.2 261.6,233.1 260.8,235 259.4,236.9 258.8,238 258.8,238.3 259.1,238.8 260,239.3 260.7,239.3 264,237.6 266.9,237.1 270.6,235.4 270.6,235.1 270.4,234.1 269.9,233.4 271.2,232.9 274,232.9 276.6,232.9 277.5,231.6 277.8,231.3 280.8,228.9 282.1,228.3 286.3,228.3 291.5,228.3 291.8,227.4 292.7,227.3 293.9,226.8 294.9,225.2 295.8,222.5 297.9,219.9 298.9,220.9 300.8,220.3 302,221.3 302,225.9 303.8,227.8 304.3,228.9 301.3,230.6 298.4,231.7 295.4,232.7 294,234.7 293.5,235.4 293.4,237.2 294.4,238.9 295.5,239 295.3,237.8 296.1,238.5 295.9,239.5 294,240 292.6,239.9 290.5,240.5 289.3,240.7 287.7,240.8 285.3,241.8 289.5,241.1 290.3,241.8 286.4,242.7 284.6,242.7 284.6,242.3 283.8,243.2 284.6,243.4 284,245.7 282,248.2 281.7,247.3 281.1,247.2 280.2,246.4 280.8,248.1 281.5,248.7 281.5,249.9 280.6,251.1 279,253.6 278.8,253.5 279.7,251.3 278.2,250.1 277.9,247.5 277.3,248.9 277.9,250.9 276.1,250.4 278,251.4 278.1,254.4 278.9,254.6 279.2,255.7 279.6,258.8 277.9,261.1 274.9,262 273.1,263.8 271.7,264 270.2,265.1 269.9,266.2 266.8,268.1 265.2,269.6 263.8,271.4 263.4,273.5 263.9,275.6 264.8,278.1 266.1,280.2 266.1,281.5 267.4,284.9 267.4,286.9 267.2,288 266.5,289.8 265.7,290.2 264.3,289.8 263.9,288.5 262.8,287.9 261.3,285.4 260,283.1 259.6,282 260.1,280 259.4,278.4 257.2,275.9 256.1,275.4 253.2,276.8 252.7,276.6 251.3,275.2 249.6,274.5 246.4,274.9 243.9,274.5 241.7,274.7 240.6,275.2 241.1,276 241,277.2 241.6,277.8 241.1,278.2 240.1,277.7 239,278.3 237,278.2 234.9,276.7 232.4,277 230.4,276.3 228.6,276.5 226.2,277.2 223.7,279.4 220.9,280.7 219.3,282.1 218.7,283.4 218.7,285.5 218.8,286.9 219.3,287.9 218.2,288 216.2,287.3 214,286.4 213.2,285 212.6,283 211,281.3 210,279.6 208.6,277.5 206.6,276.3 204.3,276.4 202.5,278.7 200.2,277.9 198.7,277 198,275.3 197.1,273.8 195.4,272.4 194,271.5 192.9,270.4 188.1,270.4 188.1,271.7 185.8,271.7 180.2,271.7 173.8,269.6 169.5,268.1 169.8,267.5 166.2,267.8 163,268.1 162.6,266.5 160.7,264.7 159.4,264.4 159.1,263.5 157.5,263.3 156.5,262.5 153.9,262.2 153.2,261.7 152.8,260 150.1,256.9 147.8,252.6 147.9,251.8 146.6,250.8 144.4,248.1 144,245.5 142.5,243.7 143.2,241.1 143.1,238.3 142.2,235.8 143.3,232.6 143.6,229.6 143.9,226.5 143.4,222 142.5,219 141.7,217.4 142.1,216.7 146.1,217.9 147.6,221.2 148.3,220.3 147.9,217.4 146.9,214.5 Z M 55.2,304.5 L 55.7,304.8 56.2,305.1 56.9,306.1 56.8,306.3 55.7,306.9 54.8,307.3 54.4,307.8 53.7,307.4 53.8,306.6 53.3,305.6 53.5,305.3 53.9,304.8 53.7,304.2 53.9,304 54.1,304 55.2,304.5 Z M 53.5,302.6 L 53.3,302.9 52.3,303.1 51.9,302.5 51.5,302.3 51.5,302.1 51.8,301.9 52.8,302.1 53.5,302.6 Z M 51.4,301.4 L 51.3,301.7 49.8,301.6 50,301.3 51.4,301.4 Z M 47.8,299.8 L 48,300 48.9,301 48.7,301.1 48.5,301.1 47.5,301 47.2,300.4 47.1,300.2 47.8,299.8 Z M 44,298.4 L 44.1,299.1 43.8,299.4 42.8,298.9 43,298.6 43.4,298.4 44,298.4 Z M 24,171.4 L 26.3,171.8 26.5,173.4 24.8,174 23,173.2 21.3,172.1 24,171.4 Z M 61.3,181.1 L 63.2,181.4 64.4,182.6 62,184.5 59.1,186 57.7,185 57.3,183.1 59.8,181.7 61.3,181.1 Z M 95.8,129.9 L 95.8,147.3 95.8,171.7 98.6,171.9 101.3,173 103.3,174.8 105.8,177.4 108.5,175.2 111.3,173.9 112.8,176 114.7,177.6 117.3,179.4 119.1,182.2 121.9,186.7 126.7,189.1 126.8,191.6 125.3,193.4 123.7,192 121.2,190.7 120.4,187.4 116.8,184.3 115.3,180.5 112.6,180.3 108.1,180.2 104.8,179 99,174.9 96.3,174.1 91.3,172.6 87.4,173 81.9,171.1 78.6,169.4 75.4,170.2 76,173.1 74.4,173.3 71.2,174.2 68.7,175.6 65.6,176.4 65.2,174 66.5,170 69.4,168.7 68.7,167.7 65.1,170 63.2,172.7 59.1,175.6 61.2,177.6 58.5,180.4 55.5,182.1 52.7,183.3 52,185 47.6,187 46.7,188.8 43.4,190.5 41.4,190.2 38.8,191.3 36,192.5 33.6,193.8 28.8,194.9 28.3,194.3 31.4,192.5 34.2,191.3 37.2,189.2 40.7,188.8 42.1,187.2 46,184.9 46.6,184.1 48.7,182.7 49.2,179.7 50.6,177.4 47.3,178.6 46.4,177.9 44.9,179.3 43.1,177.3 42.3,178.7 41.3,176.8 38.4,178.4 36.7,178.4 36.5,176 37,174.5 35.2,173 31.5,173.8 29.1,171.9 27.2,170.9 27.2,168.6 25,166.8 26.1,164.4 28.4,162 29.4,159.8 31.7,159.5 33.6,160.2 35.9,158.1 37.9,158.5 40.1,157.2 39.6,155.2 38,154.4 40.1,152.7 38.3,152.8 35.3,153.7 34.5,154.7 32.3,153.7 28.3,154.2 24.2,153.1 23,151.4 19.4,148.8 23.4,146.9 29.7,144.7 32,144.7 31.6,147 37.5,146.8 35.2,144 31.8,142.2 29.8,139.9 27.1,137.9 23.2,136.4 24.8,133.9 29.8,133.8 33.3,131.6 34,129.2 36.9,126.9 39.6,126.3 45,124.2 47.6,124.5 51.9,121.8 56.2,122.9 58.2,125.1 59.4,124.2 64.2,124.5 64,125.6 68.3,126.4 71.2,125.9 77.1,127.5 82.6,128 84.7,128.6 88.5,127.8 92.8,129.3 95.8,129.9 Z M 9.2,157.1 L 10.9,157.9 12.7,157.5 15,158.6 17.8,159.2 17.5,159.7 15.4,160.6 13.3,159.6 12.2,158.9 9.7,159.1 9,158.7 9.2,157.1 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('USA')" />
+  <path class="map-country-path" id="map-country-Brazil" d="M 342.6,455.7 L 341.8,454 343.1,452.5 341.4,450.5 339.2,448.8 336.3,446.9 335.3,447 332.5,444.6 330.6,445 334.4,440.9 337.6,438 339.5,436.8 341.8,435.2 341.9,432.9 340.5,431.2 339.1,431.8 339.6,430.1 340,428.4 340,426.8 339,426.2 337.9,426.7 336.9,426.6 336.6,425.5 336.3,422.8 335.8,422 333.9,421.2 332.7,421.8 329.8,421.2 329.9,417.3 329.1,415.8 330,415.2 329.7,413.6 330.5,412.3 331,410.1 330.3,408.4 328.8,407.6 328.5,406.5 328.9,404.8 323.5,404.7 322.4,401.5 323.2,401.4 323.2,400.2 322.6,399.4 322.5,397.8 320.9,397 319.1,397 318,396.2 316,395.6 314.9,394.6 311.8,394.2 308.7,391.7 309,389.8 308.6,388.8 308.9,386.7 305.2,387.2 303.7,388.2 301.3,389.3 300.6,390.2 299.2,390.2 297.1,390 295.5,390.5 294.2,390.1 294.4,386 292.1,387.6 289.6,387.5 288.6,386 286.7,385.9 287.3,384.7 285.7,383 284.5,380.6 285.3,380.1 285.3,378.9 287,378.1 286.7,376.6 287.4,375.7 287.6,374.4 290.9,372.5 293.2,372 293.5,371.6 296.1,371.7 297.3,364.2 297.4,363.1 297,361.5 295.7,360.5 295.7,358.5 297.3,358.1 297.9,358.4 298,357.3 296.3,357 296.3,355.3 301.8,355.4 302.7,354.4 303.5,355.3 304,356.9 304.6,356.6 306.1,358 308.3,357.8 308.9,357 311,356.4 312.1,355.9 312.4,354.8 314.5,354 314.3,353.4 311.9,353.2 311.5,351.5 311.6,349.6 310.4,348.9 310.9,348.7 313,349 315.2,349.7 316,349.1 318.1,348.6 321.2,347.6 322.3,346.6 321.9,345.8 323.3,345.7 324,346.3 323.6,347.5 324.6,347.9 325.2,349.2 324.5,350.2 324,352.5 324.7,353.9 324.9,355.1 326.7,356.4 328.1,356.5 328.4,356 329.3,355.9 330.5,355.4 331.4,354.7 333,354.9 333.7,354.8 335.2,355 335.5,354.5 335,353.9 335.3,353.2 336.4,353.4 337.8,353.1 339.4,353.7 340.6,354.3 341.5,353.5 342.1,353.6 342.5,354.4 343.8,354.2 344.9,353.2 345.8,351.2 347.4,348.7 348.4,348.5 349.1,350 350.7,354.8 352.2,355.3 352.3,357.1 350.1,359.4 351,360.2 356,360.6 356.1,363.4 358.2,361.6 361.8,362.6 366.5,364.2 367.8,365.8 367.4,367.3 370.7,366.5 376.1,367.9 380.3,367.8 384.5,370.1 388.1,373.2 390.3,373.9 392.7,374.1 393.7,374.9 394.7,378.4 395.1,380.1 394,384.6 392.6,386.4 388.6,390.2 386.8,393.4 384.7,395.8 384,395.8 383.2,397.9 383.4,403.1 382.6,407.4 382.3,409.2 381.5,410.4 381,414.1 378.1,417.8 377.6,420.8 375.3,422 374.7,423.7 371.6,423.7 367.2,424.8 365.2,426.1 362.1,427 358.7,429.3 356.4,432.2 355.9,434.3 356.4,436 355.9,438.9 355.2,440.4 353.3,442 350.1,447.3 347.7,449.7 345.8,451.1 344.5,454 342.6,455.7 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('Brazil')" />
+  <path class="map-country-path" id="map-country-India" d="M 767.1,280.8 L 767.3,282 766.3,282.5 766.6,284.3 764.6,283.8 760.9,285.8 761,287.5 759.4,289.9 759.3,291.3 758,293.7 755.8,293.1 755.7,296 755.1,297 755.4,298.2 754,298.9 752.5,294.4 751.7,294.4 751.3,296.2 749.7,294.7 750.6,293.1 751.9,292.9 753.2,290.5 751.5,290 748.9,290 746.3,289.6 746,287.6 744.7,287.4 742.4,286.2 741.4,288.2 743.5,289.7 741.7,290.8 741.1,291.8 742.8,292.6 742.3,294.4 743.3,296.5 743.7,298.9 743.4,299.9 741.4,299.9 738,300.5 738.1,302.6 736.6,304.3 732.6,306.2 729.4,309.5 727.3,311.3 724.5,313.2 724.5,314.4 723.1,315.1 720.5,316.1 719.2,316.3 718.4,318.4 719,322 719.1,324.3 717.9,327 717.9,331.7 716.4,331.8 715.2,333.9 716,334.8 713.5,335.6 712.5,337.4 711.4,338.2 708.7,335.7 707.4,331.8 706.3,329 705.3,327.7 703.8,325.1 703.1,321.6 702.7,319.9 700.1,316 698.9,310.6 698.1,307 698.1,303.5 697.5,300.9 693.4,302.6 691.5,302.2 687.8,298.8 689.1,297.7 688.3,296.6 685,294.2 686.9,292.2 693.1,292.3 692.5,289.8 690.9,288.3 690.6,286 688.8,284.7 691.9,281.7 695.2,281.9 698.1,278.8 699.9,275.8 702.6,272.8 702.6,270.6 704.9,268.9 702.7,267.4 701.7,265.3 700.7,262.6 702.1,261.3 706.4,262 709.5,261.6 712.2,259 715.2,262.6 715,265.1 716.1,266.7 716,268.2 714,267.8 714.8,271.1 717.5,273 721.4,275.1 719.7,276.5 718.6,279.3 721.3,280.4 723.9,281.8 727.6,283.5 731.5,283.9 733.1,285.4 735.3,285.6 738.7,286.3 741,286.3 741.3,285.1 741,283.3 741.2,282 742.9,281.4 743.1,283.7 743.2,284.3 745.8,285.4 747.5,284.9 749.9,285.1 752.2,285 752.4,283.2 751.3,282.3 753.5,281.9 756.1,279.7 759.3,277.8 761.7,278.6 763.7,277.3 765,279.2 764.1,280.4 767.1,280.8 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('India')" />
+  <path class="map-country-path" id="map-country-Germany" d="M 532.7,197.3 L 533.4,199.2 532.6,200.2 533.6,201.5 534.3,203.5 534.1,204.7 535.3,207 534,207.4 533.3,207 532.6,207.7 530.5,208.4 529.5,209.3 527.4,210 527.9,211.1 528.2,212.6 529.7,213.5 531.3,215 530.3,216.6 529.2,217 529.7,219.3 529.4,219.9 528.5,219.2 527.2,219.1 525.1,219.7 522.7,219.5 522.3,220.5 520.8,219.5 520,219.7 517,218.6 516.4,219.4 514,219.3 514.4,216.9 515.8,214.5 511.7,213.8 510.4,212.9 510.5,211.3 510,210.5 510.3,208.1 509.8,204.3 511.5,204.3 512.2,203 512.9,199.6 512.4,198.3 513,197.5 515.3,197.3 515.8,198.2 517.7,196.3 517.1,194.9 517,192.8 519.1,193.3 520.9,192.7 521,194.2 523.8,195 523.8,196.4 526.6,195.7 528.2,194.6 531.4,196.1 532.7,197.3 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('Germany')" />
+  <path class="map-country-path" id="map-country-UK" d="M 475.5,196.9 L 473.4,196.1 471.6,196.2 472.2,194.2 471.6,192.1 474,192 477,194.3 475.5,196.9 Z M 484.2,198.6 L 484.3,198.6 484.7,196.5 482.8,194.1 482.7,194.1 479.3,193.4 478.6,192.4 479.7,190.7 478.7,189.6 477.2,191.5 477.1,187.8 475.6,185.8 476.7,181.7 478.8,178.5 481.1,178.8 484.5,178.5 481.5,182.8 484.4,182.2 487.4,182.3 486.7,185.5 484.2,188.9 487.1,189.2 487.3,189.6 489.8,194.1 491.7,194.7 493.5,198.9 494.3,200.4 497.7,201.1 497.4,203.4 495.9,204.5 497,206.4 494.5,208.3 490.7,208.2 485.9,209.2 484.6,208.5 482.8,210.2 480.2,209.8 478.2,211.1 476.7,210.4 480.8,206.7 483.3,205.9 483.3,205.9 478.9,205.3 478.1,203.8 481.1,202.7 479.5,200.7 480.1,198.3 484.2,198.6 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('UK')" />
+  <path class="map-country-path" id="map-country-Philippines" d="M 833.3,325.2 L 831.9,323.1 834.3,323.2 835.3,324.2 834.5,326.6 833.3,325.2 Z M 838.3,332.7 L 839,331.9 839.3,330.2 840.8,330 840.4,331.9 842.5,329.2 842.2,331.9 841.2,332.8 840.3,334.5 839.4,335.3 837.7,333.4 838.3,332.7 Z M 849,337 L 849.2,338.8 849.4,340.4 848.4,342.9 847.4,340.1 846.1,341.5 847,343.5 846.2,344.8 842.9,343.2 842.1,341.2 842.9,339.9 841.2,338.6 840.3,339.7 838.9,339.6 836.9,341.2 836.4,340.4 837.5,338 839.3,337.3 840.8,336.2 841.8,337.5 844,336.7 844.4,335.5 846.4,335.4 846.2,333.3 848.5,334.6 848.7,336 849,337 Z M 826.8,334.5 L 823,337.1 824.4,335.2 826.4,333.5 828.1,331.6 829.6,328.9 830.1,331.1 828.3,332.6 826.8,334.5 Z M 837.6,309.8 L 837.1,310.9 838.1,312.9 837.3,315.3 835.7,316.2 835.2,318.4 835.9,320.7 837.3,321 838.6,320.6 842.1,322.2 841.8,323.7 842.8,324.4 842.5,325.6 840.3,324.3 839.2,322.8 838.5,323.8 836.7,322.2 834.2,322.6 832.8,322 832.9,320.8 833.8,320.1 832.9,319.5 832.6,320.5 831.2,318.9 830.8,317.7 830.7,315 831.8,315.9 832.1,311.5 833,309 834.7,309 836.4,309.8 837.3,309 837.6,309.8 Z M 836.7,328.7 L 836.3,327.4 838,328.3 839.8,328.3 839.7,329.4 838.4,330.6 836.6,331.4 836.5,330.1 836.7,328.7 Z M 846.5,326.7 L 847.3,329.8 845.1,329 845.2,330 845.8,331.7 844.5,332.3 844.4,330.3 843.5,330.2 843.1,328.5 844.8,328.7 844.7,327.7 843,325.6 845.7,325.6 846.5,326.7 Z" fill="#35353C" stroke="#52525C" stroke-width="1.2" onclick="highlightCountryMap('Philippines')" />
+
+  <!-- Interactive Country Pins & Pulse Halos -->
+  <g class="map-pin pin-high" onclick="highlightCountryMap('USA')" data-country="USA">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="216.9" cy="251.1" r="14" fill="#00975A" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="216.9" cy="251.1" r="5" fill="#00975A" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="216.9" y="232" text-anchor="middle" class="map-pin-label">🇺🇸 USA (22.5%)</text>
+  </g>
+  <g class="map-pin pin-high" onclick="highlightCountryMap('Canada')" data-country="Canada">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="194.4" cy="188.8" r="14" fill="#00975A" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="194.4" cy="188.8" r="5" fill="#00975A" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="194.4" y="170" text-anchor="middle" class="map-pin-label">🇨🇦 CA (13.0%)</text>
+  </g>
+  <g class="map-pin pin-high" onclick="highlightCountryMap('UK')" data-country="UK">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="487.3" cy="196.4" r="14" fill="#00975A" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="487.3" cy="196.4" r="5" fill="#00975A" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="472" y="178" text-anchor="end" class="map-pin-label">🇬🇧 UK (8.5%)</text>
+  </g>
+  <g class="map-pin pin-high" onclick="highlightCountryMap('Germany')" data-country="Germany">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="522.3" cy="207.4" r="14" fill="#00975A" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="522.3" cy="207.4" r="5" fill="#00975A" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="538" y="192" text-anchor="start" class="map-pin-label">🇩🇪 DE (4.2%)</text>
+  </g>
+  <g class="map-pin pin-low" onclick="highlightCountryMap('Brazil')" data-country="Brazil">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="349.3" cy="398.4" r="14" fill="#DE8A25" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="349.3" cy="398.4" r="5" fill="#DE8A25" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="349.3" y="378" text-anchor="middle" class="map-pin-label">🇧🇷 BR (5.2%)</text>
+  </g>
+  <g class="map-pin pin-low" onclick="highlightCountryMap('India')" data-country="India">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="712.7" cy="301.9" r="14" fill="#C4301C" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="712.7" cy="301.9" r="5" fill="#C4301C" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="712.7" y="280" text-anchor="middle" class="map-pin-label">🇮🇳 IN (26.1%)</text>
+  </g>
+  <g class="map-pin pin-low" onclick="highlightCountryMap('Philippines')" data-country="Philippines">
+    <!-- Concentric Pulsing Radar Rings -->
+    <circle cx="836.6" cy="324.4" r="14" fill="#C4301C" opacity="0.2">
+      <animate attributeName="r" values="6;22;6" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;0.02;0.5" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <!-- Center Pin Circle -->
+    <circle cx="836.6" cy="324.4" r="5" fill="#C4301C" stroke="#FFFFFF" stroke-width="1.8" />
+    <!-- High-Legibility Label -->
+    <text x="836.6" y="302" text-anchor="middle" class="map-pin-label">🇵🇭 PH (38.4%)</text>
+  </g>
+</svg>
+
+              <div class="map-legend">
+                <div class="legend-item"><span class="legend-dot dot-green"></span> <span>Tier 1 High-Quality Geos (USA, CA, UK, DE)</span></div>
+                <div class="legend-item"><span class="legend-dot dot-red"></span> <span>Tier 3 Cheap Drift Geos (PH, IN, BR)</span></div>
+              </div>
+            </div>
+
+            <!-- Country Data & Tier Classification Table -->
+            <div class="country-tier-table-wrapper">
+              <table class="data-table" id="country-tier-table">
+                <thead>
+                  <tr>
+                    <th>Country</th>
+                    <th>Spend %</th>
+                    <th>CPM ($)</th>
+                    <th>CVR %</th>
+                    <th>AOV ($)</th>
+                    <th>ROAS</th>
+                    <th>Classification Tier</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-tier="low" id="row-PH">
+                    <td>🇵🇭 Philippines</td>
+                    <td><strong>38.4%</strong></td>
+                    <td>$4.20</td>
+                    <td>0.00%</td>
+                    <td>$0.00</td>
+                    <td>0.00</td>
+                    <td><button class="tier-toggle-btn tier-btn-low" onclick="toggleCountryTier('PH')">Tier 3 (Cheap
+                        Drift)</button></td>
+                  </tr>
+                  <tr data-tier="low" id="row-IN">
+                    <td>🇮🇳 India</td>
+                    <td><strong>26.1%</strong></td>
+                    <td>$2.80</td>
+                    <td>0.00%</td>
+                    <td>$0.00</td>
+                    <td>0.00</td>
+                    <td><button class="tier-toggle-btn tier-btn-low" onclick="toggleCountryTier('IN')">Tier 3 (Cheap
+                        Drift)</button></td>
+                  </tr>
+                  <tr data-tier="high" id="row-USA">
+                    <td>🇺🇸 United States</td>
+                    <td><strong>22.5%</strong></td>
+                    <td>$38.50</td>
+                    <td>3.45%</td>
+                    <td>$78.20</td>
+                    <td>2.45</td>
+                    <td><button class="tier-toggle-btn tier-btn-high" onclick="toggleCountryTier('USA')">Tier 1 (High
+                        Quality)</button></td>
+                  </tr>
+                  <tr data-tier="high" id="row-CA">
+                    <td>🇨🇦 Canada</td>
+                    <td><strong>13.0%</strong></td>
+                    <td>$31.20</td>
+                    <td>2.80%</td>
+                    <td>$72.00</td>
+                    <td>1.95</td>
+                    <td><button class="tier-toggle-btn tier-btn-high" onclick="toggleCountryTier('CA')">Tier 1 (High
+                        Quality)</button></td>
+                  </tr>
+                  <tr data-tier="high" id="row-UK">
+                    <td>🇬🇧 United Kingdom</td>
+                    <td><strong>8.5%</strong></td>
+                    <td>$34.10</td>
+                    <td>3.10%</td>
+                    <td>$75.00</td>
+                    <td>2.10</td>
+                    <td><button class="tier-toggle-btn tier-btn-high" onclick="toggleCountryTier('UK')">Tier 1 (High
+                        Quality)</button></td>
+                  </tr>
+                  <tr data-tier="low" id="row-BR">
+                    <td>🇧🇷 Brazil</td>
+                    <td><strong>5.2%</strong></td>
+                    <td>$5.60</td>
+                    <td>0.20%</td>
+                    <td>$25.00</td>
+                    <td>0.15</td>
+                    <td><button class="tier-toggle-btn tier-btn-low" onclick="toggleCountryTier('BR')">Tier 3 (Cheap
+                        Drift)</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <p class="caption-line"><i data-lucide="info"></i> <strong>TAKEAWAY:</strong> Fixing the Geo-Skew Threshold at
+            50% removes media buyer subjectivity and automates early $70 kill decisions.</p>
+        </div>
+      </section>
+
+    <!-- COMPONENT 12: CBO vs ABO Audience Cannibalization & Overlap Visualizer -->
+    <section class="bento-card col-span-12 card-mast-texture" id="component-12">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="eyebrow eyebrow-problem">SECTION 4 — EVIDENCE &amp; AUDIENCE CANNIBALIZATION</span>
+          <h2>COMPONENT 12: HOW CBO STEALS AUDIENCE FROM ABO (OVERLAP VISUALIZER)</h2>
+        </div>
+        <button class="icon-btn" onclick="openModal('comp-12-detail')" title="Inspect Fullscreen">
+          <i data-lucide="maximize-2"></i>
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p class="component-desc">Interactive Circle Overlap Simulator: Visualizes how high-budget CBO campaigns outbid and cannibalize impression share from ABO creative testing ad sets.</p>
+
+        <!-- KPI Metrics Header -->
+        <div class="kpi-grid">
+          <div class="kpi-box box-danger">
+            <span class="kpi-label">CANNIBALIZATION RATE</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number" id="cbo-cannibal-rate">68%</span>
+              <span class="badge b-sale"><i data-lucide="shield-alert"></i> HIGH OVERLAP</span>
+            </div>
+            <span class="kpi-subtext">CBO outbidding ABO bids</span>
+          </div>
+
+          <div class="kpi-box box-warning">
+            <span class="kpi-label">ABO IMPRESSION WIN RATE</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number" id="abo-win-rate">11.4%</span>
+              <span class="badge b-hot">BID STARVED</span>
+            </div>
+            <span class="kpi-subtext">Test ad sets starved of reach</span>
+          </div>
+
+          <div class="kpi-box box-purple">
+            <span class="kpi-label">CPA INFLATION PENALTY</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number" id="cbo-cpa-penalty">+$34.00</span>
+              <span class="badge b-soon">AUCTION WAR</span>
+            </div>
+            <span class="kpi-subtext">Self-bidding price surge</span>
+          </div>
+
+          <div class="kpi-box box-info">
+            <span class="kpi-label">RECOMMENDED ISOLATION</span>
+            <div class="kpi-value-row">
+              <span class="kpi-number">100%</span>
+              <span class="badge b-new">EXCLUSION</span>
+            </div>
+            <span class="kpi-subtext">Exclude CBO custom audiences</span>
+          </div>
+        </div>
+
+        <!-- CBO vs ABO Circle Venn & Controls Split -->
+        <div class="cbo-simulator-grid">
+          
+          <!-- Interactive Venn Overlap Diagram -->
+          <div class="venn-visual-container">
+            <div class="map-overlay-title" style="position: absolute; top: 12px; left: 16px;">INTERACTIVE AUDIENCE OVERLAP CIRCLES</div>
+            
+            <svg class="venn-svg" viewBox="0 0 440 250">
+              <!-- ABO Audience Circle -->
+              <circle cx="120" cy="125" r="75" class="circle-abo" id="venn-circle-abo" />
+              <text x="100" y="130" class="venn-label-abo">ABO TEST POOL<tspan x="100" dy="16" font-size="11">$50/Day</tspan></text>
+
+              <!-- CBO Scaling Circle -->
+              <circle cx="280" cy="125" r="75" class="circle-cbo" id="venn-circle-cbo" />
+              <text x="300" y="130" class="venn-label-cbo">CBO SCALE POOL<tspan x="300" dy="16" font-size="11">$1,000/Day</tspan></text>
+
+              <!-- Cannibalization Overlap Region Circle -->
+              <circle cx="200" cy="125" r="40" class="circle-overlap-clip" id="venn-circle-overlap" />
+              <text x="200" y="125" class="venn-label-overlap">⚡ CANNIBALIZED<tspan x="200" dy="15" font-size="10">Meta Auction Theft</tspan></text>
+            </svg>
+
+            <div class="map-legend" style="margin-top: 4px;">
+              <div class="legend-item"><span class="legend-dot" style="background:#1D349A; box-shadow:0 0 8px #1D349A;"></span> <span>ABO Concept Test Pool</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#DE8A25; box-shadow:0 0 8px #DE8A25;"></span> <span>CBO Scaling Campaign Pool</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#C4301C; box-shadow:0 0 8px #C4301C;"></span> <span>Self-Bidding Cannibalization Zone</span></div>
+            </div>
+          </div>
+
+          <!-- Sliders & Interactive Table -->
+          <div class="cbo-sliders-card">
+            
+            <div class="cbo-slider-group">
+              <label for="cbo-budget-slider">
+                <span><i data-lucide="dollar-sign"></i> CBO SCALING DAILY BUDGET:</span>
+                <strong id="cbo-budget-val" style="color:var(--orange);">$1,000/DAY</strong>
+              </label>
+              <input type="range" id="cbo-budget-slider" min="200" max="3000" value="1000" step="100" oninput="updateCBOCannibalizationSimulator()">
+            </div>
+
+            <div class="cbo-slider-group">
+              <label for="cbo-overlap-slider">
+                <span><i data-lucide="layers"></i> AUDIENCE OVERLAP RATIO:</span>
+                <strong id="cbo-overlap-val" style="color:var(--orange);">65% OVERLAP</strong>
+              </label>
+              <input type="range" id="cbo-overlap-slider" min="10" max="90" value="65" step="5" oninput="updateCBOCannibalizationSimulator()">
+            </div>
+
+            <div class="threshold-verdict-alert" id="cbo-verdict-banner">
+              <!-- Dynamic JS -->
+            </div>
+
+            <!-- Ad Set Bidding Breakdown Table -->
+            <div style="overflow-x: auto;">
+              <table class="data-table" id="cbo-breakdown-table">
+                <thead>
+                  <tr>
+                    <th>Campaign &amp; Ad Set Name</th>
+                    <th>Targeting</th>
+                    <th>Win Rate %</th>
+                    <th>Steal Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id="row-cbo-scaling">
+                    <td><strong>CBO_Scaling_Broad_V1</strong></td>
+                    <td>15.0M Broad</td>
+                    <td><strong class="win-rate-val text-success">83.5%</strong></td>
+                    <td><span class="badge b-new">SCALING BULLY</span></td>
+                  </tr>
+                  <tr id="row-abo-concept1">
+                    <td>ABO_Test_Concept_HookA</td>
+                    <td>1.8M Interest</td>
+                    <td><strong class="win-rate-val text-danger">11.4%</strong></td>
+                    <td><span class="badge b-sale">STARVED ABO</span></td>
+                  </tr>
+                  <tr id="row-abo-concept2">
+                    <td>ABO_Test_Concept_HookB</td>
+                    <td>1.2M LAL 1%</td>
+                    <td><strong class="win-rate-val text-danger">5.1%</strong></td>
+                    <td><span class="badge b-sale">FALSE KILLED</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="card-footer">
+        <p class="caption-line"><i data-lucide="info"></i> <strong>SOP RULE TAKEAWAY:</strong> Never run ABO creative tests against active CBO scaling campaigns without custom audience negative exclusions. CBO algorithms will outbid ABO ad sets and produce false-kill data.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Fullscreen Inspection Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">COMPONENT INSPECTION DETAIL</h3>
+        <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+/* ==========================================================================
+   Hellomaterials — Meta Testing SOP Application Logic
+   ========================================================================== */
+
+let charts = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  initCountUpAnimations();
+  initAllCharts();
+  runScenarioSimulation();
+  updateGeoSkewSimulator();
+  updateCBOCannibalizationSimulator();
+});
+
+function reanimateAll() {
+  initCountUpAnimations();
+  Object.keys(charts).forEach(key => { if (charts[key]) charts[key].destroy(); });
+  initAllCharts();
+  updateGeoSkewSimulator();
+  updateCBOCannibalizationSimulator();
+}
+
+function initCountUpAnimations() {
+  const elements = document.querySelectorAll('.count-up');
+  elements.forEach(el => {
+    const target = parseFloat(el.getAttribute('data-target'));
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    let current = 0;
+    const duration = 1200;
+    const steps = 30;
+    const increment = target / steps;
+    const stepTime = duration / steps;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = `${prefix}${current.toFixed(target % 1 === 0 ? 0 : 1)}${suffix}`;
+    }, stepTime);
+  });
+}
+
+function updateBudgetCalculator() {
+  const vol = parseInt(document.getElementById('creative-volume-slider').value);
+  document.getElementById('creative-vol-val').textContent = vol;
+  const annualWaste = Math.round(vol * 0.428 * 30 * 12);
+  document.getElementById('annual-waste-display').textContent = `${annualWaste.toLocaleString()} / YEAR WASTED`;
+}
+
+let isMissingDataVisible = false;
+function toggleDataMissing() {
+  isMissingDataVisible = !isMissingDataVisible;
+  const alertEl = document.querySelector('.missing-data-alert');
+  const btnText = document.getElementById('missing-btn-text');
+  if (isMissingDataVisible) {
+    alertEl.style.display = 'flex';
+    btnText.textContent = 'HIDE MISSING DATA';
+  } else {
+    alertEl.style.display = 'none';
+    btnText.textContent = 'TOGGLE MISSING DATA';
+  }
+}
+
+function filterGeoTable(tier) {
+  const buttons = document.querySelectorAll('.table-filter-bar .filter-pill');
+  buttons.forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const rows = document.querySelectorAll('#geo-data-table tbody tr');
+  rows.forEach(row => {
+    const rowTier = row.getAttribute('data-tier');
+    row.style.display = (tier === 'all' || rowTier === tier) ? '' : 'none';
+  });
+}
+
+function runScenarioSimulation() {
+  const selected = document.getElementById('scenario-selector').value;
+  const nodes = document.querySelectorAll('.flow-node');
+  nodes.forEach(n => n.className = 'flow-node');
+  document.getElementById('gate-b-kill').style.boxShadow = 'none';
+  document.getElementById('gate-b-pass').style.boxShadow = 'none';
+
+  const verdictTitle = document.getElementById('sim-verdict-title');
+  const verdictText = document.getElementById('sim-verdict-text');
+
+  if (selected === 'scenario-1') {
+    document.getElementById('node-start').classList.add('node-active');
+    document.getElementById('node-purchase').classList.add('node-active');
+    document.getElementById('node-geo').classList.add('node-highlight-kill');
+    verdictTitle.textContent = 'DECISION: KILL @ $70 (DAY 7)';
+    verdictText.textContent = 'Delivery skewed 64.5% to cheap low-CPM geos without purchase. Cutting at $70 saves $30 waste per creative.';
+  } else if (selected === 'scenario-2') {
+    document.getElementById('node-start').classList.add('node-active');
+    document.getElementById('node-purchase').classList.add('node-active');
+    document.getElementById('node-geo').classList.add('node-active');
+    document.getElementById('node-metrics').classList.add('node-highlight-continue');
+    verdictTitle.textContent = 'DECISION: CONTINUE TO $100';
+    verdictText.textContent = 'High-CPM USA audience under-delivered. High hook/CTR secondary metrics justify extending test to $100.';
+  } else if (selected === 'scenario-3') {
+    document.getElementById('node-start').classList.add('node-active');
+    document.getElementById('node-purchase').classList.add('node-highlight-continue');
+    verdictTitle.textContent = 'DECISION: CONTINUE TO $100';
+    verdictText.textContent = 'Purchase achieved at $70. Creative validated to proceed to Checkpoint B.';
+  } else if (selected === 'scenario-4') {
+    document.getElementById('node-start').classList.add('node-active');
+    document.getElementById('node-purchase').classList.add('node-active');
+    document.getElementById('gate-b-kill').style.boxShadow = '0 0 16px rgba(196, 48, 28, 0.6)';
+    verdictTitle.textContent = 'DECISION: KILL @ $100 (CHECKPOINT B HARD GATE)';
+    verdictText.textContent = '0 purchases by $100 spend. Cut immediately regardless of soft metrics.';
+  } else if (selected === 'scenario-5') {
+    document.getElementById('node-start').classList.add('node-active');
+    document.getElementById('node-purchase').classList.add('node-active');
+    document.getElementById('gate-b-pass').style.boxShadow = '0 0 16px rgba(0, 151, 90, 0.6)';
+    verdictTitle.textContent = 'DECISION: PASS TO SCALING';
+    verdictText.textContent = '2 purchases achieved by $100 spend. Creative passes first gate to next testing stage.';
+  }
+}
+
+function updateGeoSkewSimulator() {
+  const slider = document.getElementById('skew-threshold-slider');
+  if (!slider) return;
+  const threshold = parseInt(slider.value);
+  document.getElementById('skew-threshold-val').textContent = `${threshold}% SPEND THRESHOLD`;
+
+  let cheapSpend = 0;
+  const rows = document.querySelectorAll('#country-tier-table tbody tr');
+  rows.forEach(r => {
+    if (r.getAttribute('data-tier') === 'low') {
+      const spendText = r.querySelector('td:nth-child(2)').textContent.replace('%', '');
+      cheapSpend += parseFloat(spendText);
+    }
+  });
+
+  const banner = document.getElementById('skew-verdict-banner');
+  if (cheapSpend >= threshold) {
+    banner.className = 'threshold-verdict-alert verdict-alert-danger';
+    banner.innerHTML = `<i data-lucide="alert-triangle"></i> <span>🚨 SKEW ALERT TRIGGERED: Cheap Geo Spend (${cheapSpend.toFixed(1)}%) EXCEEDS ${threshold}% Threshold &rarr; Triggers Checkpoint A Step 3 KILL Decision at $70.</span>`;
+  } else {
+    banner.className = 'threshold-verdict-alert verdict-alert-safe';
+    banner.innerHTML = `<i data-lucide="check-circle"></i> <span>SAFE DELIVERY: Cheap Geo Spend (${cheapSpend.toFixed(1)}%) is BELOW ${threshold}% Threshold &rarr; Allow Creative to Continue to $100.</span>`;
+  }
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function toggleCountryTier(code) {
+  const row = document.getElementById(`row-${code}`);
+  const btn = row.querySelector('.tier-toggle-btn');
+  const currentTier = row.getAttribute('data-tier');
+
+  if (currentTier === 'low') {
+    row.setAttribute('data-tier', 'high');
+    btn.className = 'tier-toggle-btn tier-btn-high';
+    btn.textContent = 'Tier 1 (High Quality)';
+  } else {
+    row.setAttribute('data-tier', 'low');
+    btn.className = 'tier-toggle-btn tier-btn-low';
+    btn.textContent = 'Tier 3 (Cheap Drift)';
+  }
+  updateGeoSkewSimulator();
+}
+
+function highlightCountryMap(name) {
+  const rows = document.querySelectorAll('#country-tier-table tbody tr');
+  rows.forEach(r => r.style.background = '');
+
+  document.querySelectorAll('.map-country-path').forEach(p => p.classList.remove('active-highlight'));
+  document.querySelectorAll('.map-pin').forEach(p => p.classList.remove('active-pin'));
+
+  let key = name;
+  if (name.toLowerCase().includes('usa') || name.toLowerCase().includes('united states')) key = 'USA';
+  if (name.toLowerCase().includes('ca') || name.toLowerCase().includes('canada')) key = 'Canada';
+  if (name.toLowerCase().includes('uk') || name.toLowerCase().includes('united kingdom')) key = 'UK';
+  if (name.toLowerCase().includes('de') || name.toLowerCase().includes('germany')) key = 'Germany';
+  if (name.toLowerCase().includes('br') || name.toLowerCase().includes('brazil')) key = 'Brazil';
+  if (name.toLowerCase().includes('in') || name.toLowerCase().includes('india')) key = 'India';
+  if (name.toLowerCase().includes('ph') || name.toLowerCase().includes('philippines')) key = 'Philippines';
+
+  const countryPath = document.getElementById(`map-country-${key}`);
+  if (countryPath) countryPath.classList.add('active-highlight');
+
+  const pin = document.querySelector(`.map-pin[data-country="${key}"]`);
+  if (pin) pin.classList.add('active-pin');
+
+  rows.forEach(r => {
+    if (r.textContent.toLowerCase().includes(key.toLowerCase()) || r.textContent.toLowerCase().includes(name.toLowerCase())) {
+      r.style.background = 'rgba(222, 138, 37, 0.3)';
+      r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+});
+    }
+  });
+}
+
+function switchComp5Chart(mode) {
+  document.getElementById('btn-scatter').classList.toggle('active', mode === 'scatter');
+  document.getElementById('btn-slope').classList.toggle('active', mode === 'slope');
+
+  if (charts['comp5']) charts['comp5'].destroy();
+  const ctx = document.getElementById('comp5Canvas').getContext('2d');
+
+  if (mode === 'scatter') {
+    charts['comp5'] = new Chart(ctx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Exited Creatives (CPA)',
+          data: [
+            { x: 18.5, y: 42.1 }, { x: 22.0, y: 45.0 }, { x: 25.4, y: 28.1 },
+            { x: 29.1, y: 64.2 }, { x: 31.0, y: 33.0 }, { x: 38.0, y: 78.5 },
+            { x: 19.8, y: 22.4 }, { x: 44.2, y: 89.0 }, { x: 15.2, y: 19.5 }
+          ],
+          backgroundColor: '#DE8A25',
+          pointRadius: 6,
+          pointHoverRadius: 9
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } } },
+        scales: {
+          x: { title: { display: true, text: 'Exit CPA at $10/day Test ($)', color: '#FEF9DF' }, grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } },
+          y: { title: { display: true, text: 'Scaled CPA ($)', color: '#FEF9DF' }, grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } }
+        }
+      }
+    });
+  } else {
+    charts['comp5'] = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Creative #101', 'Creative #104', 'Creative #109', 'Creative #112', 'Creative #118'],
+        datasets: [
+          { label: '$10/day Test CPA', data: [22.5, 19.8, 31.0, 15.2, 38.0], borderColor: '#DE8A25', backgroundColor: '#DE8A25' },
+          { label: 'Scaled Campaign CPA', data: [45.0, 22.4, 33.0, 19.5, 78.5], borderColor: '#C4301C', backgroundColor: '#C4301C' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } } },
+        scales: {
+          x: { grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } },
+          y: { grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } }
+        }
+      }
+    });
+  }
+}
+
+function initAllCharts() {
+  Chart.defaults.font.family = "'Geist', sans-serif";
+
+  switchComp5Chart('scatter');
+
+  const ctx6 = document.getElementById('comp6Canvas').getContext('2d');
+  charts['comp6'] = new Chart(ctx6, {
+    type: 'bar',
+    data: {
+      labels: ['Current 10-Result Count', 'Proposed Multi-Signal Exit'],
+      datasets: [{
+        label: '7-Day Scaling Survival Rate %',
+        data: [32.5, 68.4],
+        backgroundColor: ['#C4301C', '#00975A'],
+        borderColor: ['#C4301C', '#00975A'],
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } },
+        y: { max: 100, grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF', callback: v => v + '%' } }
+      }
+    }
+  });
+
+  const ctx7 = document.getElementById('comp7Canvas').getContext('2d');
+  charts['comp7'] = new Chart(ctx7, {
+    type: 'bar',
+    data: {
+      labels: ['Initial Earned Profit', 'Stall Budget Burn', 'Zombie Reclaim', 'Net Recovery Position'],
+      datasets: [{
+        label: 'USD ($)',
+        data: [18400, -8200, 14250, 24450],
+        backgroundColor: ['#1D349A', '#C4301C', '#00975A', '#DE8A25'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } },
+        y: { grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF', callback: v => '
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+
+</html> + v.toLocaleString() } }
+      }
+    }
+  });
+
+  const ctx8 = document.getElementById('comp8Canvas').getContext('2d');
+  charts['comp8'] = new Chart(ctx8, {
+    type: 'line',
+    data: {
+      labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4 (Stall Start)', 'Day 6', 'Day 8 (Stall End)'],
+      datasets: [
+        { label: 'Frequency', data: [1.02, 1.15, 1.32, 1.84, 2.45, 3.12], borderColor: '#DE8A25', tension: 0.3 },
+        { label: 'CPM ($)', data: [14.2, 15.1, 17.8, 26.4, 34.8, 42.5], borderColor: '#C4301C', tension: 0.3 },
+        { label: 'Daily Reach (k)', data: [8.5, 7.8, 6.2, 3.9, 2.1, 1.2], borderColor: '#00975A', tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } } },
+      scales: {
+        x: { grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } },
+        y: { grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } }
+      }
+    }
+  });
+
+  const ctx9 = document.getElementById('comp9Canvas').getContext('2d');
+  charts['comp9'] = new Chart(ctx9, {
+    type: 'bar',
+    data: {
+      labels: ['Problem-Agitate', 'UGC Unboxing', 'Product Demo', 'Testimonials'],
+      datasets: [
+        { label: 'Tested Assets', data: [45, 60, 30, 40], backgroundColor: '#4D473E' },
+        { label: 'Scaled Winners', data: [18, 15, 9, 3], backgroundColor: '#DE8A25' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#FEF9DF', font: { family: "'Oswald', sans-serif" } } },
+        y: { grid: { color: '#4D473E' }, ticks: { color: '#FEF9DF' } }
+      }
+    }
+  });
+}
+
+function updateCBOCannibalizationSimulator() {
+  const cboBudgetEl = document.getElementById('cbo-budget-slider');
+  const overlapEl = document.getElementById('cbo-overlap-slider');
+  if (!cboBudgetEl || !overlapEl) return;
+
+  const cboBudget = parseInt(cboBudgetEl.value);
+  const overlapPct = parseInt(overlapEl.value);
+
+  document.getElementById('cbo-budget-val').textContent = `${cboBudget.toLocaleString()}/DAY`;
+  document.getElementById('cbo-overlap-val').textContent = `${overlapPct}% OVERLAP`;
+
+  // Calculate Cannibalization Rate & ABO Win Rate
+  const cannibalizationRate = Math.min(96, Math.round(overlapPct * (cboBudget / 600)));
+  const aboWinRate = Math.max(3.5, (100 - cannibalizationRate * 0.95)).toFixed(1);
+  const cpaPenalty = Math.round(35 * (cannibalizationRate / 50));
+
+  const cannRateEl = document.getElementById('cbo-cannibal-rate');
+  const aboWinEl = document.getElementById('abo-win-rate');
+  const cpaPenEl = document.getElementById('cbo-cpa-penalty');
+
+  if (cannRateEl) cannRateEl.textContent = `${cannibalizationRate}%`;
+  if (aboWinEl) aboWinEl.textContent = `${aboWinRate}%`;
+  if (cpaPenEl) cpaPenEl.textContent = `+${cpaPenalty}.00`;
+
+  // Dynamic SVG circle adjustments
+  const circleCBO = document.getElementById('venn-circle-cbo');
+  const circleABO = document.getElementById('venn-circle-abo');
+  const circleOverlap = document.getElementById('venn-circle-overlap');
+
+  if (circleCBO && circleABO && circleOverlap) {
+    const distance = 220 - (overlapPct * 1.6);
+    circleCBO.setAttribute('cx', 120 + distance);
+    circleOverlap.setAttribute('cx', 120 + (distance / 2));
+    
+    const cboRadius = Math.min(95, 60 + (cboBudget / 150));
+    circleCBO.setAttribute('r', cboRadius);
+    
+    const overlapRadius = Math.max(15, (overlapPct * 0.65));
+    circleOverlap.setAttribute('r', overlapRadius);
+  }
+
+  // Update verdict banner
+  const verdictBanner = document.getElementById('cbo-verdict-banner');
+  if (verdictBanner) {
+    if (cannibalizationRate >= 50) {
+      verdictBanner.className = 'threshold-verdict-alert verdict-alert-danger';
+      verdictBanner.innerHTML = `<i data-lucide="alert-triangle"></i> <span>🚨 CRITICAL CANNIBALIZATION: CBO scaling campaign is stealing ${cannibalizationRate}% of impression share from ABO creative test ad sets. ABO test results are corrupted by intra-account Meta auction competition.</span>`;
+    } else {
+      verdictBanner.className = 'threshold-verdict-alert verdict-alert-safe';
+      verdictBanner.innerHTML = `<i data-lucide="check-circle"></i> <span>ISOLATED AUDIENCES: Cannibalization is low (${cannibalizationRate}%). ABO creative test ad sets are receiving clean auction bids without CBO budget bullying.</span>`;
+    }
+  }
+
+  // Update table win rates
+  const abo1Win = Math.max(4.0, (18.5 - (cannibalizationRate * 0.15))).toFixed(1);
+  const abo2Win = Math.max(2.1, (12.0 - (cannibalizationRate * 0.12))).toFixed(1);
+  const cboWin = (100 - parseFloat(abo1Win) - parseFloat(abo2Win)).toFixed(1);
+
+  const rowCBO = document.getElementById('row-cbo-scaling');
+  const rowABO1 = document.getElementById('row-abo-concept1');
+  const rowABO2 = document.getElementById('row-abo-concept2');
+
+  if (rowCBO && rowABO1 && rowABO2) {
+    rowCBO.querySelector('.win-rate-val').textContent = `${cboWin}%`;
+    rowABO1.querySelector('.win-rate-val').textContent = `${abo1Win}%`;
+    rowABO2.querySelector('.win-rate-val').textContent = `${abo2Win}%`;
+  }
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function openModal(compId) {
+  const overlay = document.getElementById('modal-overlay');
+  const body = document.getElementById('modal-body');
+  overlay.classList.add('active');
+  body.innerHTML = `
+    <div style="padding: 20px; color: #fff;">
+      <h2 style="font-family: 'Oswald', sans-serif; text-transform: uppercase;">DETAILED INSPECTION VIEW: ${compId}</h2>
+      <p style="margin-top: 10px; color: #FEF9DF; opacity: 0.8;">Loaded from Hellomaterials Meta Testing SOP presentation deck. Fully compliant with Hellomaterials Design System v1.</p>
+    </div>
+  `;
+}
+
+function closeModal(e) {
+  if (!e || e.target.id === 'modal-overlay' || e.target.classList.contains('modal-close') || e.target.closest('.modal-close')) {
+    document.getElementById('modal-overlay').classList.remove('active');
+  }
+}
+
+
+// Active section tracking on scroll
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('.section-divider-banner, section[id^="component-"]');
+  const navBtns = document.querySelectorAll('.deck-nav-btn');
+  let currentSec = '';
+
+  sections.forEach(sec => {
+    const secTop = sec.offsetTop - 120;
+    if (window.scrollY >= secTop) {
+      currentSec = sec.id;
+    }
+  });
+
+  navBtns.forEach(btn => {
+    btn.classList.remove('active');
+    const href = btn.getAttribute('href');
+    if (href === '#' + currentSec || (currentSec.includes('component-1') && href === '#section-1')) {
+      btn.classList.add('active');
+    }
+  });
+});
+
+</script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

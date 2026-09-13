@@ -1,0 +1,735 @@
+<!doctype html>
+<!--
+  Hellomaterials — Motion Kit · Bento techniques (v1 · 13 Sep 2026)
+  Six live CSS animation techniques, each mapped to a Hellomaterials use case.
+  Tokens: ../01-brand/design-system.html (palette, Oswald/Geist, radii) ·
+  mono face from bento-components/styles.css · copy from brand values B1.3 / voice B2.2.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hellomaterials — Motion Kit Bento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Oswald:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:     #DE8A25;
+    --orange-19:  #B4701E;
+    --orange-40:  #855316;
+    --charcoal:   #282828;
+    --graphite:   #343434;
+    --ink:        #202020;
+    --brown:      #4D473E;
+    --brown-19:   #6F695D;
+    --brown-60:   #B7B29F;
+    --cream:      #FEF9DF;
+    --sale-green: #00975A;
+    --r-block: 10px;
+    --r-medium: 6px;
+    --r-badge: 5px;
+    --f-head: 'Oswald', 'Arial Narrow', sans-serif;
+    --f-body: 'Geist', 'Helvetica Neue', Arial, sans-serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --ease: cubic-bezier(.65, 0, .35, 1);
+    /* dark-card roles */
+    --card:   #1F1F1F;
+    --well:   #161616;
+    --line:   rgba(254,249,223,.08);
+    --dim:    rgba(254,249,223,.62);
+    --faint:  rgba(254,249,223,.4);
+  }
+
+  /* Registered properties → the browser can interpolate them (technique 05) */
+  @property --s { syntax: '<integer>'; inherits: true; initial-value: 42; }
+  @property --m { syntax: '<integer>'; inherits: true; initial-value: 14; }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; min-height: 100vh; background: var(--charcoal); color: var(--cream); font-family: var(--f-body); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(900px 420px at 88% 0%, rgba(222,138,37,.14), transparent 60%), repeating-linear-gradient(115deg, rgba(254,249,223,.022) 0 2px, transparent 2px 16px); }
+  h1, h2, p { margin: 0; }
+
+  /* ── Header ────────────────────────────────────────────── */
+  .announce { position: relative; background: var(--orange); color: #000; font-size: 13px; font-weight: 500; text-align: center; padding: 7px 16px; }
+  .wrap { position: relative; max-width: 1560px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 48px); }
+  .top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; padding-block: 44px 32px; }
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand img { width: 64px; height: 64px; flex: none; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--orange); border-radius: 2px; }
+  .top h1 { font-family: var(--f-head); font-weight: 600; text-transform: uppercase; font-size: clamp(28px, 4vw, 46px); line-height: 1.05; margin-top: 6px; color: #fff; }
+  .top h1 em { color: var(--orange); }
+  .top .meta { color: rgba(254,249,223,.62); font-size: 13px; margin-top: 8px; max-width: 64ch; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-head); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; line-height: 1; padding: 12px 18px; border-radius: var(--r-block); border: 1px solid rgba(254,249,223,.25); background: transparent; color: var(--cream); cursor: pointer; text-decoration: none; transition: background .2s, color .2s, border-color .2s; }
+  .btn:hover, .btn:focus-visible { background: var(--orange); border-color: var(--orange); color: #000; outline: none; }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* ── Grid + technique card ─────────────────────────────── */
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-bottom: 40px; }
+  @media (max-width: 1180px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 740px)  { .grid { grid-template-columns: 1fr; gap: 18px; } }
+
+  .tq { display: flex; flex-direction: column; padding: 30px 30px 28px; background: var(--card); border: 1px solid rgba(77,71,62,.9); border-radius: var(--r-block); box-shadow: 0 30px 60px -36px rgba(0,0,0,.8); transition: border-color .3s, transform .4s var(--ease); }
+  .tq:hover { border-color: rgba(222,138,37,.55); transform: translateY(-3px); }
+  .tq.feature { border-color: rgba(222,138,37,.6); box-shadow: 0 0 0 4px rgba(222,138,37,.07), 0 30px 70px -36px rgba(222,138,37,.35); }
+  .tq-num { font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--orange); }
+  .tq h2 { font-family: var(--f-head); font-weight: 500; text-transform: uppercase; font-size: clamp(28px, 2.3vw, 36px); line-height: 1.05; margin: 8px 0 20px; color: #fff; }
+  .tq h2 em { font-style: italic; color: var(--orange); }
+
+  .tq { container-type: inline-size; min-width: 0; }
+  /* height follows card width (16:10) without forcing a min-width */
+  .stage { position: relative; height: 250px; height: max(220px, 62.5cqi); overflow: hidden; border-radius: var(--r-medium); border: 1px solid var(--line); background: radial-gradient(circle at 50% 42%, rgba(222,138,37,.07), transparent 62%), var(--well); }
+  .canvas { position: absolute; left: 50%; top: calc(50% - 8px); width: 320px; height: 200px; transform: translate(-50%, -50%) scale(var(--sc, 1)); }
+  .canvas > svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+  /* ── Applied · Meta testing route (wide card) ──────────── */
+  .tq.wide { grid-column: 1 / -1; --sale-red: #C4301C; }
+  .tq.wide .stage { height: max(330px, 30cqi); }
+  .canvas.route-h { width: 960px; height: 300px; }
+  .canvas.route-v { width: 320px; height: 800px; display: none; }
+  @media (max-width: 1000px) {
+    .tq.wide .stage { height: 840px; }
+    .canvas.route-h { display: none; }
+    .canvas.route-v { display: block; }
+  }
+  .g-amt  { font-family: var(--f-head); font-weight: 500; font-size: 20px; fill: #fff; }
+  .g-day  { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .16em; fill: var(--faint); }
+  .g-rule { font-family: var(--f-mono); font-size: 9px; letter-spacing: .14em; fill: var(--orange); }
+  .g-rule.tbc { fill: rgba(254,249,223,.35); }
+  .node-start { fill: var(--cream); }
+  .node-tbc  { fill: rgba(222,138,37,.06); stroke: var(--orange); stroke-width: 2; stroke-dasharray: 3 3; }
+  .node-end  { fill: rgba(0,151,90,.2); stroke: var(--sale-green); stroke-width: 2.2; }
+  .kill-line { fill: none; stroke: var(--sale-red); stroke-width: 1.6; stroke-dasharray: 3 4; opacity: .85; }
+  .kill-chip { fill: rgba(196,48,28,.2); stroke: var(--sale-red); stroke-width: 1.2; }
+  .kill-txt  { font-family: var(--f-mono); font-size: 9.5px; font-weight: 500; letter-spacing: .16em; fill: #FF8A78; }
+  .kill-sub  { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .12em; fill: rgba(255,138,120,.75); }
+
+  /* Creatives riding the route. Distance is linear in time: 100% of the route at 96% of the cycle,
+     so a gate at spend fraction f is reached at f × 0.96 of the cycle. */
+  .cr { position: absolute; top: 0; left: 0; width: 14px; height: 14px; border-radius: 3px; background: var(--orange); border: 1px solid rgba(254,249,223,.75); box-shadow: 0 0 14px rgba(222,138,37,.7); offset-rotate: 0deg; opacity: 0; animation-duration: 10s; animation-timing-function: linear; animation-iteration-count: infinite; animation-delay: var(--dl, 0s); }
+  /* offset-path, animation-name/-duration and --drop are set per creative by the route script;
+     the @keyframes are generated there from each route's gate fractions. */
+  .hold-line { fill: none; stroke: #B7B29F; stroke-width: 1.6; stroke-dasharray: 3 4; opacity: .8; }
+  .hold-chip { fill: rgba(183,178,159,.12); stroke: #B7B29F; stroke-width: 1.2; }
+  .hold-txt  { font-family: var(--f-mono); font-size: 9.5px; font-weight: 500; letter-spacing: .16em; fill: #E4DFCB; }
+  .hold-sub  { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .12em; fill: rgba(228,223,203,.65); }
+  .legend i.h { background: #B7B29F; }
+  .gs.exit { border-color: rgba(0,151,90,.45); }
+  .gs.exit .gs-t { color: #3FC08A; }
+  .data-note { margin-top: 10px; font-size: 12.5px; line-height: 1.5; color: var(--faint); }
+  .gate-strip.even { grid-template-columns: repeat(5, 1fr); }
+  @media (max-width: 1180px) { .gate-strip.even { grid-template-columns: repeat(6, 1fr); } .gate-strip.even .gs { grid-column: span 2; } }
+  @media (max-width: 740px)  { .gate-strip.even { grid-template-columns: 1fr; } .gate-strip.even .gs { grid-column: auto; } }
+  body.still .cr { opacity: 1; offset-distance: var(--still, 0%); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 14px; font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; background: var(--orange); }
+  .legend i.k { background: var(--sale-red); }
+  .legend i.p { background: var(--sale-green); }
+  .legend i.t { background: none; border: 1.5px dashed var(--orange); border-radius: 50%; }
+
+  .gate-strip { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .gs { background: #191919; border: 1px solid var(--line); border-radius: var(--r-medium); padding: 12px 14px; }
+  .gs b { display: block; font-family: var(--f-head); font-weight: 500; font-size: 18px; line-height: 1.2; color: #fff; }
+  .gs .gs-t { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--orange); }
+  .gs p { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--dim); }
+  .gs p .k { color: #FF8A78; font-weight: 500; }
+  .gs p .p { color: #3FC08A; font-weight: 500; }
+  .gs.tbc { border-style: dashed; border-color: rgba(222,138,37,.35); }
+  .gs.tbc .gs-t { color: var(--faint); }
+  @media (max-width: 1180px) { .gate-strip { grid-template-columns: repeat(6, 1fr); } .gs { grid-column: span 3; } .gs.tbc { grid-column: span 2; } }
+  @media (max-width: 740px)  { .gate-strip { grid-template-columns: 1fr; } .gs, .gs.tbc { grid-column: auto; } }
+
+  .wide-foot { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px 36px; align-items: start; }
+  .wide-foot .unlocks { margin-top: 16px; padding-top: 0; border-top: 0; padding-left: 28px; border-left: 1px solid var(--line); }
+  @media (max-width: 900px) {
+    .wide-foot { grid-template-columns: 1fr; }
+    .wide-foot .desc { margin-bottom: 0; }
+    .wide-foot .unlocks { margin-top: 0; padding-left: 0; border-left: 0; padding-top: 16px; border-top: 1px solid var(--line); }
+  }
+  .stage-cap { position: absolute; left: 12px; bottom: 9px; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); }
+  .stage-cap::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: var(--sale-green); box-shadow: 0 0 8px var(--sale-green); vertical-align: 1px; }
+
+  .code-pill { align-self: flex-start; margin-top: 20px; font-family: var(--f-mono); font-size: 11.5px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--orange); background: rgba(222,138,37,.08); border: 1px solid rgba(222,138,37,.35); border-radius: var(--r-badge); padding: 7px 12px; }
+  .desc { margin: 16px 0 20px; color: var(--dim); font-size: 15.5px; line-height: 1.75; }
+  .desc code { font-family: var(--f-mono); font-size: 13.5px; font-weight: 500; color: var(--cream); }
+  .unlocks { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); color: #fff; font-size: 14.5px; font-weight: 500; line-height: 1.6; }
+  .unlocks b { font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); margin-right: 8px; }
+
+  /* SVG helpers */
+  .lbl { font-family: var(--f-mono); font-size: 9px; letter-spacing: .16em; fill: var(--faint); }
+
+  /* ── 01 Motion path ────────────────────────────────────── */
+  .route { fill: none; stroke: rgba(254,249,223,.3); stroke-width: 1.6; stroke-dasharray: 4 6; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -20; } }
+  .node { fill: rgba(222,138,37,.14); stroke: var(--orange); stroke-width: 2; }
+  .ping { fill: none; stroke: var(--sale-green); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: ping 1.5s ease-out infinite; }
+  @keyframes ping { from { transform: scale(1); opacity: .9; } to { transform: scale(2.8); opacity: 0; } }
+  .pkg {
+    position: absolute; top: 0; left: 0; width: 16px; height: 11px; border-radius: 2px;
+    background: var(--orange); border: 1px solid rgba(254,249,223,.7);
+    box-shadow: 0 0 14px rgba(222,138,37,.75);
+    offset-path: path('M30 110 C 70 20, 130 20, 160 105 S 250 190, 290 105');
+    offset-rotate: auto;
+    animation: travel 4.5s cubic-bezier(.45,.05,.55,.95) infinite;
+    animation-delay: var(--dl, 0s);
+  }
+  .pkg::after { content: ""; position: absolute; left: 50%; top: -1px; bottom: -1px; width: 2px; margin-left: -1px; background: rgba(0,0,0,.35); }
+  @keyframes travel {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+
+  /* ── 02 Stroke draw ────────────────────────────────────── */
+  .topo { fill: none; stroke: rgba(183,178,159,.16); stroke-width: 1.1; }
+  .plan { fill: none; stroke: rgba(254,249,223,.16); stroke-width: 1.4; stroke-dasharray: 3 5; }
+  .trail { fill: none; stroke: var(--orange); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: trail 5.5s var(--ease) infinite; }
+  @keyframes trail {
+    0%   { stroke-dashoffset: 1; opacity: 1; }
+    55%  { stroke-dashoffset: 0; opacity: 1; }
+    86%  { stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+  .pin-end { transform-box: fill-box; transform-origin: 50% 100%; animation: pin 5.5s infinite; }
+  @keyframes pin {
+    0%, 52% { transform: scale(0); opacity: 1; }
+    60%     { transform: scale(1.25); }
+    66%, 86% { transform: scale(1); opacity: 1; }
+    100%    { transform: scale(1); opacity: 0; }
+  }
+
+  /* ── 03 Clip-path wipe ─────────────────────────────────── */
+  .crate, .contents { position: absolute; left: 30px; top: 18px; width: 260px; height: 160px; border-radius: var(--r-medium); }
+  .crate { display: grid; place-content: center; text-align: center; background: repeating-linear-gradient(45deg, #4D473E 0 10px, #454037 10px 20px); border: 2px solid var(--brown-19); }
+  .crate::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 26px; margin-left: -13px; background: rgba(222,138,37,.5); }
+  .crate b { position: relative; font-family: var(--f-head); font-weight: 600; font-size: 26px; letter-spacing: .04em; color: var(--cream); line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,.5); }
+  .crate small { position: relative; font-family: var(--f-mono); font-size: 9px; letter-spacing: .24em; color: var(--cream); opacity: .8; margin-top: 6px; }
+  .contents { background: var(--cream); color: var(--ink); padding: 13px 16px; clip-path: inset(0 100% 0 0); animation: wipe 5s var(--ease) infinite; }
+  .contents header { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .18em; color: var(--brown-19); padding-bottom: 8px; border-bottom: 1px solid rgba(77,71,62,.2); }
+  .contents h3 { margin: 8px 0 6px; font-family: var(--f-head); font-weight: 600; text-transform: uppercase; font-size: 17px; line-height: 1; }
+  .contents ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; font-size: 12px; }
+  .contents li { display: flex; align-items: center; gap: 7px; }
+  .contents li span { font-family: var(--f-mono); font-size: 9px; color: var(--orange-19); }
+  @keyframes wipe {
+    0%, 8%   { clip-path: inset(0 100% 0 0); }
+    45%, 78% { clip-path: inset(0 0 0 0); }
+    100%     { clip-path: inset(0 0 0 100%); }
+  }
+  .scan { position: absolute; left: 29px; top: 12px; width: 2px; height: 172px; background: var(--orange); box-shadow: 0 0 12px 2px rgba(222,138,37,.8); animation: scan 5s var(--ease) infinite; }
+  @keyframes scan {
+    0%   { transform: translateX(0);     opacity: 0; }
+    8%   { transform: translateX(0);     opacity: 1; }
+    45%  { transform: translateX(260px); opacity: 1; }
+    46%  { transform: translateX(260px); opacity: 0; }
+    77%  { transform: translateX(0);     opacity: 0; }
+    78%  { transform: translateX(0);     opacity: 1; }
+    100% { transform: translateX(260px); opacity: 1; }
+  }
+
+  /* ── 04 Stagger ────────────────────────────────────────── */
+  .pack { position: absolute; left: 28px; top: 14px; width: 264px; height: 150px; padding: 13px; border: 1.5px dashed rgba(254,249,223,.22); border-radius: var(--r-block); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: #242424; border: 1px solid var(--brown); border-radius: var(--r-medium); color: var(--cream); animation: drop 6s var(--ease) infinite; animation-delay: calc(var(--i) * 250ms); opacity: 0; }
+  .item svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .item span { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+  @keyframes drop {
+    0%       { transform: translateY(-28px) scale(.9); opacity: 0; border-color: var(--brown); }
+    10%      { transform: translateY(3px) scale(1);    opacity: 1; border-color: var(--orange); }
+    14%      { transform: translateY(0); }
+    30%      { border-color: var(--brown); }
+    82%      { transform: translateY(0); opacity: 1; }
+    92%, 100% { transform: translateY(0); opacity: 0; }
+  }
+  .pack-bar { position: absolute; left: 28px; top: 174px; width: 264px; height: 4px; border-radius: 4px; background: rgba(254,249,223,.08); overflow: hidden; }
+  .pack-bar::after { content: ""; position: absolute; inset: 0; background: var(--orange); transform-origin: left; animation: bar 6s var(--ease) infinite; }
+  @keyframes bar { 0% { transform: scaleX(0); opacity: 1; } 36% { transform: scaleX(1); } 84% { transform: scaleX(1); opacity: 1; } 94%, 100% { transform: scaleX(1); opacity: 0; } }
+  .pack-legend { position: absolute; left: 28px; top: 184px; width: 264px; display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .16em; color: var(--faint); }
+
+  /* ── 05 @property counter ──────────────────────────────── */
+  .timer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 22px; animation: sec 60s linear infinite, min 3600s linear infinite; }
+  @keyframes sec { from { --s: 59; } to { --s: 0; } }
+  @keyframes min { from { --m: 59; } to { --m: 0; } }
+  .dial { position: relative; width: 128px; height: 128px; display: grid; place-content: center; text-align: center; flex: none; }
+  .dial::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--orange) calc(var(--s) * 6deg), rgba(254,249,223,.08) 0); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px)); mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px)); }
+  .dial .big { font-family: var(--f-head); font-weight: 500; font-size: 46px; line-height: 1; color: #fff; counter-reset: sec var(--s); font-variant-numeric: tabular-nums; }
+  .dial .big::after { content: counter(sec, decimal-leading-zero); }
+  .dial small { font-family: var(--f-mono); font-size: 9px; letter-spacing: .22em; color: var(--faint); margin-top: 4px; }
+  .clock { display: flex; flex-direction: column; gap: 9px; }
+  .clock .k { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .2em; color: var(--orange); }
+  .units { display: flex; align-items: center; gap: 5px; font-family: var(--f-head); color: #fff; }
+  .u { width: 42px; height: 42px; display: grid; place-items: center; font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: var(--r-medium); }
+  .u.m { counter-reset: min var(--m); } .u.m::after { content: counter(min, decimal-leading-zero); }
+  .u.s { counter-reset: sec var(--s); } .u.s::after { content: counter(sec, decimal-leading-zero); }
+  .units i { font-style: normal; opacity: .45; }
+  .clock .note { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .16em; color: var(--faint); }
+
+  /* ── 06 Marquee ────────────────────────────────────────── */
+  .marquee { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 12px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
+  .row { display: flex; width: max-content; animation: marq 16s linear infinite; }
+  .row.r2 { animation-duration: 21s; animation-direction: reverse; }
+  .row.r3 { animation-duration: 26s; }
+  @keyframes marq { to { transform: translateX(-50%); } }
+  .stage:hover .row { animation-play-state: paused; }
+  .chip { flex: none; margin-right: 10px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; white-space: nowrap; font-family: var(--f-head); font-weight: 500; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; color: var(--cream); border: 1px solid rgba(254,249,223,.16); background: rgba(255,255,255,.03); }
+  .chip i { width: 6px; height: 6px; border-radius: 2px; background: var(--orange); }
+  .r2 .chip { font-family: var(--f-body); text-transform: none; letter-spacing: 0; font-weight: 500; border-color: rgba(222,138,37,.6); background: rgba(222,138,37,.1); }
+  .r3 .chip { font-family: var(--f-mono); font-size: 10px; letter-spacing: .22em; color: var(--faint); border-color: transparent; background: none; padding: 4px 8px; }
+
+  /* ── Motion control ────────────────────────────────────── */
+  body.is-paused .stage *, body.is-paused .stage *::before, body.is-paused .stage *::after { animation-play-state: paused !important; }
+  /* Still frame for prefers-reduced-motion until the viewer presses Play */
+  body.still .stage *, body.still .stage *::before, body.still .stage *::after { animation: none !important; }
+  body.still .pkg { opacity: 1; offset-distance: var(--still); }
+  body.still .trail { stroke-dashoffset: 0; }
+  body.still .contents { clip-path: inset(0); }
+  body.still .scan { opacity: 0; }
+  body.still .item { opacity: 1; }
+  body.still .pack-bar::after { transform: scaleX(1); }
+  body.still .ping { opacity: 0; }
+
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding-block: 8px 48px; color: rgba(254,249,223,.55); font-size: 12.5px; }
+  .foot a { color: var(--cream); }
+
+  @media (max-width: 740px) {
+    .tq { padding: 24px 20px 22px; }
+    .brand img { width: 48px; height: 48px; }
+    .code-pill { letter-spacing: .1em; font-size: 10.5px; }
+    .desc { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="announce">Show up ready — the Hellomaterials motion kit</div>
+
+<header class="wrap top">
+  <div class="brand">
+    <img src="../01-brand/hellomaterials-logo.svg" alt="Hellomaterials logo">
+    <div>
+      <span class="eyebrow">Motion kit · Bento techniques</span>
+      <h1>Six ways to <em>move</em></h1>
+      <p class="meta">Six CSS animation techniques, each tuned to a store job: shipping, trails, unboxing, bundles, offers and trust. All live, no libraries.</p>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="motion" type="button" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      <span>Pause motion</span>
+    </button>
+    <a class="btn" href="hellomaterials-bento-paper-grid.html">Paper grid →</a>
+  </div>
+</header>
+
+<main class="wrap grid">
+
+  <!-- 01 · MOTION PATH ─────────────────────────────────── -->
+  <article class="tq wide feature" id="testing-route">
+    <span class="tq-num">Technique 01 · Applied</span>
+    <h2>Meta testing <em>route</em></h2>
+    <div class="stage" role="img" aria-label="Creative testing route at $10 per day: start, gate at $70 day 7 signal check with kill lane, gate at $100 day 10 one-purchase rule with kill lane, gates at $130, $160 and $180 with rules to confirm, then exit to scaling at 10 results">
+      <div class="canvas route-h" data-route="testing" data-w="960" data-h="300">
+        <svg viewBox="0 0 960 300" aria-hidden="true">
+          <path class="route" d="M60 170 C 200 170, 240 125, 380 132 S 600 196, 740 170 S 870 118, 920 118"/>
+          <g class="marks"></g>
+        </svg>
+      </div>
+      <div class="canvas route-v" data-route="testing" data-w="320" data-h="800">
+        <svg viewBox="0 0 320 800" aria-hidden="true">
+          <path class="route" d="M140 40 C 140 150, 100 200, 108 300 S 176 460, 156 570 S 130 690, 140 760"/>
+          <g class="marks"></g>
+        </svg>
+      </div>
+      <span class="stage-cap">Creative test · $10/day per creative · demo flow</span>
+    </div>
+    <div class="legend">
+      <span><i></i>Creative in test</span>
+      <span><i class="k"></i>Kill</span>
+      <span><i class="p"></i>Exit to scaling</span>
+      <span><i class="t"></i>Gate rule to confirm</span>
+    </div>
+    <div class="gate-strip">
+      <div class="gs"><b>$70 · Day 7</b><span class="gs-t">Checkpoint A · signal check</span><p><span class="p">Continue</span> if under-delivered on a high-CPM geo, or a purchase landed. <span class="k">Kill</span> on geo skew or weak secondary metrics with no purchase.</p></div>
+      <div class="gs"><b>$100 · Day 10</b><span class="gs-t">Checkpoint B · hard rule</span><p><span class="p">Pass</span> with 1+ purchase. <span class="k">Kill</span> at 0 purchases, however good the soft metrics look.</p></div>
+      <div class="gs tbc"><b>$130 · Day 13</b><span class="gs-t">Gate 3</span><p>Rule to confirm.</p></div>
+      <div class="gs tbc"><b>$160 · Day 16</b><span class="gs-t">Gate 4</span><p>Rule to confirm.</p></div>
+      <div class="gs tbc"><b>$180 · Day 18</b><span class="gs-t">Gate 5</span><p>Rule to confirm.</p></div>
+    </div>
+    <span class="code-pill">CSS · offset-path · offset-distance · translate</span>
+    <div class="wide-foot">
+      <p class="desc">Every creative rides one route at $10/day, and each gate sits where its spend lands on the path. A creative that fails a gate turns red and drops into the kill lane with <code>translate</code>, while <code>offset-distance</code> holds its place on the route. Creatives that pass run on and exit to scaling.</p>
+      <p class="unlocks"><b>Use it for</b> the opening slide of the testing SOP deck, onboarding new media buyers, and showing management where the budget stops for each creative without reading a table.</p>
+    </div>
+  </article>
+
+  <!-- APPLIED · SIGNAL EXIT ROUTE (proposal) -->
+  <article class="tq wide" id="signal-route">
+    <span class="tq-num">Technique 01 · Applied · Proposal</span>
+    <h2>Signal exit <em>route</em></h2>
+    <div class="stage" role="img" aria-label="Signal exit route: after passing the $100 gate, a creative needs at least 5 purchases, CPA at or under $22, those purchases within 10 days, and at least 60% of spend in Tier-1 countries to exit to scaling; missing any check sends it to keep testing">
+      <div class="canvas route-h" data-route="signal" data-w="960" data-h="300">
+        <svg viewBox="0 0 960 300" aria-hidden="true">
+          <path class="route" d="M60 165 C 190 165, 230 118, 350 126 S 540 196, 660 172 S 850 118, 920 118"/>
+          <g class="marks"></g>
+        </svg>
+      </div>
+      <div class="canvas route-v" data-route="signal" data-w="320" data-h="800">
+        <svg viewBox="0 0 320 800" aria-hidden="true">
+          <path class="route" d="M160 40 C 160 150, 140 200, 144 300 S 182 460, 172 570 S 154 690, 160 760"/>
+          <g class="marks"></g>
+        </svg>
+      </div>
+      <span class="stage-cap">Exit window · success signals · demo flow</span>
+    </div>
+    <div class="legend">
+      <span><i></i>Creative in test</span>
+      <span><i class="h"></i>Keep testing</span>
+      <span><i class="p"></i>Exit to scaling</span>
+    </div>
+    <div class="gate-strip even">
+      <div class="gs"><b>5 purchases</b><span class="gs-t">Check 1 · minimum</span><p>Below 5 purchases the creative <span style="color:#E4DFCB;font-weight:500">keeps testing</span>. Nothing exits on fewer.</p></div>
+      <div class="gs"><b>CPA ≤ $22</b><span class="gs-t">Check 2 · cost</span><p>CPA across those purchases. 57% of creatives meeting it scaled (n 7).</p></div>
+      <div class="gs"><b>≤ 10 days</b><span class="gs-t">Check 3 · speed</span><p>Purchases landed within 10 days, so by $100 at $10/day. 60% scaled (n 5).</p></div>
+      <div class="gs"><b>≥ 60% Tier-1</b><span class="gs-t">Check 4 · geo</span><p>Share of spend in Tier-1 countries. 67% scaled (n 6).</p></div>
+      <div class="gs exit"><b>All four → exit</b><span class="gs-t">Scaling</span><p>Combined signal: <span class="p">75% scaled</span> (n 4), against 33% for the 10-result gate (n 12).</p></div>
+    </div>
+    <p class="data-note">Success rates come from the test data in the Meta testing SOP deck (Point 2). Samples are small (n 4–12), so treat them as directional and validate before rollout.</p>
+    <span class="code-pill">CSS · offset-path · generated @keyframes</span>
+    <div class="wide-foot">
+      <p class="desc">Same route mechanics, different exit logic. A creative leaves testing once it has at least 5 purchases and clears three success signals: cost, speed and Tier-1 spend. Miss a check and it pulls into the keep-testing lane instead of exiting. Both routes read one gate config, and the <code>@keyframes</code> are generated from those numbers, so timing and gates can't drift apart.</p>
+      <p class="unlocks"><b>Use it for</b> the Point 2 proposal slide, showing the signal exit next to the current route, and briefing buyers on what an early winner looks like.</p>
+    </div>
+  </article>
+
+  <!-- 01 · generic motion-path demo -->
+  <article class="tq">
+    <span class="tq-num">Technique 01</span>
+    <h2>Motion <em>path</em></h2>
+    <div class="stage">
+      <div class="canvas">
+        <svg viewBox="0 0 320 200" aria-hidden="true">
+          <path class="route" d="M30 110 C 70 20, 130 20, 160 105 S 250 190, 290 105"/>
+          <circle class="node" cx="30" cy="110" r="7"/>
+          <circle class="node" cx="160" cy="105" r="7"/>
+          <circle class="ping" cx="290" cy="105" r="7"/>
+          <circle class="node" cx="290" cy="105" r="7"/>
+          <text class="lbl" x="30" y="136" text-anchor="middle">WAREHOUSE</text>
+          <text class="lbl" x="174" y="94">ON THE ROAD</text>
+          <text class="lbl" x="290" y="84" text-anchor="middle">YOUR CAMP</text>
+        </svg>
+        <span class="pkg" style="--dl:0s;--still:18%"></span>
+        <span class="pkg" style="--dl:-1.5s;--still:50%"></span>
+        <span class="pkg" style="--dl:-3s;--still:80%"></span>
+      </div>
+      <span class="stage-cap">Order route · demo</span>
+    </div>
+    <span class="code-pill">CSS · offset-path · offset-distance</span>
+    <p class="desc">Each parcel travels an SVG route via <code>offset-path: path(…)</code>. Animate <code>offset-distance</code> from 0% to 100% and <code>offset-rotate: auto</code> turns the box with the road. Three parcels on staggered delays read as a live shipping lane.</p>
+    <p class="unlocks"><b>Use it for</b> order tracking on the thank-you page, "from our warehouse to your campsite" explainers, and delivery promises that feel real instead of written.</p>
+  </article>
+
+  <!-- 02 · STROKE DRAW ─────────────────────────────────── -->
+  <article class="tq">
+    <span class="tq-num">Technique 02</span>
+    <h2>Trail <em>draw</em></h2>
+    <div class="stage">
+      <div class="canvas">
+        <svg viewBox="0 0 320 200" aria-hidden="true">
+          <g class="topo">
+            <ellipse cx="205" cy="92" rx="112" ry="64" transform="rotate(-12 205 92)"/>
+            <ellipse cx="205" cy="92" rx="82" ry="46" transform="rotate(-12 205 92)"/>
+            <ellipse cx="205" cy="92" rx="54" ry="29" transform="rotate(-12 205 92)"/>
+            <ellipse cx="205" cy="92" rx="26" ry="13" transform="rotate(-12 205 92)"/>
+            <ellipse cx="66" cy="150" rx="52" ry="26" transform="rotate(8 66 150)"/>
+            <ellipse cx="66" cy="150" rx="28" ry="13" transform="rotate(8 66 150)"/>
+          </g>
+          <path class="plan" d="M24 168 C 60 150, 70 120, 110 128 S 150 170, 182 140 S 196 84, 232 82 S 280 72, 292 52"/>
+          <path class="trail" pathLength="1" d="M24 168 C 60 150, 70 120, 110 128 S 150 170, 182 140 S 196 84, 232 82 S 280 72, 292 52"/>
+          <circle cx="24" cy="168" r="5" fill="#FEF9DF"/>
+          <g class="pin-end">
+            <path d="M292 52 c-7-9-11-14-11-20 a11 11 0 0 1 22 0 c0 6-4 11-11 20z" fill="#DE8A25"/>
+            <circle cx="292" cy="32" r="4" fill="#161616"/>
+          </g>
+          <text class="lbl" x="14" y="190">TRAILHEAD</text>
+          <text class="lbl" x="274" y="36" text-anchor="end">CAMP</text>
+        </svg>
+      </div>
+      <span class="stage-cap">Trail map · demo</span>
+    </div>
+    <span class="code-pill">SVG · pathLength · stroke-dashoffset</span>
+    <p class="desc">Set <code>pathLength="1"</code> on any path, dash it <code>1 1</code>, then animate <code>stroke-dashoffset</code> from 1 to 0. The line draws itself at any size with no length maths, and the pin pops once the trail arrives.</p>
+    <p class="unlocks"><b>Use it for</b> route maps on trail and camp gear, "how the kit comes together" sketches, and underlining the one word that matters in a headline.</p>
+  </article>
+
+  <!-- 03 · CLIP-PATH WIPE ──────────────────────────────── -->
+  <article class="tq">
+    <span class="tq-num">Technique 03</span>
+    <h2>Box <em>reveal</em></h2>
+    <div class="stage">
+      <div class="canvas">
+        <div class="crate"><b>FIELD KIT</b><small>SEALED</small></div>
+        <div class="contents">
+          <header><span>WHAT'S IN THE BOX</span><span>6 ITEMS</span></header>
+          <h3>Sample readiness kit</h3>
+          <ul>
+            <li><span>01</span>Light</li>
+            <li><span>02</span>Fire</li>
+            <li><span>03</span>Cord</li>
+            <li><span>04</span>Water</li>
+            <li><span>05</span>First aid</li>
+            <li><span>06</span>Shelter</li>
+          </ul>
+        </div>
+        <span class="scan"></span>
+      </div>
+      <span class="stage-cap">Unboxing · demo</span>
+    </div>
+    <span class="code-pill">CSS · clip-path · inset()</span>
+    <p class="desc">Stack two layers and animate the top one from <code>clip-path: inset(0 100% 0 0)</code> to <code>inset(0)</code>. It wipes instead of fading, so it reads as opening something. A glowing 2px bar riding the edge sells the reveal.</p>
+    <p class="unlocks"><b>Use it for</b> "what's in the box" sections, loose gear vs. packed kit comparisons, and the unboxing moment on bundle pages.</p>
+  </article>
+
+  <!-- 04 · STAGGER ─────────────────────────────────────── -->
+  <article class="tq">
+    <span class="tq-num">Technique 04</span>
+    <h2>Kit <em>cascade</em></h2>
+    <div class="stage">
+      <div class="canvas">
+        <div class="pack">
+          <div class="item" style="--i:0"><svg viewBox="0 0 24 24"><path d="M8 3h8l-1 6H9z"/><path d="M9 9h6v12H9z"/></svg><span>Light</span></div>
+          <div class="item" style="--i:1"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z"/></svg><span>Fire</span></div>
+          <div class="item" style="--i:2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg><span>Cord</span></div>
+          <div class="item" style="--i:3"><svg viewBox="0 0 24 24"><path d="M10 2h4v3l2 3v13H8V8l2-3z"/></svg><span>Water</span></div>
+          <div class="item" style="--i:4"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M12 10v6M9 13h6"/></svg><span>Aid</span></div>
+          <div class="item" style="--i:5"><svg viewBox="0 0 24 24"><path d="M3 20 12 4l9 16z"/><path d="M12 4v16"/></svg><span>Shelter</span></div>
+        </div>
+        <div class="pack-bar"></div>
+        <div class="pack-legend"><span>PACKING LIST</span><span>6 ITEMS</span></div>
+      </div>
+      <span class="stage-cap">Bundle builder · demo</span>
+    </div>
+    <span class="code-pill">CSS · custom properties · calc() delay</span>
+    <p class="desc">Give each item <code>style="--i: 3"</code> and write one rule: <code>animation-delay: calc(var(--i) * 250ms)</code>. One keyframe, any number of items, a clean cascade. Add a seventh item and the timing just works.</p>
+    <p class="unlocks"><b>Use it for</b> bundle builders, "everything you need" checklists, and good / better / best tiers landing one after another.</p>
+  </article>
+
+  <!-- 05 · @PROPERTY COUNTER ───────────────────────────── -->
+  <article class="tq">
+    <span class="tq-num">Technique 05</span>
+    <h2>Live <em>countdown</em></h2>
+    <div class="stage">
+      <div class="canvas">
+        <div class="timer">
+          <div class="dial"><span class="big"></span><small>SEC</small></div>
+          <div class="clock">
+            <span class="k">OFFER ENDS IN</span>
+            <div class="units"><span class="u">02</span><i>:</i><span class="u m"></span><i>:</i><span class="u s"></span></div>
+            <span class="note">DEMO TIMER · NO JS</span>
+          </div>
+        </div>
+      </div>
+      <span class="stage-cap">Offer bar · demo</span>
+    </div>
+    <span class="code-pill">CSS · @property · counter()</span>
+    <p class="desc">Register <code>@property --s { syntax: '&lt;integer&gt;' }</code> and the browser can animate it. Feed it to <code>counter-reset</code> for the digits and to <code>conic-gradient</code> for the ring. You get a ticking countdown with zero JavaScript.</p>
+    <p class="unlocks"><b>Use it for</b> offer-bar countdowns, shipping cut-off timers, and spec numbers that count up as a comparison table comes into view.</p>
+  </article>
+
+  <!-- 06 · MARQUEE ─────────────────────────────────────── -->
+  <article class="tq">
+    <span class="tq-num">Technique 06</span>
+    <h2>Trust <em>ticker</em></h2>
+    <div class="stage">
+      <div class="canvas">
+        <div class="marquee">
+          <div class="row r1"><span class="chip"><i></i>Shipping</span><span class="chip"><i></i>Returns</span><span class="chip"><i></i>Guarantee</span><span class="chip"><i></i>Reviews</span><span class="chip"><i></i>Full specs</span></div>
+          <div class="row r2"><span class="chip">field-ready</span><span class="chip">pack smarter</span><span class="chip">show up ready</span><span class="chip">made for real weekends</span><span class="chip">what's in the box</span></div>
+          <div class="row r3"><span class="chip">HUNT</span><span class="chip">·</span><span class="chip">CAMP</span><span class="chip">·</span><span class="chip">FISH</span><span class="chip">·</span><span class="chip">RANGE</span><span class="chip">·</span><span class="chip">PREP</span><span class="chip">·</span></div>
+        </div>
+      </div>
+      <span class="stage-cap">Hover to pause</span>
+    </div>
+    <span class="code-pill">CSS · translate loop · mask-image</span>
+    <p class="desc">Render the row twice inside one track and slide it <code>translateX(0 → -50%)</code> forever, so the seam never shows. A <code>mask-image</code> gradient fades the edges, and <code>:hover</code> pauses it for anyone reading.</p>
+    <p class="unlocks"><b>Use it for</b> trust strips under the hero (shipping, returns, guarantee, reviews), bands of brand vocabulary, and hunt / camp / fish / range category rails.</p>
+  </article>
+
+</main>
+
+<footer class="wrap foot">
+  <span>Built on <a href="../01-brand/design-system.html">design-system.html</a> · Oswald · Geist · JetBrains Mono</span>
+  <span>Companion: <a href="hellomaterials-bento-paper-grid.html">Field notes paper grid</a></span>
+</footer>
+
+<script>
+  (function () {
+    // Seamless marquee: duplicate each row once (copies hidden from screen readers)
+    document.querySelectorAll('.row').forEach(function (row) {
+      Array.prototype.slice.call(row.children).forEach(function (el) {
+        var c = el.cloneNode(true); c.setAttribute('aria-hidden', 'true'); row.appendChild(c);
+      });
+    });
+
+    // Route cards. Each gate sits at fraction f of the path length; the @keyframes below are
+    // generated from the same fractions, so editing a gate keeps the motion in sync.
+    // creatives: stop = index of the gate where it leaves the route (omit → exits to scaling).
+    var ROUTES = {
+      testing: {
+        cycle: 10,
+        gates: [
+          { f: 0,    kind: 'start', amt: 'Start',   day: '$10 / day',  rule: 'Cold audience' },
+          { f: .303, kind: 'gate',  amt: '$70',     day: 'Day 7',      rule: 'Signal check',   lane: { type: 'kill', chip: 'KILL', sub: 'Skew / weak' } },
+          { f: .433, kind: 'gate',  amt: '$100',    day: 'Day 10',     rule: '1 purchase min', lane: { type: 'kill', chip: 'KILL', sub: '0 purchases' } },
+          { f: .563, kind: 'tbc',   amt: '$130',    day: 'Day 13',     rule: 'Rule TBC' },
+          { f: .693, kind: 'tbc',   amt: '$160',    day: 'Day 16',     rule: 'Rule TBC' },
+          { f: .78,  kind: 'tbc',   amt: '$180',    day: 'Day 18',     rule: 'Rule TBC' },
+          { f: 1,    kind: 'end',   amt: 'Scaling', day: '10 results', rule: 'Broad + CBO' }
+        ],
+        creatives: [ { dl: 0, still: 86 }, { stop: 1, dl: -2.5, still: 18 }, { dl: -5, still: 52 }, { stop: 2, dl: -7.5, still: 37 } ]
+      },
+      signal: {
+        cycle: 12,
+        gates: [
+          { f: 0,   kind: 'start', amt: 'Passed $100',  day: '1+ purchase',   rule: 'Exit window' },
+          { f: .2,  kind: 'gate',  amt: '5 purchases',  day: 'Check 1',       rule: 'Minimum to exit',  lane: { type: 'hold', chip: 'KEEP TESTING', sub: 'Under 5' } },
+          { f: .4,  kind: 'gate',  amt: 'CPA ≤ $22',    day: 'Check 2',       rule: '57% scaled · n 7', lane: { type: 'hold', chip: 'KEEP TESTING', sub: 'CPA over $22' } },
+          { f: .6,  kind: 'gate',  amt: '≤ 10 days',    day: 'Check 3',       rule: '60% scaled · n 5', lane: { type: 'hold', chip: 'KEEP TESTING', sub: 'Over 10 days' } },
+          { f: .78, kind: 'gate',  amt: '≥ 60% Tier-1', day: 'Check 4',       rule: '67% scaled · n 6', lane: { type: 'hold', chip: 'KEEP TESTING', sub: 'Under 60% T1' } },
+          { f: 1,   kind: 'end',   amt: 'Scaling',      day: 'All 4 signals', rule: '75% scaled · n 4' }
+        ],
+        creatives: [ { dl: 0, still: 92 }, { stop: 1, dl: -2, still: 12 }, { stop: 2, dl: -4, still: 30 }, { dl: -6, still: 70 }, { stop: 3, dl: -8, still: 50 }, { stop: 4, dl: -10, still: 62 } ]
+      }
+    };
+    var LANE = {
+      kill: { bg: '#C4301C', glow: 'rgba(196,48,28,.9)' },
+      hold: { bg: '#B7B29F', glow: 'rgba(183,178,159,.75)' }
+    };
+
+    // Distance is linear in time: the full route at 96% of the cycle, so gate f is reached at f × 96%.
+    function pct(n) { return (Math.round(n * 10) / 10) + '%'; }
+    var sheet = '';
+    Object.keys(ROUTES).forEach(function (key) {
+      var R = ROUTES[key], lastStop = 0;
+      var inTest = 'background:#DE8A25;box-shadow:0 0 14px rgba(222,138,37,.7)';
+      var scaled = 'background:#00975A;box-shadow:0 0 16px rgba(0,151,90,.85)';
+      R.gates.forEach(function (g) { if (g.lane) lastStop = Math.max(lastStop, g.f); });
+      sheet += '@keyframes ' + key + '-pass{0%{offset-distance:0%;opacity:0;' + inTest + '}3%{opacity:1}' +
+        pct(lastStop * 96) + '{' + inTest + '}96%{offset-distance:100%;opacity:1;' + scaled + '}100%{offset-distance:100%;opacity:0;' + scaled + '}}';
+      R.gates.forEach(function (g, i) {
+        if (!g.lane) return;
+        var t = g.f * 96, at = pct(g.f * 100), c = LANE[g.lane.type];
+        var out = 'background:' + c.bg + ';box-shadow:0 0 16px ' + c.glow;
+        sheet += '@keyframes ' + key + '-stop' + i + '{0%{offset-distance:0%;opacity:0;translate:0px 0px;' + inTest + '}3%{opacity:1}' +
+          pct(t) + '{offset-distance:' + at + ';translate:0px 0px;' + inTest + '}' +
+          pct(t + 4) + '{' + out + '}' +
+          pct(t + 12) + '{offset-distance:' + at + ';translate:var(--drop);opacity:1}' +
+          pct(t + 20) + ',100%{offset-distance:' + at + ';translate:var(--drop);opacity:0;' + out + '}}';
+      });
+    });
+    var kf = document.createElement('style');
+    kf.textContent = sheet;
+    document.head.appendChild(kf);
+
+    var NS = 'http://www.w3.org/2000/svg';
+    function svgEl(tag, attrs, parent, text) {
+      var n = document.createElementNS(NS, tag);
+      for (var k in attrs) n.setAttribute(k, attrs[k]);
+      if (text) n.textContent = text;
+      parent.appendChild(n);
+      return n;
+    }
+    document.querySelectorAll('.route-h, .route-v').forEach(function (canvas) {
+      var key = canvas.dataset.route, R = ROUTES[key];
+      if (!R) return;
+      var vertical = canvas.classList.contains('route-v');
+      var prev = canvas.style.display;
+      canvas.style.display = 'block'; // keep the path measurable while its layout is hidden
+      var route = canvas.querySelector('.route'), g = canvas.querySelector('.marks');
+      var L = route.getTotalLength();
+      R.gates.forEach(function (gt) {
+        var p = route.getPointAtLength(L * gt.f), x = p.x, y = p.y;
+        var nodeCls = { start: 'node-start', gate: 'node', tbc: 'node-tbc', end: 'node-end' }[gt.kind];
+        if (gt.kind === 'end') svgEl('circle', { 'class': 'ping', cx: x, cy: y, r: 10 }, g);
+        svgEl('circle', { 'class': nodeCls, cx: x, cy: y, r: gt.kind === 'start' ? 6 : gt.kind === 'end' ? 10 : 8 }, g);
+        var ruleCls = 'g-rule' + (gt.kind === 'tbc' ? ' tbc' : '');
+        if (vertical) {
+          svgEl('text', { 'class': 'g-amt',  x: x + 24, y: y - 2 },  g, gt.amt);
+          svgEl('text', { 'class': 'g-day',  x: x + 24, y: y + 12 }, g, gt.day.toUpperCase());
+          svgEl('text', { 'class': ruleCls,  x: x + 24, y: y + 24 }, g, gt.rule.toUpperCase());
+        } else {
+          svgEl('text', { 'class': 'g-amt',  x: x, y: y - 44, 'text-anchor': 'middle' }, g, gt.amt);
+          svgEl('text', { 'class': 'g-day',  x: x, y: y - 30, 'text-anchor': 'middle' }, g, gt.day.toUpperCase());
+          svgEl('text', { 'class': ruleCls,  x: x, y: y - 18, 'text-anchor': 'middle' }, g, gt.rule.toUpperCase());
+        }
+        if (gt.lane) {
+          var ln = gt.lane, cw = ln.chip.length > 6 ? 96 : 46; // chip width fits its label
+          if (vertical) {
+            var cx = x - 30 - cw / 2;
+            svgEl('path', { 'class': ln.type + '-line', d: 'M' + (x - 10) + ' ' + y + ' H' + (x - 30) }, g);
+            svgEl('rect', { 'class': ln.type + '-chip', x: x - 30 - cw, y: y - 9, width: cw, height: 18, rx: 4 }, g);
+            svgEl('text', { 'class': ln.type + '-txt', x: cx, y: y + 4,  'text-anchor': 'middle' }, g, ln.chip);
+            svgEl('text', { 'class': ln.type + '-sub', x: cx, y: y + 24, 'text-anchor': 'middle' }, g, ln.sub.toUpperCase());
+          } else {
+            svgEl('path', { 'class': ln.type + '-line', d: 'M' + x + ' ' + (y + 10) + ' V' + (y + 44) }, g);
+            svgEl('rect', { 'class': ln.type + '-chip', x: x - cw / 2, y: y + 46, width: cw, height: 18, rx: 4 }, g);
+            svgEl('text', { 'class': ln.type + '-txt', x: x, y: y + 59, 'text-anchor': 'middle' }, g, ln.chip);
+            svgEl('text', { 'class': ln.type + '-sub', x: x, y: y + 78, 'text-anchor': 'middle' }, g, ln.sub.toUpperCase());
+          }
+        }
+      });
+      R.creatives.forEach(function (c) {
+        var s = document.createElement('span');
+        s.className = 'cr';
+        s.style.offsetPath = "path('" + route.getAttribute('d') + "')";
+        s.style.animationName = key + (c.stop ? '-stop' + c.stop : '-pass');
+        s.style.animationDuration = R.cycle + 's';
+        s.style.setProperty('--dl', c.dl + 's');
+        s.style.setProperty('--still', c.still + '%');
+        s.style.setProperty('--drop', vertical ? '-22px 0px' : '0px 34px');
+        canvas.appendChild(s);
+      });
+      canvas.style.display = prev;
+    });
+
+    // Scale each fixed-size demo canvas (data-w × data-h, default 320×200) to its stage
+    function fit(stage) {
+      stage.querySelectorAll('.canvas').forEach(function (c) {
+        if (getComputedStyle(c).display === 'none') return;
+        var w = +c.dataset.w || 320, h = +c.dataset.h || 200;
+        var s = Math.min((stage.clientWidth - 28) / w, (stage.clientHeight - 52) / h);
+        c.style.setProperty('--sc', Math.max(.3, Math.min(1.4, s)).toFixed(3));
+      });
+    }
+    var stages = document.querySelectorAll('.stage');
+    stages.forEach(fit);
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function (es) { es.forEach(function (e) { fit(e.target); }); });
+      stages.forEach(function (s) { ro.observe(s); });
+    } else {
+      window.addEventListener('resize', function () { stages.forEach(fit); });
+    }
+
+    // Motion toggle; reduced-motion viewers start on a still frame
+    var body = document.body, btn = document.getElementById('motion'), label = btn.querySelector('span');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var playing = !reduce;
+    if (reduce) body.classList.add('still');
+    function render() {
+      body.classList.toggle('is-paused', !playing && !body.classList.contains('still'));
+      label.textContent = playing ? 'Pause motion' : 'Play motion';
+      btn.setAttribute('aria-pressed', String(!playing));
+    }
+    btn.addEventListener('click', function () {
+      body.classList.remove('still');
+      playing = !playing;
+      render();
+    });
+    render();
+  })();
+</script>
+</body>
+</html>
